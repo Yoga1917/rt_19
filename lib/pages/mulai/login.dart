@@ -1,9 +1,50 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/halaman_utama/home.dart';
 
 class LoginPage extends StatelessWidget {
+  final TextEditingController nikController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  Future<void> login(BuildContext context) async {
+    final String nik = nikController.text;
+    final String password = passwordController.text;
+
+    try {
+      final String apiUrl = "https://pexadont.agsa.site/api/login/pengurus?nik=$nik&password=$password";
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData['error'] == false) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Berhasil login!')),
+          );
+
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => HomePage()),
+          // );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['data'] ?? 'Gagal login!')),
+          );
+        }
+      } else {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseData['data'] ?? 'Gagal login!')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,10 +116,11 @@ class LoginPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            controller: nikController,
                             cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.person),
-                              labelText: 'Username',
+                              labelText: 'NIK',
                               floatingLabelStyle: const TextStyle(
                                 color: Colors.black,
                               ),
@@ -101,6 +143,7 @@ class LoginPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            controller: passwordController,
                             cursorColor: Color(0xff30C083),
                             obscureText: true,
                             decoration: InputDecoration(
@@ -128,13 +171,7 @@ class LoginPage extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage()),
-                              );
-                            },
+                            onTap: () => login(context), // call func login
                             child: Container(
                               width: double.infinity,
                               height: 55,
