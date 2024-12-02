@@ -23,10 +23,10 @@ class LoginPage extends StatelessWidget {
             SnackBar(content: Text('Berhasil login!')),
           );
 
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => HomePage()),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(responseData['data'] ?? 'Gagal login!')),
