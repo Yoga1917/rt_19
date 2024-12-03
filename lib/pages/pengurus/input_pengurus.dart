@@ -1,6 +1,81 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:rt_19/pages/home/pengurus.dart';
 
-class InputPengurusPage extends StatelessWidget {
+class InputPengurusPage extends StatefulWidget {
+  @override
+  _InputPengurusPageState createState() => _InputPengurusPageState();
+}
+
+class _InputPengurusPageState extends State<InputPengurusPage> {
+  final TextEditingController _nikController = TextEditingController();
+  String? _nama;
+  String? _tglLahir;
+  String? _noRumah;
+  String? _foto;
+  String? _selectedJabatan;
+
+  void _cekNIK() async {
+    final request = await http.get(
+      Uri.parse('https://pexadont.agsa.site/api/warga/edit/${_nikController.text}'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    final response = jsonDecode(request.body);
+
+    if (response["status"] == 200) {
+      setState(() {
+        _nama = response["data"]["nama"];
+        _tglLahir = response["data"]["tgl_lahir"];
+        _noRumah = response["data"]["no_rumah"];
+        _foto = response["data"]["foto"];
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data warga tidak ditemukan')),
+      );
+    }
+  }
+
+  void _simpan() {
+    if (_selectedJabatan != null) {
+      print('NIK: ${_nikController.text}');
+      print('Jabatan: $_selectedJabatan');
+
+      _savePengurus(_nikController.text, _selectedJabatan);
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Pilih jabatan pengurus terlebih dahulu!')),
+      );
+    }
+  }
+
+  void _savePengurus(nik, jabatan) async {
+    var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/pengurus/simpan'));
+    request.fields['nik'] = nik;
+    request.fields['jabatan'] = jabatan;
+
+    var streamedResponse = await request.send();
+    var responseData = await http.Response.fromStream(streamedResponse);
+    var response = jsonDecode(responseData.body);
+
+    if (response["status"] == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data pengurus berhasil ditambahkan')),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => PengurusPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response["data"])),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,314 +83,145 @@ class InputPengurusPage extends StatelessWidget {
         backgroundColor: Color(0xff30C083),
         title: Text(
           'Input Pengurus',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
-        child: LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return Column();
-          } else {
-            return Column(
-              children: [
-                SizedBox(
-                  height: 30,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              labelText: 'Jabatan',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                              prefixIcon: Icon(Icons.work, color: Colors.black),
-                            ),
-                            items: [
-                              'Ketua RT',
-                              'Wakil Ketua RT',
-                              'Sekretaris',
-                              'Bendahara',
-                              'Kordinator Kebersihan',
-                              'Kordinator Keamanan',
-                            ].map((String bulan) {
-                              return DropdownMenuItem<String>(
-                                value: bulan,
-                                child: Text(bulan),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {},
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            cursorColor: Color(0xff30C083),
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.credit_card),
-                              labelText: 'Nik',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            cursorColor: Color(0xff30C083),
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.account_box),
-                              labelText: 'Nama Pengurus',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            cursorColor: Colors.black,
-                            readOnly: true,
-                            onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(1900),
-                                lastDate: DateTime(2100),
-                                builder: (BuildContext context, Widget? child) {
-                                  return Theme(
-                                    data: ThemeData.light().copyWith(
-                                      primaryColor: Color(0xff30C083),
-                                      colorScheme: ColorScheme.light(
-                                          primary: Color(0xff30C083)),
-                                      buttonTheme: ButtonThemeData(
-                                          textTheme: ButtonTextTheme.primary),
-                                    ),
-                                    child: child ?? Container(),
-                                  );
-                                },
-                              );
-                              if (pickedDate != null) {}
-                            },
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.calendar_today),
-                              labelText: 'Tanggal Lahir',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.female),
-                              labelText: 'Jenis Kelamin',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                            items: <String>['Laki-laki', 'Perempuan']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {},
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            cursorColor: Color(0xff30C083),
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.home),
-                              labelText: 'Nomor Rumah',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            readOnly: true,
-                            onTap: () {
-                              // Implement file picker here
-                            },
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.upload_file),
-                              labelText: 'Upload Foto',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: GestureDetector(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => LoginPage()),
-                              // );
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              height: 55,
-                              decoration: BoxDecoration(
-                                color: const Color(0xff30C083),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15),
-                                child: const Text(
-                                  'Kirim',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 18,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                      ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              SizedBox(height: 30),
+              TextFormField(
+                controller: _nikController,
+                cursorColor: Color(0xff30C083),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.credit_card),
+                  labelText: 'NIK',
+                  floatingLabelStyle: const TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(
+                      color: Color(0xff30C083),
+                      width: 2,
                     ),
                   ),
                 ),
+              ),
+              SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  _cekNIK();
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 55,
+                  decoration: BoxDecoration(
+                    color: const Color(0xff30C083),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: const Text(
+                      'Cek Warga',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
+              if (_nama != null) ...[
+                 _foto != null
+                    ? ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(20),
+                        child: Image.network(
+                          'https://pexadont.agsa.site/uploads/warga/${_foto}',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      )
+                    : Container(),
+                SizedBox(height: 10),
+                Text('${_nama}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('Tanggal Lahir: $_tglLahir'),
+                Text('No Rumah: $_noRumah'),
+                SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Jabatan',
+                    floatingLabelStyle: const TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color(0xff30C083),
+                        width: 2,
+                      ),
+                    ),
+                    prefixIcon: Icon(Icons.work, color: Colors.black),
+                  ),
+                  items: [
+                    'Ketua RT',
+                    'Wakil Ketua RT',
+                    'Sekretaris',
+                    'Bendahara',
+                    'Kordinator Kebersihan',
+                    'Kordinator Keamanan',
+                  ].map((String jabatan) {
+                    return DropdownMenuItem<String>(
+                      value: jabatan,
+                      child: Text(jabatan),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedJabatan = newValue;
+                    });
+                  },
+                ),
+                SizedBox(height: 20),
+                GestureDetector(
+                onTap: () {
+                  _simpan();
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 55,
+                  decoration: BoxDecoration(
+                    color: const Color(0xff30C083),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: const Text(
+                      'Simpan',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
               ],
-            );
-          }
-        }),
+            ],
+          ),
+        ),
       ),
     );
   }
