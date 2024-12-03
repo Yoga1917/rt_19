@@ -86,7 +86,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
 
   Future<void> _tolakWarga(String nik) async {
     final url = 'https://pexadont.agsa.site/api/warga/delete/${nik}';
-    final response = await http.delete(
+    await http.delete(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
