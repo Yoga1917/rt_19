@@ -50,6 +50,20 @@ class _PengurusPageState extends State<PengurusPage> {
     );
   }
 
+  void _hapusPengurus(id) async {
+    final url = 'https://pexadont.agsa.site/api/pengurus/delete/${id}';
+    final request = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    
+    final response = json.decode(request.body);
+    showSnackbar(response['message']);
+    fetchPengurusData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,7 +231,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                             ),
                                             SizedBox(height: 10),
                                             Text(
-                                              'Nik : ${pengurus['nik']}',
+                                              'NIK : ${pengurus['nik']}',
                                               style: TextStyle(fontSize: 14),
                                             ),
                                             Text(
@@ -233,6 +247,23 @@ class _PengurusPageState extends State<PengurusPage> {
                                               style: TextStyle(fontSize: 14),
                                             ),
                                             SizedBox(height: 20),
+                                            InkWell(
+                                              onTap: () {
+                                                _hapusPengurus(pengurus['id_pengurus']);
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  color: const Color(0xff30C083)
+                                                ),
+                                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                                child: const Text(
+                                                  "Hapus Kepengurusan",
+                                                  style: TextStyle(color: Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 20)
                                           ],
                                         ),
                                       ),

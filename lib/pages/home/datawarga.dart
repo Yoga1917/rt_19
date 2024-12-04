@@ -33,15 +33,16 @@ class _DataWargaPageState extends State<DataWargaPage> {
 
   Future<void> _hapusWarga(String nik) async {
     final url = 'https://pexadont.agsa.site/api/warga/delete/${nik}';
-    await http.delete(
+    final request = await http.delete(
       Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
       },
     );
+    final response = json.decode(request.body);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Data warga dihapus.")),
+      SnackBar(content: Text(response['data'])),
     );
 
     fetchWargaData();

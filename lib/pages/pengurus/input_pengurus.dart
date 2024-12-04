@@ -194,30 +194,31 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                 ),
                 SizedBox(height: 20),
                 GestureDetector(
-                onTap: () {
-                  _simpan();
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 55,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff30C083),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: const Text(
-                      'Simpan',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 18,
+                  onTap: () {
+                    _simpan();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff30C083),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: const Text(
+                        'Simpan',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-              ),
+                SizedBox(height: 30),
               ],
             ],
           ),
