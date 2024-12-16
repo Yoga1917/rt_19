@@ -39,7 +39,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   'foto': item['foto']
                 })
             .toList();
-            filteredFasilitasList = fasilitasList; // Initialize with full list
+            filteredFasilitasList = fasilitasList; 
         isLoading = false;
         totalFasilitas = fasilitasList.length;
       });
@@ -225,7 +225,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                   children: <Widget>[
                                     SizedBox(height: 10),
                                     Text(
-                                      fasilitas['nama'] ?? 'Unknown Name',
+                                      fasilitas['nama'],
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
