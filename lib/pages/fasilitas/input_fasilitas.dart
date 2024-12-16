@@ -13,8 +13,9 @@ class InputFasilitasPage extends StatefulWidget {
 class _InputFasilitasPageState extends State<InputFasilitasPage> {
   final TextEditingController namaController = TextEditingController();
   final TextEditingController jumlahController = TextEditingController();
-  final TextEditingController kondisiController = TextEditingController();
+  String? kondisi;
   File? _image;
+  bool isLoading = false;
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -28,35 +29,67 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
   }
 
   Future<void> _kirimData() async {
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('https://pexadont.agsa.site/api/fasilitas/simpan'));
-    request.fields['nama'] = namaController.text;
-    request.fields['jml'] = jumlahController.text;
-    request.fields['status'] = kondisiController.text;
-    request.files.add(await http.MultipartFile.fromPath('foto', _image!.path));
-
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-    var responseData = jsonDecode(response.body);
-
-    if (responseData['status'] == 200) {
+    if (namaController.text.isEmpty ||
+        jumlahController.text.isEmpty ||
+        kondisi == null ||
+        _image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data Berhasil dikirim.')),
+        const SnackBar(
+            content: Text('Harap lengkapi semua data dan pilih foto')),
       );
+      return;
+    }
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => FasilitasPage()),
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://pexadont.agsa.site/api/fasilitas/simpan'),
       );
-    } else {
-      if (responseData['data']['foto'] != null) {
+      request.fields['nama'] = namaController.text;
+      request.fields['jml'] = jumlahController.text;
+      request.fields['status'] = kondisi!;
+      request.files
+          .add(await http.MultipartFile.fromPath('foto', _image!.path));
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 201) {
+        var responseData = jsonDecode(response.body);
+        print("Response Data: $responseData");
+
+        if (responseData['status'] == 201) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data berhasil dikirim')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => FasilitasPage()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text(responseData['message'] ?? 'Gagal mengirim data')),
+          );
+        }
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseData['data']['foto'])),
+          const SnackBar(content: Text('Terjadi kesalahan pada server')),
         );
       }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal mengirim data.')),
+        SnackBar(content: Text('Error: $e')),
       );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -190,7 +223,7 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
                             }).toList(),
                             onChanged: (String? newValue) {
                               setState(() {
-                                kondisiController.text = newValue!;
+                                kondisi = newValue!;
                               });
                             },
                           ),
@@ -235,9 +268,7 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
-                            onTap: () {
-                              _kirimData();
-                            },
+                            onTap: isLoading ? null : _kirimData,
                             child: Container(
                               width: double.infinity,
                               height: 55,
@@ -247,8 +278,8 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(15),
-                                child: const Text(
-                                  'Kirim',
+                                child: Text(
+                                  isLoading ? 'Mengirim...' : 'Kirim',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,
