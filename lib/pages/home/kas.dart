@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:indonesia/indonesia.dart';
 import 'package:rt_19/pages/kas_RT/detail_kas.dart';
 import 'package:rt_19/pages/kas_RT/input_kas.dart';
 import 'package:rt_19/widget/kartu_laporan.dart';
@@ -11,6 +14,41 @@ class KasPage extends StatefulWidget {
 
 class _KasPageState extends State<KasPage> {
   String? selectedYear;
+  List<dynamic> kasData = [];
+  bool isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _getKasTerakhir();
+  }
+
+  void _getKasTerakhir() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://pexadont.agsa.site/api/kas'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        setState(() {
+          kasData = responseData['data'];
+          isLoading = false;
+        });
+      } else {
+        showSnackbar('Gagal memuat data kas');
+      }
+    } catch (e) {
+      showSnackbar('Terjadi kesalahan: $e');
+    }
+  }
+  
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +64,8 @@ class _KasPageState extends State<KasPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
+      body: isLoading ? Center(child: CircularProgressIndicator())
+      : SingleChildScrollView(
         child: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth > 600) {
             return Column();
@@ -119,29 +158,36 @@ class _KasPageState extends State<KasPage> {
                 SizedBox(
                   height: 30,
                 ),
-                ListView(
+                ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    KartuLaporan(
-                      month: 'Januari',
-                      income: 'Rp 1,000,000',
-                      expense: 'Rp 500,000',
-                      onDetail: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailKASPage()),
-                        );
-                      },
-                      onPublish: () {},
-                    ),
-                    SizedBox(height: 10),
-                    TotalCard(
-                        totalIncome: 'Rp 18,800,000',
-                        totalExpense: 'Rp 12,000,000',
-                        remainingFunds: 'Rp 6,800,000'),
-                  ],
+                  itemCount: kasData.length,
+                  itemBuilder: (context, index) {
+                    final kas = kasData[index];
+                    return Column(
+                      children: [
+                        KartuLaporan(
+                          month: kas['bulan'] + " " + kas['tahun'],
+                          income: rupiah(kas['pemasukan']),
+                          expense: rupiah(kas['pengeluaran']),
+                          publish: kas['publish'],
+                          onDetail: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailKASPage(kas['id_kas'])),
+                            );
+                          },
+                          onPublish: () {},
+                        ),
+                        TotalCard(
+                          totalIncome: rupiah(kas['pemasukan']),
+                          totalExpense: rupiah(kas['pengeluaran']),
+                          remainingFunds: rupiah((int.parse(kas['pemasukan'])-int.parse(kas['pengeluaran'])).toString())
+                        ),
+                      ],
+                    );
+                  }
                 ),
                 SizedBox(
                   height: 30,

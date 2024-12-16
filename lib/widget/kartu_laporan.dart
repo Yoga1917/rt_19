@@ -4,6 +4,7 @@ class KartuLaporan extends StatelessWidget {
   final String month;
   final String income;
   final String expense;
+  final String publish;
   final VoidCallback onDetail;
   final VoidCallback onPublish;
 
@@ -11,6 +12,7 @@ class KartuLaporan extends StatelessWidget {
     required this.month,
     required this.income,
     required this.expense,
+    required this.publish,
     required this.onDetail,
     required this.onPublish,
   });
@@ -102,6 +104,7 @@ class KartuLaporan extends StatelessWidget {
                   ),
                 ),
               ),
+              publish == "0" ?
               GestureDetector(
                 onTap: onPublish,
                 child: Container(
@@ -113,7 +116,7 @@ class KartuLaporan extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Padding(
+                  child: const Padding(
                     padding: const EdgeInsets.all(10),
                     child: const Text(
                       'Publish',
@@ -126,7 +129,7 @@ class KartuLaporan extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
+              ) : const Text(""),
             ],
           ),
         ],
