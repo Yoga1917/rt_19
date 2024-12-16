@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/halaman_utama/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -28,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData['error'] == false) {
+          _saveLoginInfo(responseData['data']['nik'], responseData['data']['nama'], responseData['data']['jabatan']);
+          
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Berhasil login!')),
           );
@@ -52,6 +55,13 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text('Terjadi kesalahan: $e')),
       );
     }
+  }
+  
+  Future<void> _saveLoginInfo(String nama, String nik, String jabatan) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('nik', nik);
+    await prefs.setString('nama', nama);
+    await prefs.setString('jabatan', jabatan);
   }
 
   @override

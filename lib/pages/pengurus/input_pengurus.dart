@@ -175,7 +175,6 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                   ),
                   items: [
                     'Ketua RT',
-                    'Wakil Ketua RT',
                     'Sekretaris',
                     'Bendahara',
                     'Kordinator Kebersihan',
