@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class InputPemberitahuanPage extends StatelessWidget {
+class InputPemberitahuanPage extends StatefulWidget {
+  @override
+  State<InputPemberitahuanPage> createState() => _InputPemberitahuanPageState();
+}
+
+class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +85,7 @@ class InputPemberitahuanPage extends StatelessWidget {
                             onTap: () {},
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
-                              labelText: 'Upload File',
+                              labelText: 'Upload File Surat',
                               floatingLabelStyle: const TextStyle(
                                 color: Colors.black,
                               ),

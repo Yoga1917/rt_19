@@ -13,6 +13,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
   int totalWarga = 0;
   TextEditingController searchController = TextEditingController();
   bool isLoading = true;
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
       setState(() {
         wargaList =
             data['data'].where((item) => item['status'] == "1").toList();
+        filteredWargaList = wargaList; // Initialize with full list
         isLoading = false;
         totalWarga = wargaList.length;
       });
@@ -38,27 +40,30 @@ class _DataWargaPageState extends State<DataWargaPage> {
   }
 
   void searchWarga(String query) {
-    final lowerQuery = query.toLowerCase();
+    final cleanedQuery =
+        query.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
+
+    if (cleanedQuery.isEmpty) {
+      setState(() {
+        filteredWargaList = wargaList;
+        isSearching = false;
+      });
+      return;
+    }
+
     final suggestions = wargaList.where((warga) {
       final wargaName = warga['nama'].toLowerCase();
-      return wargaName.contains(lowerQuery);
+      return wargaName.contains(cleanedQuery);
     }).toList();
 
     setState(() {
+      isSearching = true;
       filteredWargaList = suggestions;
       filteredWargaList.sort((a, b) {
-        // Prioritizing exact matches
-        if (a['nama'].toLowerCase() == lowerQuery) return -1;
-        if (b['nama'].toLowerCase() == lowerQuery) return 1;
-        return 0;
+        if (a['nama'].toLowerCase() == cleanedQuery) return -1;
+        if (b['nama'].toLowerCase() == cleanedQuery) return 1;
+        return a['nama'].compareTo(b['nama']);
       });
-
-      // Show a message if no data found
-      if (filteredWargaList.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data nama tidak ditemukan')),
-        );
-      }
     });
   }
 
@@ -76,150 +81,159 @@ class _DataWargaPageState extends State<DataWargaPage> {
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        child: LayoutBuilder(builder: (context, constraints) {
-          return Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                child: TextField(
-                  controller: searchController,
-                  cursorColor: Color(0xff30C083),
-                  decoration: InputDecoration(
-                    hintText: 'Cari data warga...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.black),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xff30C083)),
-                    ),
-                    prefixIcon: GestureDetector(
-                      onTap: () {
-                        searchWarga(searchController.text);
-                      },
-                      child: Icon(Icons.search, color: Colors.black),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    child: TextField(
+                      controller: searchController,
+                      cursorColor: Color(0xff30C083),
+                      decoration: InputDecoration(
+                        hintText: 'Cari data warga...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Color(0xff30C083)),
+                        ),
+                        prefixIcon: GestureDetector(
+                          onTap: () {
+                            searchWarga(searchController.text);
+                          },
+                          child: Icon(Icons.search, color: Colors.black),
+                        ),
+                        suffixIcon: isSearching
+                            ? IconButton(
+                                icon: Icon(Icons.clear, color: Colors.black),
+                                onPressed: () {
+                                  searchController.clear();
+                                  searchWarga('');
+                                },
+                              )
+                            : null,
+                      ),
+                      onChanged: searchWarga,
                     ),
                   ),
-                ),
-              ),
-              Text('Total Warga : $totalWarga Warga'),
-              SizedBox(
-                height: 30,
-              ),
-              if (wargaList.isNotEmpty) ...[
-                for (var warga in wargaList)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(width: 1, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
+                  Text('Total Warga : $totalWarga Warga'),
+                  SizedBox(height: 20),
+                  if (filteredWargaList.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 100),
+                      child: Text(
+                        'Data tidak ditemukan',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xff30C083),
+                            fontWeight: FontWeight.bold),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image.network(
-                                (warga['foto'] != null)
-                                    ? 'https://pexadont.agsa.site/uploads/warga/${warga['foto']}'
-                                    : 'https://placehold.co/300x300.png',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
+                    ),
+                  if (filteredWargaList.isNotEmpty)
+                    for (var warga in filteredWargaList)
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(width: 1, color: Colors.grey),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
                               ),
-                            ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(height: 10),
-                                Text(
-                                  warga['nama'] ?? 'Unknown Name',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    (warga['foto'] != null)
+                                        ? 'https://pexadont.agsa.site/uploads/warga/${warga['foto']}'
+                                        : 'https://placehold.co/300x300.png',
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
                                   ),
                                 ),
-                                SizedBox(height: 10),
-                                Text(
-                                  'Nik : ${warga['nik']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  'Tanggal Lahir : ${warga['tgl_lahir']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  'Jenis Kelamin : ${warga['jenis_kelamin']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(
-                                  'No. Rumah : ${warga['no_rumah']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xff30C083),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: const Text(
-                                        'Aktif',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 18,
-                                        ),
-                                        textAlign: TextAlign.center,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(height: 10),
+                                    Text(
+                                      warga['nama'] ?? 'Unknown Name',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Nik : ${warga['nik']}',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    Text(
+                                      'Tanggal Lahir : ${warga['tgl_lahir']}',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    Text(
+                                      'Jenis Kelamin : ${warga['jenis_kelamin']}',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    Text(
+                                      'No. Rumah : ${warga['no_rumah']}',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    SizedBox(height: 20),
+                                    GestureDetector(
+                                      onTap: () {},
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xff30C083),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: const Text(
+                                            'Aktif',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 18,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 30),
+                                  ],
                                 ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-              ],
-              SizedBox(
-                height: 50,
+                  SizedBox(height: 50),
+                ],
               ),
-            ],
-          );
-        }),
-      ),
+            ),
     );
   }
 }
