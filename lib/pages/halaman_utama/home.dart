@@ -7,6 +7,7 @@ import 'package:rt_19/pages/home/pendaftaran.dart';
 import 'package:rt_19/pages/home/pengaduan.dart';
 import 'package:rt_19/pages/home/pengurus.dart';
 import 'package:rt_19/pages/home/datawarga.dart';
+import 'package:rt_19/pages/home/kegiatan_bulanan.dart';
 import 'package:rt_19/widget/custom_category_container.dart';
 import 'package:rt_19/widget/custom_category_container_tablet.dart';
 
@@ -466,8 +467,20 @@ class HomePage extends StatelessWidget {
                           height: 50,
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            CustomCategoryContainer(
+                              icon: Icons.calendar_month,
+                              text: 'RKB',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          KegiatanBulananPage()),
+                                );
+                              },
+                            ),
                             CustomCategoryContainer(
                               icon: Icons.notifications_active_sharp,
                               text: 'Pemberitahuan',

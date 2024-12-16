@@ -37,13 +37,12 @@ class PemberitahuanPage extends StatelessWidget {
                           );
                         },
                         child: Container(
-                          height: 50,
                           decoration: BoxDecoration(
                             color: const Color(0xff30C083),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(15),
                             child: Row(
                               children: [
                                 Icon(Icons.add, color: Colors.white),
@@ -62,7 +61,7 @@ class PemberitahuanPage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 20,
+                        width: 30,
                       ),
                       Expanded(
                         child: TextField(
@@ -167,11 +166,14 @@ class PemberitahuanPage extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 20),
-                                  child: Text(
-                                    "Assalamualaikum Bapak Ibu bburebuibgggr, ughrgruigbrubrgbfbwubfububiuebguewbgiewbwegbweugbewuigfbweiugbwugbwegubewguiewbguiewbgweu jibfibrbgw uhef  hewufewugw  uewbeu gwghwegu",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Assalamualaikum Bapak Ibu bbure bu ibgggr, ughrgruigbrubrgbfbwubfububiuebguewbgiewbwegbweugbewuigfbweiugbwugbwegubewguiewbguiewbgweu jibfibrbgw uhef  hewufewugw  uewbeu gwghwegu",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -184,7 +186,6 @@ class PemberitahuanPage extends StatelessWidget {
                                 child: Container(
                                   alignment: Alignment.center,
                                   width: double.infinity,
-                                  height: 40,
                                   decoration: BoxDecoration(
                                     color: const Color(0xff30C083),
                                     borderRadius: BorderRadius.circular(10),
@@ -197,88 +198,35 @@ class PemberitahuanPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.download,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        'Download',
-                                        style: TextStyle(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.download,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 14,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 30),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: Color(0xff30C083),
-                                          width: 2,
+                                        SizedBox(
+                                          width: 5,
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: const Text(
-                                          'Edit',
-                                          style: TextStyle(
-                                            color: Color(0xff30C083),
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 16,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xff30C083),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: const Text(
-                                          'Hapus',
+                                        Text(
+                                          'Download',
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w900,
                                             fontSize: 16,
                                           ),
-                                          textAlign: TextAlign.center,
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
-                              SizedBox(
-                                height: 30,
-                              ),
+                              SizedBox(height: 30),
                             ],
                           ),
                         ),

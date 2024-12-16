@@ -17,7 +17,7 @@ class TotalCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey [200],
+        color: Colors.grey[200],
         border: Border.all(width: 1, color: Colors.grey),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -36,28 +36,46 @@ class TotalCard extends StatelessWidget {
             'Total',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Pemasukan:', style: TextStyle(fontWeight: FontWeight.w500)),
-              Text(totalIncome, style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'Pemasukan:',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              ),
+              Text(
+                totalIncome,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
             ],
           ),
+          SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Pengeluaran:',
-                  style: TextStyle(fontWeight: FontWeight.w500)),
-              Text(totalExpense, style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'Pengeluaran:',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              ),
+              Text(
+                totalExpense,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
             ],
           ),
+          SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Sisa Dana:', style: TextStyle(fontWeight: FontWeight.w500)),
-              Text(remainingFunds,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'Sisa Dana:',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              ),
+              Text(
+                remainingFunds,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
             ],
           ),
         ],

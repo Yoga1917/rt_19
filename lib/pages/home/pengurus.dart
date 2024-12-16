@@ -50,20 +50,6 @@ class _PengurusPageState extends State<PengurusPage> {
     );
   }
 
-  void _hapusPengurus(id) async {
-    final url = 'https://pexadont.agsa.site/api/pengurus/delete/${id}';
-    final request = await http.delete(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-    
-    final response = json.decode(request.body);
-    showSnackbar(response['message']);
-    fetchPengurusData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,13 +89,12 @@ class _PengurusPageState extends State<PengurusPage> {
                                     );
                                   },
                                   child: Container(
-                                    height: 50,
                                     decoration: BoxDecoration(
                                       color: const Color(0xff30C083),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(15),
                                       child: Row(
                                         children: [
                                           Icon(Icons.add, color: Colors.white),
@@ -118,7 +103,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                             'Pengurus',
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 16,
+                                              fontSize: 18,
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
@@ -137,7 +122,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                     iconEnabledColor: Colors.white,
                                     hint: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
+                                          horizontal: 10),
                                       child: Text(
                                         'Pilih Tahun',
                                         style: TextStyle(color: Colors.white),
@@ -248,18 +233,22 @@ class _PengurusPageState extends State<PengurusPage> {
                                             ),
                                             SizedBox(height: 20),
                                             InkWell(
-                                              onTap: () {
-                                                _hapusPengurus(pengurus['id_pengurus']);
-                                              },
+                                              onTap: () {},
                                               child: Container(
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  color: const Color(0xff30C083)
-                                                ),
-                                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: const Color(
+                                                        0xff30C083)),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 10,
+                                                        horizontal: 15),
                                                 child: const Text(
-                                                  "Hapus Kepengurusan",
-                                                  style: TextStyle(color: Colors.white),
+                                                  "Aktif",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
                                                 ),
                                               ),
                                             ),

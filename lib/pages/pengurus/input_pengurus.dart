@@ -193,6 +193,42 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                   },
                 ),
                 SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: 'Pilih Tahun',
+                    floatingLabelStyle: const TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: Color(0xff30C083),
+                        width: 2,
+                      ),
+                    ),
+                    prefixIcon: Icon(Icons.list, color: Colors.black),
+                  ),
+                  items: [
+                    '2020',
+                    '2021',
+                    '2022',
+                    '2023',
+                    '2024',
+                    '2025',
+                  ].map((String jabatan) {
+                    return DropdownMenuItem<String>(
+                      value: jabatan,
+                      child: Text(jabatan),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedJabatan = newValue;
+                    });
+                  },
+                ),
+                SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
                     _simpan();

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class InputPemberitahuanPage extends StatelessWidget {
+class EditKegiatanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff30C083),
         title: Text(
-          'Input Pemberitahuan',
+          'Edit Kegiatan',
           style: TextStyle(
             color: Colors.white,
           ),
@@ -49,64 +49,11 @@ class InputPemberitahuanPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
-                            cursorColor: Color(0xff30C083),
-                            decoration: InputDecoration(
-                              prefixIcon:
-                                  const Icon(Icons.notifications_active_sharp),
-                              labelText: 'Nama Pemberitahuan',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
                             readOnly: true,
                             onTap: () {},
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
-                              labelText: 'Upload File',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            maxLines: 5,
-                            cursorColor: Color(0xff30C083),
-                            decoration: InputDecoration(
-                              labelText: 'Isi Pemberitahuan',
+                              labelText: 'Upload LPJ',
                               floatingLabelStyle: const TextStyle(
                                 color: Colors.black,
                               ),
@@ -138,7 +85,6 @@ class InputPemberitahuanPage extends StatelessWidget {
                             },
                             child: Container(
                               width: double.infinity,
-                              height: 55,
                               decoration: BoxDecoration(
                                 color: const Color(0xff30C083),
                                 borderRadius: BorderRadius.circular(10),

@@ -9,7 +9,10 @@ class DataWargaPage extends StatefulWidget {
 
 class _DataWargaPageState extends State<DataWargaPage> {
   List<dynamic> wargaList = [];
+  List<dynamic> filteredWargaList = [];
   int totalWarga = 0;
+  TextEditingController searchController = TextEditingController();
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -18,12 +21,15 @@ class _DataWargaPageState extends State<DataWargaPage> {
   }
 
   Future<void> fetchWargaData() async {
-    final response = await http.get(Uri.parse('https://pexadont.agsa.site/api/warga'));
+    final response =
+        await http.get(Uri.parse('https://pexadont.agsa.site/api/warga'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        wargaList = data['data'].where((item) => item['status'] == "1").toList();
+        wargaList =
+            data['data'].where((item) => item['status'] == "1").toList();
+        isLoading = false;
         totalWarga = wargaList.length;
       });
     } else {
@@ -31,21 +37,29 @@ class _DataWargaPageState extends State<DataWargaPage> {
     }
   }
 
-  Future<void> _hapusWarga(String nik) async {
-    final url = 'https://pexadont.agsa.site/api/warga/delete/${nik}';
-    final request = await http.delete(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-    final response = json.decode(request.body);
+  void searchWarga(String query) {
+    final lowerQuery = query.toLowerCase();
+    final suggestions = wargaList.where((warga) {
+      final wargaName = warga['nama'].toLowerCase();
+      return wargaName.contains(lowerQuery);
+    }).toList();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(response['data'])),
-    );
+    setState(() {
+      filteredWargaList = suggestions;
+      filteredWargaList.sort((a, b) {
+        // Prioritizing exact matches
+        if (a['nama'].toLowerCase() == lowerQuery) return -1;
+        if (b['nama'].toLowerCase() == lowerQuery) return 1;
+        return 0;
+      });
 
-    fetchWargaData();
+      // Show a message if no data found
+      if (filteredWargaList.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Data nama tidak ditemukan')),
+        );
+      }
+    });
   }
 
   @override
@@ -69,6 +83,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                 child: TextField(
+                  controller: searchController,
                   cursorColor: Color(0xff30C083),
                   decoration: InputDecoration(
                     hintText: 'Cari data warga...',
@@ -80,7 +95,12 @@ class _DataWargaPageState extends State<DataWargaPage> {
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(color: Color(0xff30C083)),
                     ),
-                    prefixIcon: Icon(Icons.search, color: Colors.black),
+                    prefixIcon: GestureDetector(
+                      onTap: () {
+                        searchWarga(searchController.text);
+                      },
+                      child: Icon(Icons.search, color: Colors.black),
+                    ),
                   ),
                 ),
               ),
@@ -114,7 +134,9 @@ class _DataWargaPageState extends State<DataWargaPage> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: Image.network(
-                                (warga['foto'] != null) ? 'https://pexadont.agsa.site/uploads/warga/${warga['foto']}' : 'https://placehold.co/300x300.png',
+                                (warga['foto'] != null)
+                                    ? 'https://pexadont.agsa.site/uploads/warga/${warga['foto']}'
+                                    : 'https://placehold.co/300x300.png',
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                               ),
@@ -160,11 +182,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                 ),
                                 SizedBox(height: 20),
                                 GestureDetector(
-                                  onTap: () {
-                                    _hapusWarga(warga['nik']);
-                                  },
+                                  onTap: () {},
                                   child: Container(
-                                    height: 45,
                                     decoration: BoxDecoration(
                                       color: const Color(0xff30C083),
                                       borderRadius: BorderRadius.circular(10),
@@ -172,11 +191,11 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: const Text(
-                                        'Hapus',
+                                        'Aktif',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w900,
-                                          fontSize: 16,
+                                          fontSize: 18,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),

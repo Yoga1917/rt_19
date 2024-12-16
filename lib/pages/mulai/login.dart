@@ -4,16 +4,25 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/halaman_utama/home.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController nikController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
+  bool _isPasswordVisible = false;
 
   Future<void> login(BuildContext context) async {
     final String nik = nikController.text;
     final String password = passwordController.text;
 
     try {
-      final String apiUrl = "https://pexadont.agsa.site/api/login/pengurus?nik=$nik&password=$password";
+      final String apiUrl =
+          "https://pexadont.agsa.site/api/login/pengurus?nik=$nik&password=$password";
       final response = await http.get(Uri.parse(apiUrl));
 
       if (response.statusCode == 200) {
@@ -145,7 +154,7 @@ class LoginPage extends StatelessWidget {
                           child: TextFormField(
                             controller: passwordController,
                             cursorColor: Color(0xff30C083),
-                            obscureText: true,
+                            obscureText: !_isPasswordVisible,
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.lock),
                               labelText: 'Password',
@@ -161,6 +170,21 @@ class LoginPage extends StatelessWidget {
                                   color: const Color(0xff30C083),
                                   width: 2,
                                 ),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: _isPasswordVisible
+                                      ? Color(0xff30C083)
+                                      : Colors.black,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
                               ),
                             ),
                           ),

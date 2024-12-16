@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 
 class KartuLaporan extends StatelessWidget {
   final String month;
-  final String date;
   final String income;
   final String expense;
-  final String description;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
+  final VoidCallback onDetail;
+  final VoidCallback onPublish;
 
   KartuLaporan({
     required this.month,
-    required this.date,
     required this.income,
     required this.expense,
-    required this.description,
-    required this.onEdit,
-    required this.onDelete,
+    required this.onDetail,
+    required this.onPublish,
   });
 
   @override
@@ -47,41 +43,33 @@ class KartuLaporan extends StatelessWidget {
                 month,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Row(
-                children: [
-                  Icon(Icons.calendar_today, color: Colors.grey),
-                  SizedBox(width: 4),
-                  Text(date, style: TextStyle(color: Colors.grey)),
-                ],
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Pemasukan:',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              ),
+              Text(
+                income,
+                style: TextStyle(fontSize: 14),
               ),
             ],
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Pemasukan:', style: TextStyle(fontWeight: FontWeight.w500)),
-              Text(income),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Pengeluaran:',
-                  style: TextStyle(fontWeight: FontWeight.w500)),
-              Text(expense),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Keterangan:',
-                  style: TextStyle(fontWeight: FontWeight.w500)),
-              Expanded(
-                child: Text(
-                  description,
-                  textAlign: TextAlign.right,
-                ),
+              Text(
+                'Pengeluaran:',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+              ),
+              Text(
+                expense,
+                style: TextStyle(fontSize: 14),
               ),
             ],
           ),
@@ -90,9 +78,8 @@ class KartuLaporan extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               GestureDetector(
-                onTap: onEdit,
+                onTap: onDetail,
                 child: Container(
-                  height: 45,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
@@ -104,11 +91,11 @@ class KartuLaporan extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: const Text(
-                      'Edit',
+                      'Detail',
                       style: TextStyle(
                         color: Color(0xff30C083),
                         fontWeight: FontWeight.w900,
-                        fontSize: 14,
+                        fontSize: 16,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -116,9 +103,8 @@ class KartuLaporan extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: onDelete,
+                onTap: onPublish,
                 child: Container(
-                  height: 45,
                   decoration: BoxDecoration(
                     color: const Color(0xff30C083),
                     border: Border.all(
@@ -130,11 +116,11 @@ class KartuLaporan extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: const Text(
-                      'Hapus',
+                      'Publish',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
-                        fontSize: 14,
+                        fontSize: 16,
                       ),
                       textAlign: TextAlign.center,
                     ),

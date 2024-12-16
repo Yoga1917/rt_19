@@ -19,12 +19,14 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse('https://pexadont.agsa.site/api/warga'));
+      final response =
+          await http.get(Uri.parse('https://pexadont.agsa.site/api/warga'));
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         setState(() {
           // Filter data dengan status "0"
-          data = jsonData['data'].where((item) => item['status'] == "0").toList();
+          data =
+              jsonData['data'].where((item) => item['status'] == "0").toList();
           isLoading = false;
         });
       } else {
@@ -45,7 +47,8 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
     }
   }
 
-  Future<void> _acceptWarga(nik, nama, tgl_lahir, jenis_kelamin, no_rumah, no_wa) async {
+  Future<void> _acceptWarga(
+      nik, nama, tgl_lahir, jenis_kelamin, no_rumah, no_wa) async {
     final String apiUrl = 'https://pexadont.agsa.site/api/warga/update/${nik}';
 
     final Map<String, dynamic> requestBody = {
@@ -73,7 +76,9 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
         fetchData();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Gagal menerima pendaftaran, coba ulangi beberapa saat.")),
+          SnackBar(
+              content: Text(
+                  "Gagal menerima pendaftaran, coba ulangi beberapa saat.")),
         );
       }
     } catch (e) {
@@ -147,9 +152,9 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                 child: Image.network(
                                   'https://pexadont.agsa.site/uploads/warga/${item['foto']}',
                                   fit: BoxFit.cover,
-                                  height: 200,
                                   width: double.infinity,
-                                  errorBuilder: (context, error, stackTrace) => Icon(Icons.error),
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(Icons.error),
                                 ),
                               ),
                             ),
@@ -165,10 +170,22 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Text('NIK: ${item['nik']}'),
-                                  Text('Tanggal Lahir: ${item['tgl_lahir']}'),
-                                  Text('Jenis Kelamin: ${item['jenis_kelamin']}'),
-                                  Text('No. Rumah: ${item['no_rumah']}'),
+                                  Text(
+                                    'NIK: ${item['nik']}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  Text(
+                                    'Tanggal Lahir: ${item['tgl_lahir']}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  Text(
+                                    'Jenis Kelamin: ${item['jenis_kelamin']}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  Text(
+                                    'No. Rumah: ${item['no_rumah']}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
                                 ],
                               ),
                             ),
@@ -181,7 +198,6 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                     _tolakWarga(item['nik']);
                                   },
                                   child: Container(
-                                    height: 45,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(10),
@@ -206,10 +222,15 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    _acceptWarga(item['nik'], item['nama'], item['tgl_lahir'], item['jenis_kelamin'], item['no_rumah'], item['no_wa']);
+                                    _acceptWarga(
+                                        item['nik'],
+                                        item['nama'],
+                                        item['tgl_lahir'],
+                                        item['jenis_kelamin'],
+                                        item['no_rumah'],
+                                        item['no_wa']);
                                   },
                                   child: Container(
-                                    height: 45,
                                     decoration: BoxDecoration(
                                       color: const Color(0xff30C083),
                                       borderRadius: BorderRadius.circular(10),

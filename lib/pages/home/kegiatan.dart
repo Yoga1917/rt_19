@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rt_19/pages/kegiatan/edit_kegiatan.dart';
 import 'package:rt_19/pages/kegiatan/input_kegiatan.dart';
 
 class KegiatanPage extends StatelessWidget {
@@ -37,13 +38,12 @@ class KegiatanPage extends StatelessWidget {
                           );
                         },
                         child: Container(
-                          height: 50,
                           decoration: BoxDecoration(
                             color: const Color(0xff30C083),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(15),
                             child: Row(
                               children: [
                                 Icon(Icons.add, color: Colors.white),
@@ -62,7 +62,7 @@ class KegiatanPage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 20,
+                        width: 30,
                       ),
                       Expanded(
                         child: TextField(
@@ -166,14 +166,14 @@ class KegiatanPage extends StatelessWidget {
                                   child: Text(
                                     "Assalamualaikum Bapak Ibu bburebuibgggr, ughrgruigbrubrgbfbwubfububiuebguewbgiewbwegbweugbewuigfbweiugbwugbwegubewguiewbguiewbgweu jibfibrbgw uhef hewufewugw uewbeu gwghwegu",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 14,
                                       color: Colors.black,
                                     ),
                                     textAlign: TextAlign.justify,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 30),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
@@ -202,14 +202,12 @@ class KegiatanPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: 10,
+                                        height: 15,
                                       ),
                                       GestureDetector(
                                         onTap: () {},
                                         child: Container(
                                           alignment: Alignment.center,
-                                          width: 100,
-                                          height: 30,
                                           decoration: BoxDecoration(
                                             color: const Color(0xff30C083),
                                             borderRadius:
@@ -224,23 +222,26 @@ class KegiatanPage extends StatelessWidget {
                                               ),
                                             ],
                                           ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(Icons.download,
-                                                  size: 16,
-                                                  color: Colors.white),
-                                              SizedBox(width: 2),
-                                              Text(
-                                                'Download',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w900,
-                                                  fontSize: 12,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.download,
+                                                    size: 14,
+                                                    color: Colors.white),
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  'Download',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w900,
+                                                    fontSize: 12,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -270,14 +271,12 @@ class KegiatanPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: 10,
+                                        height: 15,
                                       ),
                                       GestureDetector(
                                         onTap: () {},
                                         child: Container(
                                           alignment: Alignment.center,
-                                          width: 100,
-                                          height: 30,
                                           decoration: BoxDecoration(
                                             color: const Color(0xff30C083),
                                             borderRadius:
@@ -292,23 +291,26 @@ class KegiatanPage extends StatelessWidget {
                                               ),
                                             ],
                                           ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Icon(Icons.download,
-                                                  size: 16,
-                                                  color: Colors.white),
-                                              SizedBox(width: 2),
-                                              Text(
-                                                'Download',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w900,
-                                                  fontSize: 12,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.download,
+                                                    size: 14,
+                                                    color: Colors.white),
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  'Download',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w900,
+                                                    fontSize: 12,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -317,59 +319,39 @@ class KegiatanPage extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 30),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
+                              Center(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditKegiatanPage()),
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: Color(0xff30C083),
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: const Text(
+                                        'Edit',
+                                        style: TextStyle(
                                           color: Color(0xff30C083),
-                                          width: 2,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 16,
                                         ),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: const Text(
-                                          'Edit',
-                                          style: TextStyle(
-                                            color: Color(0xff30C083),
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 16,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xff30C083),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: const Text(
-                                          'Hapus',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 16,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                               SizedBox(height: 10),
                             ],

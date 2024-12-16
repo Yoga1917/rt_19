@@ -1,7 +1,47 @@
-import 'package:flutter/material.dart';
-import 'package:rt_19/pages/fasilitas/input_fasilitas.dart';
+import 'dart:convert';
 
-class FasilitasPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:rt_19/pages/fasilitas/edit_fasilitas.dart';
+import 'package:rt_19/pages/fasilitas/input_fasilitas.dart';
+import 'package:http/http.dart' as http;
+
+class FasilitasPage extends StatefulWidget {
+  @override
+  State<FasilitasPage> createState() => _FasilitasPageState();
+}
+
+class _FasilitasPageState extends State<FasilitasPage> {
+  List<dynamic> fasilitasList = [];
+  int totalFasilitas = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFasilitasData();
+  }
+
+  Future<void> fetchFasilitasData() async {
+    final response =
+        await http.get(Uri.parse('https://pexadont.agsa.site/api/fasilitas'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        fasilitasList = (data['data'] as List)
+            .map((item) => {
+                  'nama': item['nama'],
+                  'jml': item['jml'],
+                  'status': item['status'],
+                  'foto': item['foto']
+                })
+            .toList();
+        totalFasilitas = fasilitasList.length;
+      });
+    } else {
+      throw Exception('Failed to load data: ${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,13 +77,12 @@ class FasilitasPage extends StatelessWidget {
                           );
                         },
                         child: Container(
-                          height: 50,
                           decoration: BoxDecoration(
                             color: const Color(0xff30C083),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(15),
                             child: Row(
                               children: [
                                 Icon(Icons.add, color: Colors.white),
@@ -62,7 +101,7 @@ class FasilitasPage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 20,
+                        width: 30,
                       ),
                       Expanded(
                         child: TextField(
@@ -84,75 +123,82 @@ class FasilitasPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text('Total Fasilitas : 10 Fasilitas'),
+                Text('Total Fasilitas : $totalFasilitas Fasilitas'),
                 SizedBox(
                   height: 30,
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              'https://placehold.co/300x300.png',
-                              fit: BoxFit.cover,
-                              width: double.infinity,
+                if (fasilitasList.isNotEmpty) ...[
+                  for (var fasilitas in fasilitasList)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(width: 1, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
                             ),
-                          ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              SizedBox(height: 10),
-                              Text(
-                                'Kursi',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.network(
+                                  (fasilitas['foto'] != null)
+                                      ? 'https://pexadont.agsa.site/uploads/fasilitas/${fasilitas['foto']}'
+                                      : 'https://placehold.co/300x300.png',
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
                                 ),
                               ),
-                              SizedBox(height: 10),
-                              Text(
-                                'Jumlah : 10',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                ' Kondisi : Baik',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  SizedBox(height: 10),
+                                  Text(
+                                    fasilitas['nama'] ?? 'Unknown Name',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Jumlah : ${fasilitas['jml']}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Kondisi : ${fasilitas['status']}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
                                   GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditFasilitasPage()),
+                                    );
+                                    },
                                     child: Container(
-                                      height: 45,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         border: Border.all(
@@ -175,41 +221,30 @@ class FasilitasPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xff30C083),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: const Text(
-                                          'Hapus',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 16,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  SizedBox(height: 20),
                                 ],
                               ),
-                              SizedBox(height: 20),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    ),
+                ] else ...[
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 200, horizontal: 20),
+                    child: Center(
+                      child: Text(
+                        'Data fasilitas kosong.',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
+                ],
               ],
             );
           }
