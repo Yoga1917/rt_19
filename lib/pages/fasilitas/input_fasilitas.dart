@@ -62,9 +62,9 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
         var responseData = jsonDecode(response.body);
         print("Response Data: $responseData");
 
-        if (responseData['status'] == 201) {
+        if (responseData['status'] == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Data berhasil dikirim')),
+            const SnackBar(content: Text('Data fasilitas berhasil ditambahkan')),
           );
           Navigator.pushReplacement(
             context,
