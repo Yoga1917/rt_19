@@ -222,9 +222,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedJabatan = newValue;
-                    });
+                    // setState(() {
+                    //   _selectedJabatan = newValue;
+                    // });
                   },
                 ),
                 SizedBox(height: 20),
