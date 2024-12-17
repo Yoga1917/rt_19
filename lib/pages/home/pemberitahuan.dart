@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:rt_19/pages/pemberitahuan/input_pemberitahuan.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class PemberitahuanPage extends StatefulWidget {
   @override
@@ -30,18 +31,37 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
       final data = json.decode(response.body);
       setState(() {
         pemberitahuanList = (data['data'] as List)
-            .map((item) => {
-                  'pemberitahuan': item['pemberitahuan'],
-                  'deskripsi': item['deskripsi'],
-                  'tgl': item['tgl'],
-                  'file': item['file']
-                })
+            .map(
+              (item) => {
+                'pemberitahuan': item['pemberitahuan'],
+                'deskripsi': item['deskripsi'],
+                'tgl': item['tgl'],
+                'file': item['file'] != null && item['file'].isNotEmpty
+                    ? 'https://pexadont.agsa.site/uploads/pemberitahuan/${item['file']}'
+                    : null,
+              },
+            )
             .toList();
         filteredPemberitahuanList = pemberitahuanList;
         isLoading = false;
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
+    }
+  }
+
+  Future<void> downloadFile(String url) async {
+    try {
+      final Uri fileUri = Uri.parse(url);
+      if (await canLaunchUrl(fileUri)) {
+        await launchUrl(fileUri, mode: LaunchMode.externalApplication);
+      } else {
+        throw 'Tidak dapat membuka URL: $url';
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal mengunduh file: $e')),
+      );
     }
   }
 
@@ -88,12 +108,17 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Color(0xff30C083)),
+              ),
+            )
           : SingleChildScrollView(
               child: Column(
                 children: [
+                  SizedBox(height: 10),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -166,13 +191,9 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                   ),
                   if (filteredPemberitahuanList.isEmpty)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 100),
+                      padding: const EdgeInsets.only(top: 150),
                       child: Text(
-                        'Data tidak ditemukan',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Color(0xff30C083),
-                            fontWeight: FontWeight.bold),
+                        'Data tidak ditemukan.',
                       ),
                     ),
                   if (filteredPemberitahuanList.isNotEmpty)
@@ -281,7 +302,20 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                       height: 20,
                                     ),
                                     GestureDetector(
-                                      onTap: () async {},
+                                      onTap: () async {
+                                        final fileUrl = pemberitahuan['file'];
+                                        if (fileUrl != null &&
+                                            fileUrl.isNotEmpty) {
+                                          await downloadFile(fileUrl);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content:
+                                                Text('File tidak tidak ada'),
+                                            backgroundColor: Colors.red,
+                                          ));
+                                        }
+                                      },
                                       child: Container(
                                         alignment: Alignment.center,
                                         width: double.infinity,

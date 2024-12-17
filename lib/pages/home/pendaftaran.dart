@@ -119,7 +119,11 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Color(0xff30C083),
+              ),
+            )
           : data.isEmpty
               ? Center(child: Text('Tidak ada data pendaftaran.'))
               : ListView.builder(

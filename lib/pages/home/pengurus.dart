@@ -63,7 +63,11 @@ class _PengurusPageState extends State<PengurusPage> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Color(0xff30C083),
+              ),
+            )
           : SingleChildScrollView(
               child: LayoutBuilder(builder: (context, constraints) {
                 if (constraints.maxWidth > 600) {
@@ -153,7 +157,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 30),
                             ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),

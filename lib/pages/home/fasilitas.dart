@@ -39,7 +39,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   'foto': item['foto']
                 })
             .toList();
-            filteredFasilitasList = fasilitasList; 
+        filteredFasilitasList = fasilitasList;
         isLoading = false;
         totalFasilitas = fasilitasList.length;
       });
@@ -91,7 +91,11 @@ class _FasilitasPageState extends State<FasilitasPage> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xff30C083)),
+              ),
+            )
           : SingleChildScrollView(
               child: Column(
                 children: [
@@ -150,6 +154,12 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                 borderSide:
                                     BorderSide(color: Color(0xff30C083)),
                               ),
+                              prefixIcon: GestureDetector(
+                                onTap: () {
+                                  searchFasilitas(searchController.text);
+                                },
+                                child: Icon(Icons.search, color: Colors.black),
+                              ),
                               suffixIcon: isSearching
                                   ? IconButton(
                                       icon: Icon(Icons.clear,
@@ -173,13 +183,9 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   ),
                   if (filteredFasilitasList.isEmpty)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 100),
+                      padding: const EdgeInsets.only(top: 150),
                       child: Text(
-                        'Data tidak ditemukan',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Color(0xff30C083),
-                            fontWeight: FontWeight.bold),
+                        'Data tidak ditemukan.',
                       ),
                     ),
                   if (filteredFasilitasList.isNotEmpty)

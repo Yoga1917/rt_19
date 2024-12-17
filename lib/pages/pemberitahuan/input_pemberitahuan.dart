@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:rt_19/pages/home/pemberitahuan.dart';
+import 'package:file_picker/file_picker.dart';
 
 class InputPemberitahuanPage extends StatefulWidget {
   @override
@@ -6,6 +12,87 @@ class InputPemberitahuanPage extends StatefulWidget {
 }
 
 class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
+  final TextEditingController pemberitahuanController = TextEditingController();
+  final TextEditingController deskripsiController = TextEditingController();
+  File? _file;
+  bool isLoading = false;
+
+  Future<void> _pickPDF() async {
+    // Memilih file dengan tipe pdf
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'], // Membatasi hanya memilih file PDF
+    );
+
+    if (result != null) {
+      setState(() {
+        _file = File(result.files.single.path!); // Menyimpan file yang dipilih
+      });
+    } else {
+      // Menangani jika tidak ada file yang dipilih
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tidak ada file yang dipilih')));
+    }
+  }
+
+  Future<void> _kirimData() async {
+    if (pemberitahuanController.text.isEmpty ||
+        deskripsiController.text.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://pexadont.agsa.site/api/pemberitahuan/simpan'),
+      );
+      request.fields['pemberitahuan'] = pemberitahuanController.text;
+      request.fields['deskripsi'] = deskripsiController.text;
+      request.files
+          .add(await http.MultipartFile.fromPath('file', _file!.path));
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 201) {
+        var responseData = jsonDecode(response.body);
+        print("Response Data: $responseData");
+
+        if (responseData['status'] == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Data pemberitahuan berhasil ditambahkan')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => PemberitahuanPage()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text(responseData['message'] ?? 'Gagal mengirim data')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Terjadi kesalahan pada server')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +141,7 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            controller: pemberitahuanController,
                             cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               prefixIcon:
@@ -82,7 +170,7 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             readOnly: true,
-                            onTap: () {},
+                            onTap: _pickPDF,
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
                               labelText: 'Upload File Surat',
@@ -102,12 +190,25 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                             ),
                           ),
                         ),
+                        SizedBox(height: 20),
+                        if (_file != null) 
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            child: Image.file(
+                              _file!,
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         SizedBox(
                           height: 20,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
+                            controller: deskripsiController,
                             maxLines: 5,
                             cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
@@ -134,13 +235,7 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => LoginPage()),
-                              // );
-                            },
+                            onTap: isLoading ? null : _kirimData,
                             child: Container(
                               width: double.infinity,
                               height: 55,
@@ -150,8 +245,8 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(15),
-                                child: const Text(
-                                  'Kirim',
+                                child: Text(
+                                  isLoading ? 'Mengirim...' : 'Kirim',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,
