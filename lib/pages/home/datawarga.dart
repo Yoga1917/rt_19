@@ -82,7 +82,11 @@ class _DataWargaPageState extends State<DataWargaPage> {
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Color(0xff30C083),
+              ),
+            )
           : SingleChildScrollView(
               child: Column(
                 children: [
@@ -124,13 +128,9 @@ class _DataWargaPageState extends State<DataWargaPage> {
                   SizedBox(height: 20),
                   if (filteredWargaList.isEmpty)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 100),
+                      padding: const EdgeInsets.only(top: 150),
                       child: Text(
-                        'Data tidak ditemukan',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Color(0xff30C083),
-                            fontWeight: FontWeight.bold),
+                        'Data tidak ditemukan.',
                       ),
                     ),
                   if (filteredWargaList.isNotEmpty)
