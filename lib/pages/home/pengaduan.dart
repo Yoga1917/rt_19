@@ -175,7 +175,22 @@ class _PengaduanPageState extends State<PengaduanPage> {
               SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text('Menampilkan pengaduan untuk ${jabatan ?? "-"}.'),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'Menampilkan pengaduan untuk ',
+                      ),
+                      TextSpan(
+                        text: jabatan ?? "-",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const TextSpan(
+                        text: '.',
+                      ),
+                    ],
+                  ),
+                ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -224,7 +239,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                             return Padding(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Container(
-                                margin: EdgeInsets.only(bottom: 30),
+                                margin: EdgeInsets.only(bottom: 20),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   border:
@@ -295,21 +310,25 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                       ),
                                     ),
                                     SizedBox(height: 20),
-                                    Text(
-                                      'Mengadukan :',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: Text(
+                                        'Mengadukan :',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
                                     ),
                                     pengaduan['foto'] == null
                                         ? SizedBox()
                                         : Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20),
+                                            padding: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 20,
+                                                top: 10,
+                                                bottom: 20),
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(20),
@@ -320,12 +339,9 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                               ),
                                             ),
                                           ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
+                                          horizontal: 20, vertical: 10),
                                       child: Text(
                                         pengaduan['isi'],
                                         style: TextStyle(
