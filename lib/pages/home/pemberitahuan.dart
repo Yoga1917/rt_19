@@ -311,7 +311,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                             content:
-                                                Text('File tidak tidak ada'),
+                                                Text('File tidak ada'),
                                             backgroundColor: Colors.red,
                                           ));
                                         }
