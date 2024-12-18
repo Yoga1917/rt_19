@@ -16,21 +16,31 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
+  bool isLoading = false;
 
   Future<void> login(BuildContext context) async {
     final String nik = nikController.text;
     final String password = passwordController.text;
+
+    setState(() {
+      isLoading = true;
+    });
 
     try {
       final String apiUrl =
           "https://pexadont.agsa.site/api/login/pengurus?nik=$nik&password=$password";
       final response = await http.get(Uri.parse(apiUrl));
 
+      setState(() {
+        isLoading = false;
+      });
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData['error'] == false) {
-          _saveLoginInfo(responseData['data']['nik'], responseData['data']['nama'], responseData['data']['jabatan']);
-          
+          _saveLoginInfo(responseData['data']['nik'],
+              responseData['data']['nama'], responseData['data']['jabatan']);
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Berhasil login!')),
           );
@@ -51,12 +61,16 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan: $e')),
       );
     }
   }
-  
+
   Future<void> _saveLoginInfo(String nama, String nik, String jabatan) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('nik', nik);
@@ -215,8 +229,8 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(15),
-                                child: const Text(
-                                  'Masuk',
+                                child: Text(
+                                  isLoading ? 'Masuk...' : 'Masuk',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,

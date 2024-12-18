@@ -30,13 +30,19 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
       });
     } else {
       // Menangani jika tidak ada file yang dipilih
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tidak ada file yang dipilih')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Tidak ada file yang dipilih')));
     }
   }
 
   Future<void> _kirimData() async {
     if (pemberitahuanController.text.isEmpty ||
         deskripsiController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content:
+                Text('Nama Pemberitahuan dan Isi Pemberitahuan harus diisi')),
+      );
       return;
     }
 
@@ -51,13 +57,15 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
       );
       request.fields['pemberitahuan'] = pemberitahuanController.text;
       request.fields['deskripsi'] = deskripsiController.text;
-      request.files
-          .add(await http.MultipartFile.fromPath('file', _file!.path));
+      if (_file != null) {
+        request.files
+            .add(await http.MultipartFile.fromPath('file', _file!.path));
+      }
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         var responseData = jsonDecode(response.body);
         print("Response Data: $responseData");
 
@@ -170,38 +178,47 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             readOnly: true,
-                            onTap: _pickPDF,
+                            onTap: _pickPDF, // Fungsi untuk memilih file PDF
+                            controller: TextEditingController(
+                              text: _file != null
+                                  ? _file!.path.split('/').last
+                                  : '', // Menampilkan nama file jika ada
+                            ),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
                               labelText: 'Upload File Surat',
                               floatingLabelStyle: const TextStyle(
                                 color: Colors.black,
                               ),
+                              hintText: _file == null
+                                  ? 'Pilih file PDF'
+                                  : null, // Menambahkan hint jika belum ada file
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
+                                  color: Color(0xff30C083),
                                   width: 2,
                                 ),
                               ),
+                              suffixIcon: _file != null
+                                  ? IconButton(
+                                      icon: Icon(Icons.clear,
+                                          color:
+                                              Colors.red), // Tombol hapus file
+                                      onPressed: () {
+                                        setState(() {
+                                          _file = null; // Menghapus file
+                                        });
+                                      },
+                                    )
+                                  : null,
                             ),
                           ),
                         ),
                         SizedBox(height: 20),
-                        if (_file != null) 
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            child: Image.file(
-                              _file!,
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
                         SizedBox(
                           height: 20,
                         ),
