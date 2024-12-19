@@ -41,7 +41,7 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content:
-                Text('Nama Pemberitahuan dan Isi Pemberitahuan harus diisi')),
+                Text('Nama dan Isi Pemberitahuan harus diisi!')),
       );
       return;
     }

@@ -50,7 +50,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
     var keterangan = _keteranganController.text;
 
     if (tgl == "" || keterangan == "") {
-      showSnackbar("Isi data yang diperlukan!");
+      showSnackbar("Harap lengkapi semua data!");
     } else {
       var request = http.MultipartRequest(
           'POST', Uri.parse('https://pexadont.agsa.site/api/rkb/simpan'));
