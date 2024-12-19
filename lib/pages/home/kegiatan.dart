@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/pages/kegiatan/edit_kegiatan.dart';
 import 'package:rt_19/pages/kegiatan/input_kegiatan.dart';
 import 'package:http/http.dart' as http;
@@ -25,8 +26,8 @@ class _KegiatanPageState extends State<KegiatanPage> {
   }
 
   Future<void> fetchKegiatanData() async {
-    final response = await http
-        .get(Uri.parse('https://pexadont.agsa.site/api/kegiatan'));
+    final response =
+        await http.get(Uri.parse('https://pexadont.agsa.site/api/kegiatan'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
@@ -95,7 +96,15 @@ class _KegiatanPageState extends State<KegiatanPage> {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
       ),
       body: isLoading
           ? Center(

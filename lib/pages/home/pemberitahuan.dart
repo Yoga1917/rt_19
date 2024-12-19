@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/pages/pemberitahuan/input_pemberitahuan.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
@@ -105,7 +106,15 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
       ),
       body: isLoading
           ? Center(
@@ -172,6 +181,13 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide:
                                       BorderSide(color: Color(0xff30C083)),
+                                ),
+                                prefixIcon: GestureDetector(
+                                  onTap: () {
+                                    searchPemberitahuan(searchController.text);
+                                  },
+                                  child:
+                                      Icon(Icons.search, color: Colors.black),
                                 ),
                                 suffixIcon: isSearching
                                     ? IconButton(
@@ -310,8 +326,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                         } else {
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
-                                            content:
-                                                Text('File tidak ada'),
+                                            content: Text('File tidak ada'),
                                             backgroundColor: Colors.red,
                                           ));
                                         }

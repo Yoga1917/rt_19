@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:rt_19/pages/halaman_utama/home.dart';
+
 class DataWargaPage extends StatefulWidget {
   @override
   _DataWargaPageState createState() => _DataWargaPageState();
@@ -79,7 +81,15 @@ class _DataWargaPageState extends State<DataWargaPage> {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
       ),
       body: isLoading
           ? Center(
