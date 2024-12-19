@@ -64,6 +64,14 @@ class _InputKASPageState extends State<InputKASPage> {
   }
 
   void _simpanPemasukan() {
+    // Validasi jika form belum diisi
+    if (_jumlahPemasukanController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap isi data Pemasukan!')),
+      );
+      return;
+    }
+
     // Validasi angka pada jumlah pemasukan
     if (int.tryParse(_jumlahPemasukanController.text) == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -96,6 +104,14 @@ class _InputKASPageState extends State<InputKASPage> {
   }
 
   void _simpanPengeluaran() {
+    // Validasi jika form belum diisi
+    if (_jumlahPengeluaranController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap isi data Pengeluaran!')),
+      );
+      return;
+    }
+
     // Validasi angka pada jumlah pengeluaran
     if (int.tryParse(_jumlahPengeluaranController.text) == null) {
       ScaffoldMessenger.of(context).showSnackBar(

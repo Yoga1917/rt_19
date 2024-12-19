@@ -15,8 +15,43 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   String? _noRumah;
   String? _foto;
   String? _selectedJabatan;
+  bool isLoading = false;
 
   void _cekNIK() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    if (_nikController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap isi data NIK!')),
+      );
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    if (_nikController.text.length < 16) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('NIK harus 16 digit angka!')),
+      );
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    if (int.tryParse(_nikController.text) == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data NIK harus berupa angka!')),
+      );
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
     final request = await http.get(
       Uri.parse(
           'https://pexadont.agsa.site/api/warga/edit/${_nikController.text}'),
@@ -24,6 +59,10 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
     );
 
     final response = jsonDecode(request.body);
+
+    setState(() {
+      isLoading = false;
+    });
 
     if (response["status"] == 200) {
       setState(() {
@@ -126,7 +165,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  _cekNIK();
+                  if (!isLoading) {
+                    _cekNIK();
+                  }
                 },
                 child: Container(
                   width: double.infinity,
@@ -137,8 +178,8 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(15),
-                    child: const Text(
-                      'Cek Warga',
+                    child: Text(
+                      isLoading ? 'Cek Warga...' : 'Cek Warga',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
@@ -240,9 +281,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                 ),
                 SizedBox(height: 20),
                 GestureDetector(
-                  onTap: () {
-                    _simpan();
-                  },
+                  onTap: isLoading ? null : _simpan,
                   child: Container(
                     width: double.infinity,
                     height: 55,
@@ -252,8 +291,8 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(15),
-                      child: const Text(
-                        'Simpan',
+                      child: Text(
+                        isLoading ? 'Simpan...' : 'Simpan',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w900,

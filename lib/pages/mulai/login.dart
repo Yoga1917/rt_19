@@ -22,9 +22,30 @@ class _LoginPageState extends State<LoginPage> {
     final String nik = nikController.text;
     final String password = passwordController.text;
 
+    if (nik.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap isi data NIK!')),
+      );
+      return;
+    }
+
     if (nik.length < 16) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('NIK harus 16 digit angka!')),
+      );
+      return;
+    }
+
+    if (int.tryParse(nik) == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data NIK harus berupa angka!')),
+      );
+      return;
+    }
+
+    if (password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap masukan password anda!')),
       );
       return;
     }
