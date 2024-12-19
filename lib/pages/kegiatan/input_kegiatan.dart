@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rt_19/pages/home/kegiatan.dart';
 
 class InputKegiatanPage extends StatelessWidget {
   @override
@@ -13,7 +14,15 @@ class InputKegiatanPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => KegiatanPage()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: LayoutBuilder(builder: (context, constraints) {

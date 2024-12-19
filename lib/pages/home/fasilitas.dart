@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rt_19/pages/fasilitas/edit_fasilitas.dart';
 import 'package:rt_19/pages/fasilitas/input_fasilitas.dart';
 import 'package:http/http.dart' as http;
+import 'package:rt_19/pages/halaman_utama/home.dart';
 
 class FasilitasPage extends StatefulWidget {
   @override
@@ -88,7 +89,15 @@ class _FasilitasPageState extends State<FasilitasPage> {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
       ),
       body: isLoading
           ? Center(

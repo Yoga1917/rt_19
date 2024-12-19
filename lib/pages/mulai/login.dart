@@ -22,6 +22,13 @@ class _LoginPageState extends State<LoginPage> {
     final String nik = nikController.text;
     final String password = passwordController.text;
 
+    if (nik.length < 16) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('NIK harus 16 digit angka!')),
+      );
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });

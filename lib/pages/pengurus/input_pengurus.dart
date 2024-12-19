@@ -18,7 +18,8 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
 
   void _cekNIK() async {
     final request = await http.get(
-      Uri.parse('https://pexadont.agsa.site/api/warga/edit/${_nikController.text}'),
+      Uri.parse(
+          'https://pexadont.agsa.site/api/warga/edit/${_nikController.text}'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -44,7 +45,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
       print('Jabatan: $_selectedJabatan');
 
       _savePengurus(_nikController.text, _selectedJabatan);
-    }else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Pilih jabatan pengurus terlebih dahulu!')),
       );
@@ -52,7 +53,8 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   }
 
   void _savePengurus(nik, jabatan) async {
-    var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/pengurus/simpan'));
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('https://pexadont.agsa.site/api/pengurus/simpan'));
     request.fields['nik'] = nik;
     request.fields['jabatan'] = jabatan;
 
@@ -86,7 +88,15 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => PengurusPage()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -141,10 +151,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
               ),
               SizedBox(height: 30),
               if (_nama != null) ...[
-                 _foto != null
+                _foto != null
                     ? ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20),
                         child: Image.network(
                           'https://pexadont.agsa.site/uploads/warga/${_foto}',
                           fit: BoxFit.cover,
@@ -153,7 +162,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                       )
                     : Container(),
                 SizedBox(height: 10),
-                Text('${_nama}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('${_nama}',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)),
                 Text('Tanggal Lahir: $_tglLahir'),
                 Text('No Rumah: $_noRumah'),
                 SizedBox(height: 20),

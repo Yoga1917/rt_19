@@ -64,7 +64,8 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
 
         if (responseData['status'] == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Data fasilitas berhasil ditambahkan')),
+            const SnackBar(
+                content: Text('Data fasilitas berhasil ditambahkan')),
           );
           Navigator.pushReplacement(
             context,
@@ -105,7 +106,15 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => FasilitasPage()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: LayoutBuilder(builder: (context, constraints) {

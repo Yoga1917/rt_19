@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:rt_19/pages/kas_RT/detail_kas.dart';
+import 'package:rt_19/pages/home/kas.dart';
 import 'package:rt_19/widget/toggle_tabs.dart';
 
 class InputKASPage extends StatefulWidget {
@@ -13,12 +13,17 @@ class InputKASPage extends StatefulWidget {
 
 class _InputKASPageState extends State<InputKASPage> {
   bool isPemasukanSelected = true;
+  bool isLoading = true;
   String? id_kas;
   String? periode = "Periode Kas...";
-  final TextEditingController _jumlahPemasukanController = TextEditingController();
-  final TextEditingController _keteranganPemasukanController = TextEditingController();
-  final TextEditingController _jumlahPengeluaranController = TextEditingController();
-  final TextEditingController _keteranganPengeluaranController = TextEditingController();
+  final TextEditingController _jumlahPemasukanController =
+      TextEditingController();
+  final TextEditingController _keteranganPemasukanController =
+      TextEditingController();
+  final TextEditingController _jumlahPengeluaranController =
+      TextEditingController();
+  final TextEditingController _keteranganPengeluaranController =
+      TextEditingController();
   File? _fotoPengeluaran;
 
   Future<void> _pickImage() async {
@@ -49,7 +54,7 @@ class _InputKASPageState extends State<InputKASPage> {
     if (response["status"] == 200) {
       setState(() {
         id_kas = response["data"]["id_kas"];
-        periode = response["data"]["bulan"] + " "+ response["data"]["tahun"];
+        periode = response["data"]["bulan"] + " " + response["data"]["tahun"];
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,36 +62,75 @@ class _InputKASPageState extends State<InputKASPage> {
       );
     }
   }
-  
+
   void _simpanPemasukan() {
-    if (_jumlahPemasukanController.text != "" || _keteranganPemasukanController.text != "") {
-      print('Jumlah: ${_jumlahPemasukanController.text}');
-      print('Keterangan: ${_keteranganPemasukanController.text}');
-
-      _postPemasukan();
-    }else{
+    // Validasi angka pada jumlah pemasukan
+    if (int.tryParse(_jumlahPemasukanController.text) == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Isi data yang diperlukan!')),
+        SnackBar(content: Text('Jumlah pemasukan harus berupa angka!')),
       );
+      return;
     }
+
+    // Validasi keterangan tidak kosong
+    if (_keteranganPemasukanController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Keterangan tidak boleh kosong!')),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    // Jika validasi berhasil
+    print('Jumlah: ${_jumlahPemasukanController.text}');
+    print('Keterangan: ${_keteranganPemasukanController.text}');
+
+    _postPemasukan();
+
+    setState(() {
+      isLoading = false;
+    });
   }
-  
+
   void _simpanPengeluaran() {
-    if (_jumlahPengeluaranController.text != "" || _keteranganPengeluaranController.text != "") {
-      print('Jumlah: ${_jumlahPengeluaranController.text}');
-      print('Keterangan: ${_keteranganPengeluaranController.text}');
-      print('Foto: ${_fotoPengeluaran}');
-
-      _postPengeluaran();
-    }else{
+    // Validasi angka pada jumlah pengeluaran
+    if (int.tryParse(_jumlahPengeluaranController.text) == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Isi data yang diperlukan!')),
+        SnackBar(content: Text('Jumlah pengeluaran harus berupa angka!')),
       );
+      return;
     }
+
+    // Validasi keterangan tidak kosong
+    if (_keteranganPengeluaranController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Keterangan tidak boleh kosong!')),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    // Jika validasi berhasil
+    print('Jumlah: ${_jumlahPengeluaranController.text}');
+    print('Keterangan: ${_keteranganPengeluaranController.text}');
+    print('Foto: ${_fotoPengeluaran}');
+
+    _postPengeluaran();
+
+    setState(() {
+      isLoading = false;
+    });
   }
-  
+
   void _postPemasukan() async {
-    var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/kas/pemasukan/simpan'));
+    var request = http.MultipartRequest('POST',
+        Uri.parse('https://pexadont.agsa.site/api/kas/pemasukan/simpan'));
     request.fields['id_kas'] = id_kas.toString();
     request.fields['jumlah'] = _jumlahPemasukanController.text;
     request.fields['keterangan'] = _keteranganPemasukanController.text;
@@ -102,7 +146,7 @@ class _InputKASPageState extends State<InputKASPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => DetailKASPage(id_kas.toString())),
+        MaterialPageRoute(builder: (context) => KasPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,14 +154,16 @@ class _InputKASPageState extends State<InputKASPage> {
       );
     }
   }
-  
+
   void _postPengeluaran() async {
-    var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/kas/pengeluaran/simpan'));
+    var request = http.MultipartRequest('POST',
+        Uri.parse('https://pexadont.agsa.site/api/kas/pengeluaran/simpan'));
     request.fields['id_kas'] = id_kas.toString();
     request.fields['jumlah'] = _jumlahPengeluaranController.text;
     request.fields['keterangan'] = _keteranganPengeluaranController.text;
-    if(_fotoPengeluaran != null){
-      request.files.add(await http.MultipartFile.fromPath('foto', _fotoPengeluaran!.path));
+    if (_fotoPengeluaran != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath('foto', _fotoPengeluaran!.path));
     }
 
     var streamedResponse = await request.send();
@@ -131,7 +177,7 @@ class _InputKASPageState extends State<InputKASPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => DetailKASPage(id_kas.toString())),
+        MaterialPageRoute(builder: (context) => KasPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -152,7 +198,15 @@ class _InputKASPageState extends State<InputKASPage> {
           ),
         ),
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => KasPage()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: LayoutBuilder(builder: (context, constraints) {
@@ -173,7 +227,10 @@ class _InputKASPageState extends State<InputKASPage> {
                   },
                 ),
                 SizedBox(height: 30),
-                Text(periode.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                Text(
+                  periode.toString(),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
                 SizedBox(height: 30),
                 Center(
                   child: isPemasukanSelected
@@ -238,7 +295,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
                                       child: TextFormField(
-                                        controller: _keteranganPemasukanController,
+                                        controller:
+                                            _keteranganPemasukanController,
                                         maxLines: 5,
                                         cursorColor: Color(0xff30C083),
                                         decoration: InputDecoration(
@@ -268,7 +326,9 @@ class _InputKASPageState extends State<InputKASPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
                                       child: GestureDetector(
-                                        onTap: () => _simpanPemasukan(),
+                                        onTap: isLoading
+                                            ? () => _simpanPemasukan()
+                                            : null,
                                         child: Container(
                                           width: double.infinity,
                                           height: 55,
@@ -279,8 +339,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(15),
-                                            child: const Text(
-                                              'Kirim',
+                                            child: Text(
+                                              isLoading ? 'Kirim' : 'Kirim...',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w900,
@@ -330,7 +390,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
                                       child: TextFormField(
-                                        controller: _jumlahPengeluaranController,
+                                        controller:
+                                            _jumlahPengeluaranController,
                                         cursorColor: Color(0xff30C083),
                                         decoration: InputDecoration(
                                           prefixIcon:
@@ -356,15 +417,18 @@ class _InputKASPageState extends State<InputKASPage> {
                                     ),
                                     SizedBox(height: 20),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
                                       child: GestureDetector(
                                           onTap: _pickImage,
                                           child: Container(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 15),
                                             decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.grey),
-                                                borderRadius: BorderRadius.circular(10)),
+                                                border: Border.all(
+                                                    color: Colors.grey),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
                                             child: const Row(
                                               children: [
                                                 Icon(Icons.upload_file),
@@ -375,7 +439,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                           )),
                                     ),
                                     SizedBox(height: 10),
-                                    if (_fotoPengeluaran != null) // Display image preview if selected
+                                    if (_fotoPengeluaran !=
+                                        null) // Display image preview if selected
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 10),
@@ -393,7 +458,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
                                       child: TextFormField(
-                                        controller: _keteranganPengeluaranController,
+                                        controller:
+                                            _keteranganPengeluaranController,
                                         maxLines: 5,
                                         cursorColor: Color(0xff30C083),
                                         decoration: InputDecoration(
@@ -423,7 +489,9 @@ class _InputKASPageState extends State<InputKASPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
                                       child: GestureDetector(
-                                        onTap: () => _simpanPengeluaran(),
+                                        onTap: isLoading
+                                            ? () => _simpanPengeluaran()
+                                            : null,
                                         child: Container(
                                           width: double.infinity,
                                           height: 55,
@@ -434,8 +502,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.all(15),
-                                            child: const Text(
-                                              'Kirim',
+                                            child: Text(
+                                              isLoading ? 'Kirim' : 'Kirim...',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w900,
