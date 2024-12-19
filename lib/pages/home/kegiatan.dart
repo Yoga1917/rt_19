@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/pages/kegiatan/edit_kegiatan.dart';
@@ -253,7 +252,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                   size: 20),
                                               SizedBox(width: 10),
                                               Text(
-                                                kegiatan['nama'],
+                                                kegiatan['ketua_pelaksana'],
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.black,
@@ -347,7 +346,10 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                     height: 15,
                                                   ),
                                                   GestureDetector(
-                                                    onTap: () {},
+                                                    onTap: () async {
+                                                      final fileUrl = "https://pexadont.agsa.site/uploads/kegiatan/proposal/" + kegiatan['proposal'];
+                                                      await downloadFile(fileUrl);
+                                                    },
                                                     child: Container(
                                                       alignment:
                                                           Alignment.center,
@@ -434,13 +436,23 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                     height: 15,
                                                   ),
                                                   GestureDetector(
-                                                    onTap: () {},
+                                                    onTap: () async {
+                                                      final fileUrl = kegiatan['lpj'];
+                                                      if (fileUrl != null) {
+                                                        await downloadFile("https://pexadont.agsa.site/uploads/kegiatan/lpj/${fileUrl}");
+                                                      } else {
+                                                        ScaffoldMessenger.of(context)
+                                                            .showSnackBar(SnackBar(
+                                                          content: Text('LPJ belum tersedia'),
+                                                          backgroundColor: Colors.red,
+                                                        ));
+                                                      }
+                                                    },
                                                     child: Container(
                                                       alignment:
                                                           Alignment.center,
                                                       decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xff30C083),
+                                                        color: kegiatan['lpj'] == null ? Colors.red : const Color(0xff30C083),
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10),
@@ -457,27 +469,21 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                         ],
                                                       ),
                                                       child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(10),
+                                                        padding: EdgeInsets.all(10),
                                                         child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
-                                                            Icon(Icons.download,
+                                                            kegiatan['lpj'] == null
+                                                            ? const Text('')
+                                                            : const Icon(Icons.download,
                                                                 size: 14,
-                                                                color: Colors
-                                                                    .white),
-                                                            SizedBox(width: 5),
+                                                                color: Colors.white),
+                                                            const SizedBox(width: 5),
                                                             Text(
-                                                              'Download',
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w900,
+                                                              kegiatan['lpj'] == null ? 'Belum tersedia' : "Download",
+                                                              style: const TextStyle(
+                                                                color: Colors.white,
+                                                                fontWeight: FontWeight.w900,
                                                                 fontSize: 12,
                                                               ),
                                                             ),
@@ -491,14 +497,16 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                             ],
                                           ),
                                           SizedBox(height: 30),
-                                          Center(
+                                          kegiatan['lpj'] != null
+                                          ? const SizedBox(height: 10)
+                                          : Center(
                                             child: GestureDetector(
                                               onTap: () {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          EditKegiatanPage()),
+                                                          EditKegiatanPage(kegiatan['id_kegiatan'])),
                                                 );
                                               },
                                               child: Container(
@@ -515,7 +523,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                   padding:
                                                       const EdgeInsets.all(10),
                                                   child: const Text(
-                                                    'Edit',
+                                                    'Upload LPJ',
                                                     style: TextStyle(
                                                       color: Color(0xff30C083),
                                                       fontWeight:
@@ -528,7 +536,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(height: 10),
                                         ],
                                       ),
                                     ),
