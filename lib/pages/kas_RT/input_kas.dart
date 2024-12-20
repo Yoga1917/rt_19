@@ -468,7 +468,7 @@ class _InputKASPageState extends State<InputKASPage> {
                                         ),
                                       ),
                                     SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(

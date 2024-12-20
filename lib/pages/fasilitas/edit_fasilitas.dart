@@ -1,7 +1,80 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:rt_19/pages/home/fasilitas.dart';
+import 'package:http/http.dart' as http;
 
-class EditFasilitasPage extends StatelessWidget {
+class EditFasilitasPage extends StatefulWidget {
+  final String id_fasilitas;
+  const EditFasilitasPage(this.id_fasilitas);
+
+  @override
+  State<EditFasilitasPage> createState() => _EditFasilitasPageState();
+}
+
+class _EditFasilitasPageState extends State<EditFasilitasPage> {
+  final TextEditingController jumlahController = TextEditingController();
+  String? kondisi;
+  bool isLoading = false;
+
+  Future<void> _kirimData() async {
+    if (jumlahController.text.isEmpty && kondisi == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pilih Data yang mau diedit!')),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/fasilitas/update/${widget.id_fasilitas}'));
+      request.fields['id_kegiatan'] = widget.id_fasilitas;
+      request.fields['jml'] = jumlahController.text;
+      request.fields['status'] = kondisi!;
+
+      var streamedResponse = await request.send();
+      var responseData = await http.Response.fromStream(streamedResponse);
+      var response = jsonDecode(responseData.body);
+
+      if (response.statusCode == 202) {
+        var responseData = jsonDecode(response.body);
+        print("Response Data: $responseData");
+
+        if (responseData['status'] == 202) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Data fasilitas berhasil ditambahkan')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => FasilitasPage()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text(responseData['message'] ?? 'Gagal mengirim data')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Terjadi kesalahan pada server')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,8 +131,8 @@ class EditFasilitasPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
-                            readOnly: true,
-                            onTap: () {},
+                            controller: jumlahController,
+                            cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.list),
                               labelText: 'Jumlah',
@@ -112,9 +185,9 @@ class EditFasilitasPage extends StatelessWidget {
                               );
                             }).toList(),
                             onChanged: (String? newValue) {
-                              // setState(() {
-                              //   kondisiController.text = newValue!;
-                              // });
+                              setState(() {
+                                kondisi = newValue!;
+                              });
                             },
                           ),
                         ),
@@ -124,13 +197,7 @@ class EditFasilitasPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => LoginPage()),
-                              // );
-                            },
+                            onTap: isLoading ? null : _kirimData,
                             child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
@@ -139,8 +206,8 @@ class EditFasilitasPage extends StatelessWidget {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(15),
-                                child: const Text(
-                                  'Kirim',
+                                child: Text(
+                                  isLoading ? 'Mengirim...' : 'Kirim',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,

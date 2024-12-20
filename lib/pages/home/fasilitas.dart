@@ -266,7 +266,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  EditFasilitasPage()),
+                                                  EditFasilitasPage(fasilitas('id_fasilitas'))),
                                         );
                                       },
                                       child: Container(
