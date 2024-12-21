@@ -109,6 +109,10 @@ class _PengaduanPageState extends State<PengaduanPage> {
         isLoading = false;
       });
     }
+
+    setState(() {
+      filteredPengaduanList = pengaduanData;
+    });
   }
 
   void _balasPengaduan(String id_pengaduan, String balasan) async {
@@ -150,7 +154,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
     }
 
     final suggestions = pengaduanData.where((pengaduan) {
-      final pengaduanName = pengaduan['nama'].toLowerCase();
+      final pengaduanName = pengaduan['jenis'].toLowerCase();
       return pengaduanName.contains(cleanedQuery);
     }).toList();
 
@@ -158,9 +162,9 @@ class _PengaduanPageState extends State<PengaduanPage> {
       isSearching = true;
       filteredPengaduanList = suggestions;
       filteredPengaduanList.sort((a, b) {
-        if (a['nama'].toLowerCase() == cleanedQuery) return -1;
-        if (b['nama'].toLowerCase() == cleanedQuery) return 1;
-        return a['nama'].compareTo(b['nama']);
+        if (a['jenis'].toLowerCase() == cleanedQuery) return -1;
+        if (b['jenis'].toLowerCase() == cleanedQuery) return 1;
+        return a['jenis'].compareTo(b['jenis']);
       });
     });
   }
@@ -193,328 +197,328 @@ class _PengaduanPageState extends State<PengaduanPage> {
                 color: Color(0xff30C083),
               ),
             )
-          : SingleChildScrollView(
-              child: LayoutBuilder(builder: (context, constraints) {
-                if (constraints.maxWidth > 600) {
-                  return Column();
-                } else {
-                  return Column(
-                    children: [
-                      SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text.rich(
+          : LayoutBuilder(builder: (context, constraints) {
+            if (constraints.maxWidth > 600) {
+              return Column();
+            } else {
+              return Column(
+                children: [
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: 'Menampilkan pengaduan untuk ',
+                          ),
                           TextSpan(
-                            children: [
-                              const TextSpan(
-                                text: 'Menampilkan pengaduan untuk ',
-                              ),
-                              TextSpan(
-                                text: jabatan ?? "-",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const TextSpan(
-                                text: '.',
-                              ),
-                            ],
+                            text: jabatan ?? "-",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        child: TextField(
-                          controller: searchController,
-                          cursorColor: Color(0xff30C083),
-                          decoration: InputDecoration(
-                            hintText: 'Cari data Pengaduan...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.black),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Color(0xff30C083)),
-                            ),
-                            prefixIcon: GestureDetector(
-                              onTap: () {
-                                searchPengaduan(searchController.text);
-                              },
-                              child: Icon(Icons.search, color: Colors.black),
-                            ),
-                            suffixIcon: isSearching
-                                ? IconButton(
-                                    icon:
-                                        Icon(Icons.clear, color: Colors.black),
-                                    onPressed: () {
-                                      searchController.clear();
-                                      searchPengaduan('');
-                                    },
-                                  )
-                                : null,
+                          const TextSpan(
+                            text: '.',
                           ),
-                          onChanged: searchPengaduan,
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: TextField(
+                      controller: searchController,
+                      cursorColor: Color(0xff30C083),
+                      decoration: InputDecoration(
+                        hintText: 'Cari Jenis Pengaduan...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.black),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Color(0xff30C083)),
+                        ),
+                        prefixIcon: GestureDetector(
+                          onTap: () {
+                            searchPengaduan(searchController.text);
+                          },
+                          child: Icon(Icons.search, color: Colors.black),
+                        ),
+                        suffixIcon: isSearching
+                            ? IconButton(
+                                icon:
+                                    Icon(Icons.clear, color: Colors.black),
+                                onPressed: () {
+                                  searchController.clear();
+                                  searchPengaduan('');
+                                },
+                              )
+                            : null,
                       ),
-                      Text(
-                          'Total Pengaduan : ${pengaduanData.length} Pengaduan'),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      pengaduanData.isEmpty
-                          ? Column(
-                              children: [
-                                SizedBox(height: 150),
-                                Center(
-                                  child: Text(
-                                    "Belum ada data pengaduan.",
+                      onChanged: searchPengaduan,
+                    ),
+                  ),
+                  Text(
+                      'Total Pengaduan : ${filteredPengaduanList.length} Pengaduan'),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  pengaduanData.isEmpty
+                      ? Column(
+                          children: [
+                            SizedBox(height: 150),
+                            Center(
+                              child: Text(
+                                "Belum ada data pengaduan.",
+                              ),
+                            ),
+                          ],
+                        )
+                      : Expanded(
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filteredPengaduanList.length,
+                            itemBuilder: (context, index) {
+                              final pengaduan = filteredPengaduanList[index];
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        spreadRadius: 1,
+                                        blurRadius: 5,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: pengaduanData.length,
-                              itemBuilder: (context, index) {
-                                final pengaduan = pengaduanData[index];
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  child: Container(
-                                    margin: EdgeInsets.only(bottom: 20),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          width: 1, color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          spreadRadius: 1,
-                                          blurRadius: 5,
-                                          offset: Offset(0, 3),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20),
                                         ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(height: 20),
-                                              Text(
-                                                'Pengaduan ${pengaduan['jenis']}',
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(height: 20),
+                                            Text(
+                                              'Pengaduan ${pengaduan['jenis']}',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                              SizedBox(height: 10),
-                                              Row(
-                                                children: [
-                                                  Icon(Icons.calendar_month,
-                                                      color: Colors.black),
-                                                  SizedBox(width: 5),
-                                                  Text(
-                                                    pengaduan['tgl'],
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 10),
-                                              Text(
-                                                pengaduan['nama'],
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(
-                                                pengaduan['nik'],
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(height: 20),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 10),
-                                          child: Text(
-                                            'Mengadukan :',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
                                             ),
-                                          ),
-                                        ),
-                                        pengaduan['foto'] == null
-                                            ? SizedBox()
-                                            : Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20,
-                                                    right: 20,
-                                                    top: 10,
-                                                    bottom: 20),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  child: Image.network(
-                                                    'https://pexadont.agsa.site/uploads/pengaduan/${pengaduan['foto']}',
-                                                    // fit: BoxFit.cover,
-                                                    width: double.infinity,
+                                            SizedBox(height: 10),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.calendar_month,
+                                                    color: Colors.black),
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  pengaduan['tgl'],
+                                                  style: TextStyle(
+                                                    fontSize: 14,
                                                   ),
                                                 ),
-                                              ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 10),
-                                          child: Text(
-                                            pengaduan['isi'],
-                                            style: TextStyle(
-                                              fontSize: 14,
+                                              ],
                                             ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              pengaduan['nama'],
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              pengaduan['nik'],
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 10),
+                                        child: Text(
+                                          'Mengadukan :',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: 20,
+                                      ),
+                                      pengaduan['foto'] == null
+                                          ? SizedBox()
+                                          : Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20,
+                                                  right: 20,
+                                                  top: 10,
+                                                  bottom: 20),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: Image.network(
+                                                  'https://pexadont.agsa.site/uploads/pengaduan/${pengaduan['foto']}',
+                                                  // fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                ),
+                                              ),
+                                            ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        child: Text(
+                                          pengaduan['isi'],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
                                         ),
-                                        pengaduan['balasan'] == null
-                                            ? GestureDetector(
-                                                onTap: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      TextEditingController
-                                                          messageController =
-                                                          TextEditingController();
-
-                                                      return AlertDialog(
-                                                        title:
-                                                            Text('Ketik Pesan'),
-                                                        content: TextField(
-                                                          controller:
-                                                              messageController,
-                                                          cursorColor:
-                                                              Color(0xff30C083),
-                                                          decoration:
-                                                              InputDecoration(
-                                                            hintText:
-                                                                "Masukkan pesan...",
-                                                            focusedBorder:
-                                                                UnderlineInputBorder(
-                                                              borderSide: BorderSide(
-                                                                  color: Color(
-                                                                      0xff30C083)),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      pengaduan['balasan'] == null
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    TextEditingController
+                                                        messageController =
+                                                        TextEditingController();
+                                  
+                                                    return AlertDialog(
+                                                      title:
+                                                          Text('Ketik Pesan'),
+                                                      content: TextField(
+                                                        controller:
+                                                            messageController,
+                                                        cursorColor:
+                                                            Color(0xff30C083),
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              "Masukkan pesan...",
+                                                          focusedBorder:
+                                                              UnderlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Color(
+                                                                    0xff30C083)),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            String message =
+                                                                messageController
+                                                                    .text;
+                                                            _balasPengaduan(
+                                                                pengaduan[
+                                                                    'id_pengaduan'],
+                                                                message);
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: Text(
+                                                            'Kirim',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xff30C083),
                                                             ),
                                                           ),
                                                         ),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              String message =
-                                                                  messageController
-                                                                      .text;
-                                                              _balasPengaduan(
-                                                                  pengaduan[
-                                                                      'id_pengaduan'],
-                                                                  message);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: Text(
-                                                              'Kirim',
-                                                              style: TextStyle(
-                                                                color: Color(
-                                                                    0xff30C083),
-                                                              ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: Text(
+                                                            'Batal',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xff30C083),
                                                             ),
                                                           ),
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: Text(
-                                                              'Batal',
-                                                              style: TextStyle(
-                                                                color: Color(
-                                                                    0xff30C083),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    border: Border.all(
-                                                      color: Color(0xff30C083),
-                                                      width: 2,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  border: Border.all(
+                                                    color: Color(0xff30C083),
+                                                    width: 2,
                                                   ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    child: const Text(
-                                                      'Balas',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xff30C083),
-                                                        fontWeight:
-                                                            FontWeight.w900,
-                                                        fontSize: 16,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10),
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(
+                                                          10),
+                                                  child: const Text(
+                                                    'Balas',
+                                                    style: TextStyle(
+                                                      color:
+                                                          Color(0xff30C083),
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                      fontSize: 16,
                                                     ),
+                                                    textAlign:
+                                                        TextAlign.center,
                                                   ),
                                                 ),
-                                              )
-                                            : Container(
-                                                margin: const EdgeInsets.only(
-                                                    top: 20),
-                                                child: Text(
-                                                    "Balasan : ${pengaduan['balasan']}"),
                                               ),
-                                        SizedBox(
-                                          height: 30,
-                                        ),
-                                      ],
-                                    ),
+                                            )
+                                          : Container(
+                                              margin: const EdgeInsets.only(
+                                                  top: 20),
+                                              child: Text(
+                                                  "Balasan : ${pengaduan['balasan']}"),
+                                            ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                    ],
                                   ),
-                                );
-                              }),
-                    ],
-                  );
-                }
-              }),
-            ),
+                                ),
+                              );
+                            }),
+                      ),
+                ],
+              );
+            }
+          }),
     );
   }
 }

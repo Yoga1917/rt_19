@@ -34,6 +34,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
       setState(() {
         fasilitasList = (data['data'] as List)
             .map((item) => {
+                  'id_fasilitas': item['id_fasilitas'],
                   'nama': item['nama'],
                   'jml': item['jml'],
                   'status': item['status'],
@@ -265,8 +266,13 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  EditFasilitasPage(fasilitas('id_fasilitas'))),
+                                            builder: (context) => EditFasilitasPage(
+                                              fasilitas['id_fasilitas'].toString(),
+                                              fasilitas['nama'].toString(),
+                                              fasilitas['jml'].toString(),
+                                              fasilitas['status'].toString()
+                                            ),
+                                          ),
                                         );
                                       },
                                       child: Container(

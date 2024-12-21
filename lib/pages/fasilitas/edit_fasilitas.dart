@@ -6,7 +6,11 @@ import 'package:http/http.dart' as http;
 
 class EditFasilitasPage extends StatefulWidget {
   final String id_fasilitas;
-  const EditFasilitasPage(this.id_fasilitas);
+  final String nama;
+  final String jml;
+  final String status;
+
+  const EditFasilitasPage(this.id_fasilitas, this.nama, this.jml, this.status);
 
   @override
   State<EditFasilitasPage> createState() => _EditFasilitasPageState();
@@ -17,10 +21,25 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
   String? kondisi;
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    
+    jumlahController.text = widget.jml;
+    kondisi = widget.status;
+  }
+
   Future<void> _kirimData() async {
-    if (jumlahController.text.isEmpty && kondisi == null) {
+    if (jumlahController.text == widget.jml && kondisi == widget.status) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih Data yang mau diedit!')),
+        const SnackBar(content: Text('Tidak ada data yang diubah.')),
+      );
+      return;
+    }
+
+    if (jumlahController.text.isEmpty || kondisi == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Isi data yang diperlukan!')),
       );
       return;
     }
@@ -31,7 +50,7 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
 
     try {
       var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/fasilitas/update/${widget.id_fasilitas}'));
-      request.fields['id_kegiatan'] = widget.id_fasilitas;
+      request.fields['nama'] = widget.nama;
       request.fields['jml'] = jumlahController.text;
       request.fields['status'] = kondisi!;
 
@@ -39,29 +58,18 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
       var responseData = await http.Response.fromStream(streamedResponse);
       var response = jsonDecode(responseData.body);
 
-      if (response.statusCode == 202) {
-        var responseData = jsonDecode(response.body);
-        print("Response Data: $responseData");
-
-        if (responseData['status'] == 202) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Data fasilitas berhasil ditambahkan')),
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => FasilitasPage()),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content:
-                    Text(responseData['message'] ?? 'Gagal mengirim data')),
-          );
-        }
+      if (response['status'] == 202) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Data fasilitas berhasil diperbarui')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FasilitasPage()),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Terjadi kesalahan pada server')),
+          const SnackBar(content: Text('Gagal mengubah data')),
         );
       }
     } catch (e) {
@@ -175,6 +183,7 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
                                 ),
                               ),
                             ),
+                            value: widget.status,
                             items: [
                               'Baik',
                               'Tidak Baik',

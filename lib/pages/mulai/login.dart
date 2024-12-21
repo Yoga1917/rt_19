@@ -179,6 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: TextFormField(
                             controller: nikController,
                             cursorColor: Color(0xff30C083),
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.person),
                               labelText: 'NIK',
