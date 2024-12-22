@@ -18,44 +18,48 @@ class CustomCategoryContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.all(5),
-            height: 80,
-            width: 80,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
+    return LayoutBuilder(builder: (context, constraints) {
+      return GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.all(5),
+              height: constraints.maxWidth > 250 ? 190 : 80,
+              width: constraints.maxWidth > 250 ? 190 : 80,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Icon(
+                icon,
+                size: 60,
+                color: iconColor,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Flexible(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: constraints.maxWidth > 250 ? 25 : 14,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
+              ),
             ),
-            child: Icon(
-              icon,
-              size: 60,
-              color: iconColor,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }

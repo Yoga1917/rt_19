@@ -61,7 +61,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
       } else if (jabatan == "Sekretaris") {
         final kegiatanResponse = await http.get(Uri.parse(
             "https://pexadont.agsa.site/api/pengaduan/jenis/Kegiatan"));
-        final kegiatanData = json.decode(kegiatanResponse.body)['data'];
+        List kegiatanData = json.decode(kegiatanResponse.body)['data'];
 
         kegiatanData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
 
@@ -72,7 +72,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
       } else if (jabatan == "Bendahara") {
         final keuanganResponse = await http.get(Uri.parse(
             "https://pexadont.agsa.site/api/pengaduan/jenis/Keuangan"));
-        final keuanganData = json.decode(keuanganResponse.body)['data'];
+        List keuanganData = json.decode(keuanganResponse.body)['data'];
 
         keuanganData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
 
@@ -83,7 +83,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
       } else if (jabatan == "Kordinator Kebersihan") {
         final kebersihanResponse = await http.get(Uri.parse(
             "https://pexadont.agsa.site/api/pengaduan/jenis/Kebersihan"));
-        final kebersihanData = json.decode(kebersihanResponse.body)['data'];
+        List kebersihanData = json.decode(kebersihanResponse.body)['data'];
 
         kebersihanData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
 
@@ -94,7 +94,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
       } else if (jabatan == "Kordinator Keamanan") {
         final keamananResponse = await http.get(Uri.parse(
             "https://pexadont.agsa.site/api/pengaduan/jenis/Keamanan"));
-        final keamananData = json.decode(keamananResponse.body)['data'];
+        List keamananData = json.decode(keamananResponse.body)['data'];
 
         keamananData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
 
