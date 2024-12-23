@@ -17,6 +17,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
   TextEditingController searchController = TextEditingController();
   bool isSearching = false;
   bool isLoading = true;
+  String? aksiBy;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
             .toList();
         filteredPemberitahuanList = pemberitahuanList;
         isLoading = false;
+        aksiBy = data['aksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -257,7 +259,23 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                       ),
                                       Row(
                                         children: [
-                                          Icon(Icons.calendar_month_outlined),
+                                          Icon(Icons.person_2_outlined, size: 16),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            aksiBy!,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 5),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.calendar_month_outlined, size: 16),
                                           SizedBox(
                                             width: 10,
                                           ),

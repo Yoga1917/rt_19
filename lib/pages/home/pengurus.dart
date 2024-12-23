@@ -10,7 +10,7 @@ class PengurusPage extends StatefulWidget {
 }
 
 class _PengurusPageState extends State<PengurusPage> {
-  String? selectedYear;
+  String? selectedPeriode;
   List<dynamic> pengurusData = [];
   bool isLoading = true;
 
@@ -21,9 +21,11 @@ class _PengurusPageState extends State<PengurusPage> {
   }
 
   Future<void> fetchPengurusData() async {
+    String url = selectedPeriode == null ? 'https://pexadont.agsa.site/api/pengurus' : 'https://pexadont.agsa.site/api/pengurus?periode=${selectedPeriode}';
+
     try {
       final response = await http.get(
-        Uri.parse('https://pexadont.agsa.site/api/pengurus'),
+        Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -137,37 +139,40 @@ class _PengurusPageState extends State<PengurusPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10),
                                       child: Text(
-                                        'Pilih Tahun',
+                                        'Periode',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
-                                    value: selectedYear,
-                                    items: generateYearList()
-                                        .map<DropdownMenuItem<String>>(
-                                            (String year) {
+                                    value: selectedPeriode,
+                                    items: [
+                                      '2019-2024',
+                                      '2024-2029',
+                                      '2029-2034',
+                                    ].map((String value) {
                                       return DropdownMenuItem<String>(
-                                        value: year,
+                                        value: value,
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.only(left: 10),
                                           child: Text(
-                                            year,
-                                            style:
-                                                TextStyle(color: Colors.white),
+                                            value,
+                                            style: const TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       );
                                     }).toList(),
                                     onChanged: (String? newValue) {
                                       setState(() {
-                                        selectedYear = newValue;
+                                        selectedPeriode = newValue;
                                       });
+                                      fetchPengurusData();
                                     },
                                   ),
                                 ),
                               ],
                             ),
                             SizedBox(height: 30),
-                            ListView.builder(
+                            pengurusData.length > 0
+                            ? ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
                               itemCount: pengurusData.length,
@@ -273,6 +278,10 @@ class _PengurusPageState extends State<PengurusPage> {
                                   ),
                                 );
                               },
+                            )
+                            : Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              child: const Text("Tidak ada data pengurus di periode ini"),
                             ),
                           ],
                         ),

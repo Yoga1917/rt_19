@@ -15,6 +15,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
   String? selectedYear;
   List<dynamic> rkbData = [];
   bool isLoading = true;
+  String? aksiBy;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
         setState(() {
           rkbData = responseData['data'];
           isLoading = false;
+          aksiBy = responseData['aksiBy'];
         });
       } else {
         showSnackbar('Gagal memuat kegiatan bulanan');
@@ -368,6 +370,14 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                         ),
+                                      ),
+                                      if(rkbKegiatan.length > 0)
+                                      Row(
+                                        children: [
+                                          Icon(Icons.person_2_outlined, size: 16),
+                                          SizedBox(width: 6),
+                                          Text(aksiBy!),
+                                        ],
                                       ),
                                       SizedBox(height: 20),
                                       rkbKegiatan.length > 0

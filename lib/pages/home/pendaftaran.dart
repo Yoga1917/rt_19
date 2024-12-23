@@ -48,28 +48,16 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
     }
   }
 
-  Future<void> _acceptWarga(
-      nik, nama, tgl_lahir, jenis_kelamin, no_rumah, no_wa) async {
-    final String apiUrl = 'https://pexadont.agsa.site/api/warga/update/${nik}';
-
-    final Map<String, dynamic> requestBody = {
-      'nik': nik,
-      'nama': nama,
-      'tgl_lahir': tgl_lahir,
-      'jenis_kelamin': jenis_kelamin,
-      'no_rumah': no_rumah,
-      'no_wa': no_wa,
-      'status': "1",
-    };
+  Future<void> _acceptWarga(String nik) async {
+    final String apiUrl = 'https://pexadont.agsa.site/api/warga/terima?nik=${nik}';
 
     try {
-      final response = await http.post(
+      final response = await http.get(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(requestBody),
       );
 
-      if (response.statusCode == 202) {
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Pendaftaran warga berhasil diterima.")),
         );
@@ -90,19 +78,65 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
     }
   }
 
-  Future<void> _tolakWarga(String nik) async {
-    final url = 'https://pexadont.agsa.site/api/warga/delete/${nik}';
-    await http.delete(
+  Future<void> _tolakWarga(String nik, String keterangan) async {
+    final url = 'https://pexadont.agsa.site/api/warga/tolak?nik=${nik}&keterangan=${Uri.encodeComponent(keterangan)}';
+    final response = await http.get(
       Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Pendaftaran warga ditolak.")),
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Pendaftaran warga ditolak.")),
+      );
+
+      fetchData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                "Gagal menolak pendaftaran, coba ulangi beberapa saat.")),
+      );
+    }
+  }
+
+  Future<void> _showTolakDialog(String nik) async {
+    final TextEditingController keteranganController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Keterangan Penolakan'),
+          content: TextField(
+            controller: keteranganController,
+            decoration: InputDecoration(hintText: "Masukkan keterangan..."),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Kirim'),
+              onPressed: () {
+                String keterangan = keteranganController.text;
+                if (keterangan.isNotEmpty) {
+                  _tolakWarga(nik, keterangan);
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Keterangan tidak boleh kosong')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
-    fetchData();
   }
 
   @override
@@ -208,7 +242,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    _tolakWarga(item['nik']);
+                                    _showTolakDialog(item['nik']);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -235,13 +269,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    _acceptWarga(
-                                        item['nik'],
-                                        item['nama'],
-                                        item['tgl_lahir'],
-                                        item['jenis_kelamin'],
-                                        item['no_rumah'],
-                                        item['no_wa']);
+                                    _acceptWarga(item['nik']);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(

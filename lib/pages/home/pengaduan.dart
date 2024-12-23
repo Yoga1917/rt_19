@@ -358,7 +358,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                       SizedBox(height: 20),
                                       Padding(
                                         padding:
-                                            const EdgeInsets.only(bottom: 10),
+                                            const EdgeInsets.only(bottom: 5),
                                         child: Text(
                                           'Mengadukan :',
                                           style: TextStyle(
@@ -500,12 +500,22 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                 ),
                                               ),
                                             )
-                                          : Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 20),
-                                              child: Text(
-                                                  "Balasan : ${pengaduan['balasan']}"),
-                                            ),
+                                          : Column(
+                                            children: [
+                                              Container(
+                                                margin: const EdgeInsets.only(top: 20, bottom: 10),
+                                                child: Text(
+                                                  'Balasan Oleh\n${pengaduan['aksiBy']} :',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              Text(pengaduan['balasan'])
+                                            ],
+                                          ),
                                       SizedBox(
                                         height: 30,
                                       ),

@@ -12,11 +12,14 @@ class InputKegiatanPage extends StatefulWidget {
 
 class _InputKegiatanPageState extends State<InputKegiatanPage> {
   final TextEditingController kegiatanController = TextEditingController();
-  final TextEditingController pelaksanaController = TextEditingController();
+  final TextEditingController nikController = TextEditingController();
   final TextEditingController tglController = TextEditingController();
   final TextEditingController keteranganController = TextEditingController();
   File? _proposal;
   bool isLoading = false;
+  bool validNIK = false;
+  bool nikLoading = false;
+  String? pelaksana;
 
   Future<void> _pickPDF() async {
     // Memilih file dengan tipe pdf
@@ -39,7 +42,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   void _kirimData() async {
     if(
       kegiatanController.text.isEmpty ||
-      pelaksanaController.text.isEmpty ||
+      nikController.text.isEmpty ||
       tglController.text.isEmpty ||
       keteranganController.text.isEmpty ||
       _proposal == null
@@ -56,7 +59,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
 
   void _postKegiatan() async {
     var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/kegiatan/simpan'));
-    request.fields['ketua_pelaksana'] = pelaksanaController.text;
+    request.fields['nik'] = nikController.text;
     request.fields['nama_kegiatan'] = kegiatanController.text;
     request.fields['keterangan'] = keteranganController.text;
     request.fields['tgl'] = tglController.text;
@@ -83,6 +86,65 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Gagal menambahkan data kegiatan.")),
+      );
+    }
+  }
+
+  void _cekNIK() async {
+    setState(() {
+      nikLoading = true;
+    });
+
+    if (nikController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Harap isi data NIK!')),
+      );
+      setState(() {
+        nikLoading = false;
+      });
+      return;
+    }
+
+    if (nikController.text.length < 16) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('NIK harus 16 digit angka!')),
+      );
+      setState(() {
+        nikLoading = false;
+      });
+      return;
+    }
+
+    if (int.tryParse(nikController.text) == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data NIK harus berupa angka!')),
+      );
+      setState(() {
+        nikLoading = false;
+      });
+      return;
+    }
+
+    final request = await http.get(
+      Uri.parse(
+          'https://pexadont.agsa.site/api/warga/edit/${nikController.text}'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    final response = jsonDecode(request.body);
+
+    setState(() {
+      nikLoading = false;
+    });
+
+    if (response["status"] == 200) {
+      setState(() {
+        pelaksana = response["data"]["nama"];
+        validNIK = true;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data warga tidak ditemukan')),
       );
     }
   }
@@ -165,16 +227,16 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 15,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
-                            controller: pelaksanaController,
+                            controller: nikController,
                             cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.person),
-                              labelText: 'Nama Ketua Pelaksana',
+                              labelText: 'NIK Pelaksana',
                               floatingLabelStyle: const TextStyle(
                                 color: Colors.black,
                               ),
@@ -191,9 +253,60 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
+                        if(!validNIK)
+                        InkWell(
+                          onTap: () => _cekNIK(),
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff30C083),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Text(
+                                nikLoading ? 'Loading...' : 'Cek Data',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 18,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
                         ),
+                        if(validNIK)
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 15),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: TextFormField(
+                            readOnly: true,
+                            initialValue: pelaksana,
+                            cursorColor: Color(0xff30C083),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                              prefixIcon: const Icon(Icons.person),
+                              labelText: 'Nama Pelaksana',
+                              floatingLabelStyle: const TextStyle(
+                                color: Colors.black,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: const Color(0xff30C083),
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if(validNIK)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
@@ -246,8 +359,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 15,
                         ),
+                        if(validNIK)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
@@ -292,14 +406,13 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
+                        if(validNIK)
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 15),
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             controller: keteranganController,
-                            maxLines: 5,
+                            maxLines: 3,
                             cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               labelText: 'Deskripsi Kegiatan',
@@ -319,14 +432,13 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
+                        if(validNIK)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
                             onTap: () => _kirimData(),
                             child: Container(
+                              margin: const EdgeInsets.only(bottom: 30),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 color: const Color(0xff30C083),
@@ -346,9 +458,6 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
                         ),
                       ],
                     ),

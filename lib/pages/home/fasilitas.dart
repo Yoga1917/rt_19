@@ -18,6 +18,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
   TextEditingController searchController = TextEditingController();
   bool isSearching = false;
   bool isLoading = true;
+  String? aksiBy;
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
         filteredFasilitasList = fasilitasList;
         isLoading = false;
         totalFasilitas = fasilitasList.length;
+        aksiBy = data['aksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -259,6 +261,14 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                       style: TextStyle(
                                         fontSize: 14,
                                       ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Terakhir diedit oleh :\n${aksiBy}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
                                     SizedBox(height: 20),
                                     GestureDetector(

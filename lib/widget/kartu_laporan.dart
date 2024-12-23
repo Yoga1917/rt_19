@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class KartuLaporan extends StatelessWidget {
   final String month;
+  final String aksiBy;
   final String income;
   final String expense;
   final String publish;
@@ -10,6 +11,7 @@ class KartuLaporan extends StatelessWidget {
 
   KartuLaporan({
     required this.month,
+    required this.aksiBy,
     required this.income,
     required this.expense,
     required this.publish,
@@ -38,16 +40,22 @@ class KartuLaporan extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            month,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 5),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
-                month,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const Padding(
+                padding: EdgeInsets.only(right: 6),
+                child: Icon(Icons.person_2_outlined, size: 16),
               ),
+              Text(aksiBy),
             ],
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -61,7 +69,7 @@ class KartuLaporan extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 5),
+          SizedBox(height: 3),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

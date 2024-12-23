@@ -14,7 +14,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   String? _tglLahir;
   String? _noRumah;
   String? _foto;
+
   String? _selectedJabatan;
+  String? _selectedPeriode;
   bool isLoading = false;
 
   void _cekNIK() async {
@@ -79,23 +81,25 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   }
 
   void _simpan() {
-    if (_selectedJabatan != null) {
+    if (_selectedJabatan != null || _selectedPeriode != null) {
       print('NIK: ${_nikController.text}');
       print('Jabatan: $_selectedJabatan');
+      print('Periode: $_selectedPeriode');
 
-      _savePengurus(_nikController.text, _selectedJabatan);
+      _savePengurus(_nikController.text, _selectedJabatan, _selectedPeriode);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Pilih jabatan pengurus terlebih dahulu!')),
+        SnackBar(content: Text('Pilih jabatan dan periode pengurus terlebih dahulu!')),
       );
     }
   }
 
-  void _savePengurus(nik, jabatan) async {
+  void _savePengurus(nik, jabatan, periode) async {
     var request = http.MultipartRequest(
         'POST', Uri.parse('https://pexadont.agsa.site/api/pengurus/simpan'));
     request.fields['nik'] = nik;
     request.fields['jabatan'] = jabatan;
+    request.fields['periode'] = periode;
 
     var streamedResponse = await request.send();
     var responseData = await http.Response.fromStream(streamedResponse);
@@ -246,7 +250,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                 SizedBox(height: 20),
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-                    labelText: 'Pilih Tahun',
+                    labelText: 'Pilih Periode',
                     floatingLabelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -261,22 +265,19 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                     prefixIcon: Icon(Icons.list, color: Colors.black),
                   ),
                   items: [
-                    '2020',
-                    '2021',
-                    '2022',
-                    '2023',
-                    '2024',
-                    '2025',
-                  ].map((String jabatan) {
+                    '2019-2024',
+                    '2024-2029',
+                    '2029-2034',
+                  ].map((String value) {
                     return DropdownMenuItem<String>(
-                      value: jabatan,
-                      child: Text(jabatan),
+                      value: value,
+                      child: Text(value),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
-                    // setState(() {
-                    //   _selectedJabatan = newValue;
-                    // });
+                    setState(() {
+                      _selectedPeriode = newValue;
+                    });
                   },
                 ),
                 SizedBox(height: 20),
