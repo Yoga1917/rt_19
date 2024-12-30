@@ -21,7 +21,9 @@ class _PengurusPageState extends State<PengurusPage> {
   }
 
   Future<void> fetchPengurusData() async {
-    String url = selectedPeriode == null ? 'https://pexadont.agsa.site/api/pengurus' : 'https://pexadont.agsa.site/api/pengurus?periode=${selectedPeriode}';
+    String url = selectedPeriode == null
+        ? 'https://pexadont.agsa.site/api/pengurus'
+        : 'https://pexadont.agsa.site/api/pengurus?periode=${selectedPeriode}';
 
     try {
       final response = await http.get(
@@ -152,10 +154,12 @@ class _PengurusPageState extends State<PengurusPage> {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Padding(
-                                          padding: const EdgeInsets.only(left: 10),
+                                          padding:
+                                              const EdgeInsets.only(left: 10),
                                           child: Text(
                                             value,
-                                            style: const TextStyle(color: Colors.white),
+                                            style: const TextStyle(
+                                                color: Colors.white),
                                           ),
                                         ),
                                       );
@@ -172,117 +176,127 @@ class _PengurusPageState extends State<PengurusPage> {
                             ),
                             SizedBox(height: 30),
                             pengurusData.length > 0
-                            ? ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: pengurusData.length,
-                              itemBuilder: (context, index) {
-                                final pengurus = pengurusData[index];
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: 20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        width: 1, color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        spreadRadius: 1,
-                                        blurRadius: 5,
-                                        offset: Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      SizedBox(height: 20),
-                                      Text(
-                                        pengurus['jabatan'],
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(20),
-                                        child: ClipRRect(
+                                ? ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: pengurusData.length,
+                                    itemBuilder: (context, index) {
+                                      final pengurus = pengurusData[index];
+                                      return Container(
+                                        margin: EdgeInsets.only(bottom: 20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              width: 1, color: Colors.grey),
                                           borderRadius:
                                               BorderRadius.circular(20),
-                                          child: Image.network(
-                                            'https://pexadont.agsa.site/uploads/warga/${pengurus['foto']}',
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.2),
+                                              spreadRadius: 1,
+                                              blurRadius: 5,
+                                              offset: Offset(0, 3),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20),
                                         child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
-                                            SizedBox(height: 10),
+                                            SizedBox(height: 20),
                                             Text(
-                                              pengurus['nama'],
+                                              pengurus['jabatan'],
                                               style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 24,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            SizedBox(height: 10),
-                                            Text(
-                                              'NIK : ${pengurus['nik']}',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            Text(
-                                              'Tanggal Lahir : ${pengurus['tgl_lahir']}',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            Text(
-                                              'Jenis Kelamin : ${pengurus['jenis_kelamin']}',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            Text(
-                                              'No. Rumah : ${pengurus['no_rumah']}',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            SizedBox(height: 20),
-                                            InkWell(
-                                              onTap: () {},
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: const Color(
-                                                        0xff30C083)),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 15),
-                                                child: const Text(
-                                                  "Aktif",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
+                                            Padding(
+                                              padding: const EdgeInsets.all(20),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: Image.network(
+                                                  'https://pexadont.agsa.site/uploads/warga/${pengurus['foto']}',
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(height: 20)
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: <Widget>[
+                                                  SizedBox(height: 10),
+                                                  Text(
+                                                    pengurus['nama'],
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  Text(
+                                                    'NIK : ${pengurus['nik']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                  Text(
+                                                    'Tanggal Lahir : ${pengurus['tgl_lahir']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                  Text(
+                                                    'Jenis Kelamin : ${pengurus['jenis_kelamin']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                  Text(
+                                                    'No. Rumah : ${pengurus['no_rumah']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                  SizedBox(height: 20),
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: const Color(
+                                                              0xff30C083)),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 10,
+                                                          horizontal: 15),
+                                                      child: const Text(
+                                                        "Aktif",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 20)
+                                                ],
+                                              ),
+                                            ),
                                           ],
                                         ),
-                                      ),
-                                    ],
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    margin: const EdgeInsets.only(top: 20),
+                                    child: const Text(
+                                        "Tidak ada data pengurus di periode ini"),
                                   ),
-                                );
-                              },
-                            )
-                            : Container(
-                              margin: const EdgeInsets.only(top: 20),
-                              child: const Text("Tidak ada data pengurus di periode ini"),
-                            ),
                           ],
                         ),
                       ),
@@ -292,15 +306,5 @@ class _PengurusPageState extends State<PengurusPage> {
               }),
             ),
     );
-  }
-
-  List<String> generateYearList() {
-    int currentYear = DateTime.now().year;
-    List<String> years = [];
-
-    for (int i = currentYear - 10; i <= currentYear; i++) {
-      years.add(i.toString());
-    }
-    return years;
   }
 }
