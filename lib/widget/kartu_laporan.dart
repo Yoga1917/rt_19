@@ -112,7 +112,7 @@ class KartuLaporan extends StatelessWidget {
                   ),
                 ),
               ),
-              publish == "0" ?
+              if(publish == "0")
               GestureDetector(
                 onTap: onPublish,
                 child: Container(
@@ -137,7 +137,7 @@ class KartuLaporan extends StatelessWidget {
                     ),
                   ),
                 ),
-              ) : const Text(""),
+              ),
             ],
           ),
         ],

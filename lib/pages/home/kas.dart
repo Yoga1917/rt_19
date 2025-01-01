@@ -18,6 +18,7 @@ class _KasPageState extends State<KasPage> {
   List<dynamic> kasData = [];
   bool isLoading = true;
   String? aksiBy;
+  int saldo_kas = 0;
 
   @override
   void initState() {
@@ -37,6 +38,16 @@ class _KasPageState extends State<KasPage> {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         setState(() {
           kasData = responseData['data'];
+          kasData.sort((a, b) => int.parse(b['id_kas']).compareTo(int.parse(a['id_kas'])));
+          
+          int totalSisaKas = 0;
+          for (var kas in kasData) {
+            int pemasukan = kas['pemasukan'] != null ? int.parse(kas['pemasukan']) : 0;
+            int pengeluaran = kas['pengeluaran'] != null ? int.parse(kas['pengeluaran']) : 0;
+            totalSisaKas += (pemasukan - pengeluaran);
+          }
+          saldo_kas = totalSisaKas;
+
           isLoading = false;
           aksiBy = responseData['aksiBy'];
         });
@@ -52,6 +63,26 @@ class _KasPageState extends State<KasPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
+  }
+
+  void _publishKas(id_kas) async {
+    final response = await http.post(
+      Uri.parse('https://pexadont.agsa.site/api/kas/publish/simpan'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'id_kas': id_kas,
+      })
+    );
+
+    if (response.statusCode == 200) {
+      showSnackbar('Berhasil Publish KAS');
+      
+      Navigator.of(context).pop();
+      _fetchKas();
+    }else{
+      showSnackbar('Gagal memuat data kas');
+      print(jsonDecode(response.body));
+    }
   }
 
   @override
@@ -175,7 +206,7 @@ class _KasPageState extends State<KasPage> {
                         height: 30,
                       ),
                       if(kasData.length > 0)
-                      Text('Saldo Kas : Rp. 100.000.000'),
+                      Text('Saldo Kas : ${rupiah(saldo_kas)}'),
                       SizedBox(height: 10),
                       kasData.length > 0
                       ? ListView.builder(
@@ -189,8 +220,8 @@ class _KasPageState extends State<KasPage> {
                               KartuLaporan(
                                 month: kas['bulan'] + " " + kas['tahun'],
                                 aksiBy: aksiBy!,
-                                income: rupiah(kas['pemasukan']),
-                                expense: rupiah(kas['pengeluaran']),
+                                income: rupiah(kas['pemasukan'] ?? 0),
+                                expense: rupiah(kas['pengeluaran'] ?? 0),
                                 publish: kas['publish'],
                                 onDetail: () {
                                   Navigator.push(
@@ -200,15 +231,44 @@ class _KasPageState extends State<KasPage> {
                                             DetailKASPage(kas['id_kas'])),
                                   );
                                 },
-                                onPublish: () {},
+                                // onPublish: () => _publishKas(kas['id_kas']),
+                                onPublish: () => showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Konfirmasi"),
+                                      content:
+                                          Text("Publish KAS bulan ${kas['bulan'] + " " + kas['tahun']}?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text(
+                                            "Batal",
+                                            style: TextStyle(color: Color(0xff30C083), fontWeight: FontWeight.bold),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          style: const ButtonStyle(
+                                            backgroundColor: WidgetStatePropertyAll(Color(0xff30C083))
+                                          ),
+                                          child: const Text(
+                                            "Publish",
+                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                          ),
+                                          onPressed: () => _publishKas(kas['id_kas']),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
                               ),
                               TotalCard(
-                                  totalIncome: rupiah(kas['pemasukan']),
-                                  totalExpense: rupiah(kas['pengeluaran']),
-                                  remainingFunds: rupiah(
-                                      (int.parse(kas['pemasukan']) -
-                                              int.parse(kas['pengeluaran']))
-                                          .toString())),
+                                totalIncome: rupiah(kas['pemasukan'] ?? 0),
+                                totalExpense: rupiah(kas['pengeluaran'] ?? 0),
+                                remainingFunds: rupiah((int.parse(kas['pemasukan'] ?? '0') - int.parse(kas['pengeluaran'] ?? '0')).toString())
+                              ),
                             ],
                           );
                         },
