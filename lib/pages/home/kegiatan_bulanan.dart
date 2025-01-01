@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -291,7 +292,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 50),
+                      SizedBox(height: 30),
                       Container(
                         decoration: BoxDecoration(
                           color: Color(0xff30C083),
@@ -371,14 +372,15 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      if(rkbKegiatan.length > 0)
-                                      Row(
-                                        children: [
-                                          Icon(Icons.person_2_outlined, size: 16),
-                                          SizedBox(width: 6),
-                                          Text(aksiBy!),
-                                        ],
-                                      ),
+                                      if (rkbKegiatan.length > 0)
+                                        Row(
+                                          children: [
+                                            Icon(Icons.person_2_outlined,
+                                                size: 16),
+                                            SizedBox(width: 6),
+                                            Text(aksiBy!),
+                                          ],
+                                        ),
                                       SizedBox(height: 20),
                                       rkbKegiatan.length > 0
                                           ? Column(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:indonesia/indonesia.dart';
@@ -28,7 +29,9 @@ class _KasPageState extends State<KasPage> {
 
   void _fetchKas() async {
     try {
-      String url = selectedYear == null ? 'https://pexadont.agsa.site/api/kas' : 'https://pexadont.agsa.site/api/kas?tahun=${selectedYear}';
+      String url = selectedYear == null
+          ? 'https://pexadont.agsa.site/api/kas'
+          : 'https://pexadont.agsa.site/api/kas?tahun=${selectedYear}';
       final response = await http.get(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
@@ -38,12 +41,15 @@ class _KasPageState extends State<KasPage> {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         setState(() {
           kasData = responseData['data'];
-          kasData.sort((a, b) => int.parse(b['id_kas']).compareTo(int.parse(a['id_kas'])));
-          
+          kasData.sort((a, b) =>
+              int.parse(b['id_kas']).compareTo(int.parse(a['id_kas'])));
+
           int totalSisaKas = 0;
           for (var kas in kasData) {
-            int pemasukan = kas['pemasukan'] != null ? int.parse(kas['pemasukan']) : 0;
-            int pengeluaran = kas['pengeluaran'] != null ? int.parse(kas['pengeluaran']) : 0;
+            int pemasukan =
+                kas['pemasukan'] != null ? int.parse(kas['pemasukan']) : 0;
+            int pengeluaran =
+                kas['pengeluaran'] != null ? int.parse(kas['pengeluaran']) : 0;
             totalSisaKas += (pemasukan - pengeluaran);
           }
           saldo_kas = totalSisaKas;
@@ -67,19 +73,18 @@ class _KasPageState extends State<KasPage> {
 
   void _publishKas(id_kas) async {
     final response = await http.post(
-      Uri.parse('https://pexadont.agsa.site/api/kas/publish/simpan'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'id_kas': id_kas,
-      })
-    );
+        Uri.parse('https://pexadont.agsa.site/api/kas/publish/simpan'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'id_kas': id_kas,
+        }));
 
     if (response.statusCode == 200) {
       showSnackbar('Berhasil Publish KAS');
-      
+
       Navigator.of(context).pop();
       _fetchKas();
-    }else{
+    } else {
       showSnackbar('Gagal memuat data kas');
       print(jsonDecode(response.body));
     }
@@ -205,78 +210,92 @@ class _KasPageState extends State<KasPage> {
                       SizedBox(
                         height: 30,
                       ),
-                      if(kasData.length > 0)
-                      Text('Saldo Kas : ${rupiah(saldo_kas)}'),
+                      if (kasData.length > 0)
+                        Text('Saldo Kas : ${rupiah(saldo_kas)}'),
                       SizedBox(height: 10),
                       kasData.length > 0
-                      ? ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: kasData.length,
-                        itemBuilder: (context, index) {
-                          final kas = kasData[index];
-                          return Column(
-                            children: [
-                              KartuLaporan(
-                                month: kas['bulan'] + " " + kas['tahun'],
-                                aksiBy: aksiBy!,
-                                income: rupiah(kas['pemasukan'] ?? 0),
-                                expense: rupiah(kas['pengeluaran'] ?? 0),
-                                publish: kas['publish'],
-                                onDetail: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            DetailKASPage(kas['id_kas'])),
-                                  );
-                                },
-                                // onPublish: () => _publishKas(kas['id_kas']),
-                                onPublish: () => showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("Konfirmasi"),
-                                      content:
-                                          Text("Publish KAS bulan ${kas['bulan'] + " " + kas['tahun']}?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text(
-                                            "Batal",
-                                            style: TextStyle(color: Color(0xff30C083), fontWeight: FontWeight.bold),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          style: const ButtonStyle(
-                                            backgroundColor: WidgetStatePropertyAll(Color(0xff30C083))
-                                          ),
-                                          child: const Text(
-                                            "Publish",
-                                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                          ),
-                                          onPressed: () => _publishKas(kas['id_kas']),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              ),
-                              TotalCard(
-                                totalIncome: rupiah(kas['pemasukan'] ?? 0),
-                                totalExpense: rupiah(kas['pengeluaran'] ?? 0),
-                                remainingFunds: rupiah((int.parse(kas['pemasukan'] ?? '0') - int.parse(kas['pengeluaran'] ?? '0')).toString())
-                              ),
-                            ],
-                          );
-                        },
-                      )
-                      : Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        child: const Text("Belum ada data KAS di tahun yang dipilih"),
-                      ),
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: kasData.length,
+                              itemBuilder: (context, index) {
+                                final kas = kasData[index];
+                                return Column(
+                                  children: [
+                                    KartuLaporan(
+                                      month: kas['bulan'] + " " + kas['tahun'],
+                                      aksiBy: aksiBy!,
+                                      income: rupiah(kas['pemasukan'] ?? 0),
+                                      expense: rupiah(kas['pengeluaran'] ?? 0),
+                                      publish: kas['publish'],
+                                      onDetail: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailKASPage(kas['id_kas'])),
+                                        );
+                                      },
+                                      // onPublish: () => _publishKas(kas['id_kas']),
+                                      onPublish: () => showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Konfirmasi"),
+                                            content: Text(
+                                                "Publish KAS bulan ${kas['bulan'] + " " + kas['tahun']}?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: const Text(
+                                                  "Batal",
+                                                  style: TextStyle(
+                                                      color: Color(0xff30C083),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              TextButton(
+                                                style: const ButtonStyle(
+                                                    backgroundColor:
+                                                        WidgetStatePropertyAll(
+                                                            Color(0xff30C083))),
+                                                child: const Text(
+                                                  "Publish",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                onPressed: () =>
+                                                    _publishKas(kas['id_kas']),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    TotalCard(
+                                        totalIncome:
+                                            rupiah(kas['pemasukan'] ?? 0),
+                                        totalExpense:
+                                            rupiah(kas['pengeluaran'] ?? 0),
+                                        remainingFunds: rupiah((int.parse(
+                                                    kas['pemasukan'] ?? '0') -
+                                                int.parse(
+                                                    kas['pengeluaran'] ?? '0'))
+                                            .toString())),
+                                  ],
+                                );
+                              },
+                            )
+                          : Container(
+                              margin: const EdgeInsets.only(bottom: 20),
+                              child: const Text(
+                                  "Belum ada data KAS di tahun yang dipilih."),
+                            ),
                       SizedBox(
                         height: 30,
                       ),

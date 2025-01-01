@@ -1,9 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/pages/kegiatan/edit_kegiatan.dart';
 import 'package:rt_19/pages/kegiatan/input_kegiatan.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class KegiatanPage extends StatefulWidget {
@@ -119,9 +120,10 @@ class _KegiatanPageState extends State<KegiatanPage> {
                   } else {
                     return Column(
                       children: [
+                        SizedBox(height: 10),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 30),
+                              horizontal: 20, vertical: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -211,8 +213,8 @@ class _KegiatanPageState extends State<KegiatanPage> {
                         if (filteredKegiatanList.isNotEmpty)
                           for (var kegiatan in filteredKegiatanList)
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
                               child: Column(
                                 children: [
                                   Container(

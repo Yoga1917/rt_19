@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/widget/toggle_tabs.dart';
 
@@ -39,14 +39,16 @@ class _DataWargaPageState extends State<DataWargaPage> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        wargaList = data['data'].where((item) => item['status'] == "1").toList();
+        wargaList =
+            data['data'].where((item) => item['status'] == "1").toList();
         filteredWargaList = wargaList;
-        wargaInactiveList = data['data'].where((item) => item['status'] == "2").toList();
+        wargaInactiveList =
+            data['data'].where((item) => item['status'] == "2").toList();
         filteredWargaInactiveList = wargaInactiveList;
 
         totalWarga = wargaList.length;
         totalWargaInactive = wargaInactiveList.length;
-        
+
         isLoading = false;
       });
     } else {
@@ -55,7 +57,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
   }
 
   void searchWarga(String query) {
-    final cleanedQuery = query.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
+    final cleanedQuery =
+        query.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
 
     if (cleanedQuery.isEmpty) {
       setState(() {
@@ -82,7 +85,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
   }
 
   void searchWargaInactive(String query) {
-    final cleanedQuery = query.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
+    final cleanedQuery =
+        query.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
 
     if (cleanedQuery.isEmpty) {
       setState(() {
@@ -108,11 +112,12 @@ class _DataWargaPageState extends State<DataWargaPage> {
     });
   }
 
-  
-  void _updateStatus(nik, nama, tglLahir, jenisKelamin, noRumah, noWa, status) async {
+  void _updateStatus(
+      nik, nama, tglLahir, jenisKelamin, noRumah, noWa, status) async {
     setState(() => loadingUpdate = true);
 
-    var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/warga/update/${nik}'));
+    var request = http.MultipartRequest('POST',
+        Uri.parse('https://pexadont.agsa.site/api/warga/update/${nik}'));
     request.fields['nik'] = nik;
     request.fields['nama'] = nama;
     request.fields['tgl_lahir'] = tglLahir;
@@ -177,7 +182,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
               child: Column(
                 children: [
                   SizedBox(height: 20),
-                  Text('Total Warga : ${totalWarga + totalWargaInactive} Warga'),
+                  Text(
+                      'Total Warga : ${totalWarga + totalWargaInactive} Warga'),
                   SizedBox(height: 20),
                   ToggleTabs(
                     isSelectedLeft: isDataAktifSelected,
@@ -194,7 +200,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                           children: [
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
                               child: TextField(
                                 controller: searchController,
                                 cursorColor: Color(0xff30C083),
@@ -202,14 +209,16 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                   hintText: 'Cari data warga Aktif...',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(color: Colors.black),
+                                    borderSide:
+                                        const BorderSide(color: Colors.black),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide:
                                         BorderSide(color: Color(0xff30C083)),
                                   ),
-                                  prefixIcon: const Icon(Icons.search, color: Colors.black),
+                                  prefixIcon: const Icon(Icons.search,
+                                      color: Colors.black),
                                   suffixIcon: isSearching
                                       ? IconButton(
                                           icon: Icon(Icons.clear,
@@ -313,7 +322,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                     ),
                                                     SizedBox(height: 20),
                                                     GestureDetector(
-                                                      onTap: () => _updateStatus(
+                                                      onTap: () =>
+                                                          _updateStatus(
                                                         warga['nik'],
                                                         warga['nama'],
                                                         warga['tgl_lahir'],
@@ -323,16 +333,31 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                         "2",
                                                       ),
                                                       child: Container(
-                                                        decoration: BoxDecoration(
-                                                          color: const Color(0xff30C083),
-                                                          borderRadius: BorderRadius.circular(10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xff30C083),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
                                                         ),
                                                         child: Padding(
-                                                          padding: const EdgeInsets.all(10),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(10),
                                                           child: Text(
-                                                            loadingUpdate ? 'Update...' : 'Aktif',
-                                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18),
-                                                            textAlign: TextAlign.center,
+                                                            loadingUpdate
+                                                                ? 'Update...'
+                                                                : 'Aktif',
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w900,
+                                                                fontSize: 18),
+                                                            textAlign: TextAlign
+                                                                .center,
                                                           ),
                                                         ),
                                                       ),
@@ -352,7 +377,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                           children: [
                             SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
                               child: TextField(
                                 controller: searchInactiveController,
                                 cursorColor: Color(0xff30C083),
@@ -364,12 +390,15 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(color: Color(0xff30C083)),
+                                    borderSide: const BorderSide(
+                                        color: Color(0xff30C083)),
                                   ),
-                                  prefixIcon: const Icon(Icons.search, color: Colors.black),
+                                  prefixIcon: const Icon(Icons.search,
+                                      color: Colors.black),
                                   suffixIcon: isSearching
                                       ? IconButton(
-                                          icon: const Icon(Icons.clear, color: Colors.black),
+                                          icon: const Icon(Icons.clear,
+                                              color: Colors.black),
                                           onPressed: () {
                                             searchInactiveController.clear();
                                             searchWargaInactive('');
@@ -380,7 +409,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                 onChanged: searchWargaInactive,
                               ),
                             ),
-                            Text('Total Warga Non Aktif : $totalWargaInactive Warga'),
+                            Text(
+                                'Total Warga Non Aktif : $totalWargaInactive Warga'),
                             SizedBox(height: 10),
                             filteredWargaInactiveList.isEmpty
                                 ? const Text("Data tidak ditemukan")
@@ -389,7 +419,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                     physics: NeverScrollableScrollPhysics(),
                                     itemCount: filteredWargaInactiveList.length,
                                     itemBuilder: (context, index) {
-                                      final warga = filteredWargaInactiveList[index];
+                                      final warga =
+                                          filteredWargaInactiveList[index];
                                       return Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 10),
@@ -469,7 +500,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                     ),
                                                     SizedBox(height: 20),
                                                     GestureDetector(
-                                                      onTap: () => _updateStatus(
+                                                      onTap: () =>
+                                                          _updateStatus(
                                                         warga['nik'],
                                                         warga['nama'],
                                                         warga['tgl_lahir'],
@@ -479,16 +511,31 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                         "1",
                                                       ),
                                                       child: Container(
-                                                        decoration: BoxDecoration(
-                                                          color: Colors.red[700],
-                                                          borderRadius: BorderRadius.circular(10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Colors.red[700],
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
                                                         ),
                                                         child: Padding(
-                                                          padding: const EdgeInsets.all(10),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(10),
                                                           child: Text(
-                                                            loadingUpdate ? 'Update...' : 'Tidak Aktif',
-                                                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18),
-                                                            textAlign: TextAlign.center,
+                                                            loadingUpdate
+                                                                ? 'Update...'
+                                                                : 'Tidak Aktif',
+                                                            style: const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w900,
+                                                                fontSize: 18),
+                                                            textAlign: TextAlign
+                                                                .center,
                                                           ),
                                                         ),
                                                       ),

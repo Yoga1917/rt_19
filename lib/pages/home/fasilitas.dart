@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/fasilitas/edit_fasilitas.dart';
 import 'package:rt_19/pages/fasilitas/input_fasilitas.dart';
-import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/halaman_utama/home.dart';
 
 class FasilitasPage extends StatefulWidget {
@@ -111,8 +111,9 @@ class _FasilitasPageState extends State<FasilitasPage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
+                  SizedBox(height: 10),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -191,7 +192,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   ),
                   Text('Total Fasilitas : $totalFasilitas Fasilitas'),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   if (filteredFasilitasList.isEmpty)
                     Padding(
@@ -276,12 +277,15 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => EditFasilitasPage(
-                                              fasilitas['id_fasilitas'].toString(),
-                                              fasilitas['nama'].toString(),
-                                              fasilitas['jml'].toString(),
-                                              fasilitas['status'].toString()
-                                            ),
+                                            builder: (context) =>
+                                                EditFasilitasPage(
+                                                    fasilitas['id_fasilitas']
+                                                        .toString(),
+                                                    fasilitas['nama']
+                                                        .toString(),
+                                                    fasilitas['jml'].toString(),
+                                                    fasilitas['status']
+                                                        .toString()),
                                           ),
                                         );
                                       },
