@@ -295,7 +295,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                 : Container(
                                     margin: const EdgeInsets.only(top: 20),
                                     child: const Text(
-                                        "Tidak ada data pengurus di periode ini"),
+                                        "Tidak ada data pengurus di periode ini."),
                                   ),
                           ],
                         ),
