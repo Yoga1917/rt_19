@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/widget/toggle_tabs.dart';
 
@@ -148,6 +149,16 @@ class _DataWargaPageState extends State<DataWargaPage> {
     }
 
     setState(() => loadingUpdate = false);
+  }
+
+  String formatDate(String date) {
+    if (date.isEmpty) return 'Unknown Date';
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return DateFormat('dd MMMM yyyy').format(parsedDate);
+    } catch (e) {
+      return 'Invalid Date';
+    }
   }
 
   @override
@@ -306,7 +317,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                           fontSize: 14),
                                                     ),
                                                     Text(
-                                                      'Tanggal Lahir : ${warga['tgl_lahir']}',
+                                                      'Tanggal Lahir : ${formatDate(warga['tgl_lahir'])}',
                                                       style: TextStyle(
                                                           fontSize: 14),
                                                     ),

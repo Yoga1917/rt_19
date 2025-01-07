@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/pages/pemberitahuan/input_pemberitahuan.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
   TextEditingController searchController = TextEditingController();
   bool isSearching = false;
   bool isLoading = true;
+  List<bool> isExpanded = [];
   String? aksiBy;
 
   @override
@@ -41,6 +43,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                 'file': item['file'] != null && item['file'].isNotEmpty
                     ? 'https://pexadont.agsa.site/uploads/pemberitahuan/${item['file']}'
                     : null,
+                'isExpanded': false,
               },
             )
             .toList();
@@ -94,6 +97,16 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
         return a['pemberitahuan'].compareTo(b['pemberitahuan']);
       });
     });
+  }
+
+  String formatDate(String date) {
+    if (date.isEmpty) return 'Unknown Date';
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return DateFormat('dd MMMM yyyy').format(parsedDate);
+    } catch (e) {
+      return 'Invalid Date';
+    }
   }
 
   @override
@@ -259,7 +272,8 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                       ),
                                       Row(
                                         children: [
-                                          Icon(Icons.person_2_outlined, size: 16),
+                                          Icon(Icons.person_2_outlined,
+                                              size: 16),
                                           SizedBox(
                                             width: 10,
                                           ),
@@ -275,12 +289,13 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                       SizedBox(height: 5),
                                       Row(
                                         children: [
-                                          Icon(Icons.calendar_month_outlined, size: 16),
+                                          Icon(Icons.calendar_month_outlined,
+                                              size: 16),
                                           SizedBox(
                                             width: 10,
                                           ),
                                           Text(
-                                            pemberitahuan['tgl'],
+                                            '${formatDate(pemberitahuan['tgl'])}',
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: Colors.black,
@@ -320,15 +335,65 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 20),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            pemberitahuan['deskripsi'],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              pemberitahuan['isExpanded']
+                                                  ? pemberitahuan['deskripsi']
+                                                  : (pemberitahuan['deskripsi']
+                                                              .length >
+                                                          100
+                                                      ? pemberitahuan[
+                                                                  'deskripsi']
+                                                              .substring(
+                                                                  0, 100) +
+                                                          '...'
+                                                      : pemberitahuan[
+                                                          'deskripsi']),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                              ),
                                             ),
-                                          ),
+                                            SizedBox(height: 10),
+                                            if (pemberitahuan['deskripsi']
+                                                    .length >
+                                                100) ...[
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    // Toggle isExpanded untuk item ini
+                                                    pemberitahuan[
+                                                            'isExpanded'] =
+                                                        !pemberitahuan[
+                                                            'isExpanded'];
+                                                  });
+                                                },
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: Text(
+                                                    pemberitahuan['isExpanded']
+                                                        ? 'Klik lagi untuk sembunyikan'
+                                                        : 'Lihat selengkapnya',
+                                                    style: TextStyle(
+                                                      color: Color(0xff30C083),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                      decorationColor:
+                                                          Color(0xff30C083),
+                                                      height: 1.5,
+                                                      decorationThickness: 2,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -353,7 +418,12 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                         alignment: Alignment.center,
                                         width: double.infinity,
                                         decoration: BoxDecoration(
-                                          color: const Color(0xff30C083),
+                                          color:
+                                              pemberitahuan['file'] != null &&
+                                                      pemberitahuan['file']
+                                                          .isNotEmpty
+                                                  ? const Color(0xff30C083)
+                                                  : Colors.red,
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           boxShadow: [

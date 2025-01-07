@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/pages/kegiatan/edit_kegiatan.dart';
 import 'package:rt_19/pages/kegiatan/input_kegiatan.dart';
@@ -82,6 +83,16 @@ class _KegiatanPageState extends State<KegiatanPage> {
         return a['nama_kegiatan'].compareTo(b['nama_kegiatan']);
       });
     });
+  }
+
+  String formatDate(String date) {
+    if (date.isEmpty) return 'Unknown Date';
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return DateFormat('dd MMMM yyyy').format(parsedDate);
+    } catch (e) {
+      return 'Invalid Date';
+    }
   }
 
   @override
@@ -270,7 +281,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                   size: 20),
                                               SizedBox(width: 10),
                                               Text(
-                                                kegiatan['tgl'],
+                                                '${formatDate(kegiatan['tgl'])}',
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.black,

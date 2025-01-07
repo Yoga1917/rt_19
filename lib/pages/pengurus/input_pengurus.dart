@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rt_19/pages/home/pengurus.dart';
 
 class InputPengurusPage extends StatefulWidget {
@@ -13,6 +14,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   String? _nama;
   String? _tglLahir;
   String? _noRumah;
+  String? _jenisKelamin;
   String? _foto;
 
   String? _selectedJabatan;
@@ -70,6 +72,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
       setState(() {
         _nama = response["data"]["nama"];
         _tglLahir = response["data"]["tgl_lahir"];
+        _jenisKelamin = response["data"]["jenis_kelamin"];
         _noRumah = response["data"]["no_rumah"];
         _foto = response["data"]["foto"];
       });
@@ -89,7 +92,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
       _savePengurus(_nikController.text, _selectedJabatan, _selectedPeriode);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Pilih jabatan dan periode pengurus terlebih dahulu!')),
+        SnackBar(
+            content:
+                Text('Pilih jabatan dan periode pengurus terlebih dahulu!')),
       );
     }
   }
@@ -118,6 +123,16 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(response["data"])),
       );
+    }
+  }
+
+  String formatDate(String date) {
+    if (date.isEmpty) return 'Unknown Date';
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return DateFormat('dd MMMM yyyy').format(parsedDate);
+    } catch (e) {
+      return 'Invalid Date';
     }
   }
 
@@ -206,11 +221,16 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                         ),
                       )
                     : Container(),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 Text('${_nama}',
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold)),
-                Text('Tanggal Lahir: $_tglLahir'),
+                SizedBox(height: 10),
+                Text('Jenis Kelamin: $_jenisKelamin'),
+                SizedBox(height: 2),
+                Text(
+                    'Tanggal Lahir: ${_tglLahir != null ? formatDate(_tglLahir!) : 'Unknown'}'),
+                SizedBox(height: 2),
                 Text('No Rumah: $_noRumah'),
                 SizedBox(height: 20),
                 DropdownButtonFormField<String>(
