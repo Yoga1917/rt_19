@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:rt_19/pages/home/kegiatan.dart';
 
@@ -11,7 +12,6 @@ class InputKegiatanPage extends StatefulWidget {
 }
 
 class _InputKegiatanPageState extends State<InputKegiatanPage> {
-  final TextEditingController kegiatanController = TextEditingController();
   final TextEditingController nikController = TextEditingController();
   final TextEditingController tglController = TextEditingController();
   final TextEditingController keteranganController = TextEditingController();
@@ -23,6 +23,13 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   String? pilihBulan;
   String? pilihKegiatan;
   List<dynamic> rkbData = [];
+  Map<String, dynamic>? rkbDataFiltered;
+  
+  @override
+  void initState() {
+    super.initState();
+    _getRkb();
+  }
 
   Future<void> _pickPDF() async {
     // Memilih file dengan tipe pdf
@@ -44,7 +51,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   }
 
   void _kirimData() async {
-    if (kegiatanController.text.isEmpty ||
+    if (pilihKegiatan == null ||
         nikController.text.isEmpty ||
         tglController.text.isEmpty ||
         keteranganController.text.isEmpty ||
@@ -52,6 +59,13 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Lengkapi data yang diperlukan!')));
     } else {
+      // print("NIK : ${nikController.text}");
+      // print("Kegiatan : $pilihKegiatan");
+      // print("Tgl : ${tglController.text}");
+      // print("Proposal : ${_proposal}");
+      // print("Desc : ${keteranganController.text}");
+      // return;
+
       setState(() {
         isLoading = true;
       });
@@ -64,7 +78,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
     var request = http.MultipartRequest(
         'POST', Uri.parse('https://pexadont.agsa.site/api/kegiatan/simpan'));
     request.fields['nik'] = nikController.text;
-    request.fields['nama_kegiatan'] = kegiatanController.text;
+    request.fields['nama_kegiatan'] = pilihKegiatan!;
     request.fields['keterangan'] = keteranganController.text;
     request.fields['tgl'] = tglController.text;
     if (_proposal != null) {
@@ -154,11 +168,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   }
 
   void _getRkb() async {
-    var tahun = pilihBulan ?? DateTime.now().year;
-
     try {
       final response = await http.get(
-        Uri.parse('https://pexadont.agsa.site/api/rkb?tahun=${tahun}'),
+        Uri.parse('https://pexadont.agsa.site/api/rkb'),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -166,13 +178,12 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         setState(() {
           rkbData = responseData['data'];
-          isLoading = false;
         });
       } else {
-        showSnackbar('Gagal memuat kegiatan bulanan');
+        showSnackbar('Gagal mendapatkan data rencana kegiatan');
       }
     } catch (e) {
-      showSnackbar('Terjadi kesalahan: $e');
+      showSnackbar('Gagal mendapatkan data rencana kegiatan');
     }
   }
 
@@ -180,6 +191,47 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
+  }
+
+  void _pilihBulan(bulan) {
+    setState(() {
+      pilihBulan = bulan;
+      pilihKegiatan = null;
+      tglController.clear();
+      rkbDataFiltered = null;
+    });
+
+    final selectedData = rkbData.firstWhere(
+      (item) => item["bulan"] == pilihBulan,
+      orElse: () => null,
+    );
+
+    setState(() {
+      rkbDataFiltered = selectedData;
+    });
+
+    if(selectedData['data'].isEmpty){
+      showSnackbar("Tidak ada kegiatan di bulan tersebut");
+    }
+  }
+
+  void _pilihKegiatan(kegiatan) {
+    setState(() {
+      pilihKegiatan = kegiatan;
+    });
+
+    final selectedRkb = rkbData.firstWhere(
+      (item) => item["bulan"] == pilihBulan,
+      orElse: () => null,
+    );
+    final getKegiatanSelected = selectedRkb['data'].firstWhere(
+      (item) => item["keterangan"] == kegiatan,
+      orElse: () => null,
+    );
+
+    setState(() {
+      tglController.text = getKegiatanSelected['tgl'];
+    });
   }
 
   @override
@@ -337,31 +389,25 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                     color: Colors.black),
                               ),
                               items: [
-                                'Januari',
-                                'Februari',
-                                'Maret',
-                                'April',
-                                'Mei',
-                                'Juni',
-                                'Juli',
-                                'Agustus',
-                                'September',
-                                'Oktober',
-                                'November',
-                                'Desember',
+                                'Januari ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Februari ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Maret ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'April ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Mei ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Juni ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Juli ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Agustus ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'September ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Oktober ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'November ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Desember ' + DateFormat('yyyy').format(new DateTime.now()),
                               ].map((String month) {
                                 return DropdownMenuItem<String>(
                                   value: month,
                                   child: Text(month),
                                 );
                               }).toList(),
-                              onChanged: (String? newMonth) {
-                                setState(() {
-                                  pilihBulan = newMonth;
-                                  pilihKegiatan = null;
-                                });
-                                _getRkb();
-                              },
+                              onChanged: (String? newMonth) => _pilihBulan(newMonth),
                             ),
                           ),
                         if (validNIK && pilihBulan != null)
@@ -386,17 +432,16 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 prefixIcon:
                                     Icon(Icons.event, color: Colors.black),
                               ),
-                              items: rkbData.map((activity) {
-                                return DropdownMenuItem<String>(
-                                  value: activity['keterangan'],
-                                  child: Text(activity['keterangan']),
-                                );
-                              }).toList(),
-                              onChanged: (String? newActivity) {
-                                setState(() {
-                                  pilihKegiatan = newActivity;
-                                });
-                              },
+                              items: (rkbDataFiltered != null && rkbDataFiltered!['data'] != null)
+                                ? rkbDataFiltered!['data'].map<DropdownMenuItem<String>>((activity) {
+                                    return DropdownMenuItem<String>(
+                                      value: activity['keterangan'],
+                                      child: Text(activity['keterangan']),
+                                    );
+                                  }).toList()
+                                : [],
+                              value: pilihKegiatan,
+                              onChanged: (String? newActivity) => _pilihKegiatan(newActivity),
                             ),
                           ),
                         if (validNIK)
