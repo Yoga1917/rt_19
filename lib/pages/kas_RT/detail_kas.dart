@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:indonesia/indonesia.dart';
+import 'package:intl/intl.dart';
 import 'package:rt_19/pages/home/kas.dart';
 import 'package:rt_19/widget/toggle_tabs.dart';
 
@@ -81,6 +82,16 @@ class _DetailKASPageState extends State<DetailKASPage> {
     );
   }
 
+  String formatDate(String date) {
+    if (date.isEmpty) return 'Unknown Date';
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return DateFormat('dd MMMM yyyy').format(parsedDate);
+    } catch (e) {
+      return 'Invalid Date';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,7 +152,12 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                     ),
                                     SizedBox(height: 30),
                                     pemasukanData.isEmpty
-                                        ? const Text("Belum ada data pemasukan")
+                                        ? Column(
+                                            children: [
+                                              SizedBox(height: 200),
+                                              Text("Belum ada data pemasukan."),
+                                            ],
+                                          )
                                         : ListView.builder(
                                             shrinkWrap: true,
                                             physics:
@@ -206,24 +222,25 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                                 Icon(
                                                                     Icons
                                                                         .calendar_month,
+                                                                    size: 20,
                                                                     color: Colors
                                                                         .black),
                                                                 SizedBox(
                                                                     width: 10),
                                                                 Text(
-                                                                  pemasukan[
-                                                                          'tgl'] ??
-                                                                      "28 Desember 2024",
+                                                                  '${formatDate(pemasukan['tgl'])}',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
                                                                         14,
+                                                                    color: Colors
+                                                                        .black,
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                             SizedBox(
-                                                                height: 20),
+                                                                height: 10),
                                                             Text(
                                                               rupiah(pemasukan[
                                                                   'jumlah']),
@@ -237,9 +254,9 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(height: 20),
+                                                      SizedBox(height: 10),
                                                       Text(
-                                                        'Sumber :',
+                                                        'Didapatkan dari :',
                                                         style: TextStyle(
                                                           fontSize: 16,
                                                           fontWeight:
@@ -247,16 +264,17 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        height: 20,
+                                                        height: 5,
                                                       ),
                                                       Text(
                                                         pemasukan['keterangan'],
                                                         style: TextStyle(
                                                           fontSize: 14,
+                                                          color: Colors.black,
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        height: 30,
+                                                        height: 15,
                                                       ),
                                                     ],
                                                   ),
@@ -275,8 +293,13 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                     ),
                                     SizedBox(height: 30),
                                     pengeluaranData.isEmpty
-                                        ? const Text(
-                                            "Belum ada data pengeluaran")
+                                        ? Column(
+                                            children: [
+                                              SizedBox(height: 200),
+                                              Text(
+                                                  "Belum ada data pengeluaran."),
+                                            ],
+                                          )
                                         : ListView.builder(
                                             shrinkWrap: true,
                                             physics:
@@ -341,24 +364,25 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                                 Icon(
                                                                     Icons
                                                                         .calendar_month,
+                                                                    size: 20,
                                                                     color: Colors
                                                                         .black),
                                                                 SizedBox(
                                                                     width: 10),
                                                                 Text(
-                                                                  pengeluaran[
-                                                                          'tgl'] ??
-                                                                      '28 Desember 2024',
+                                                                  '${formatDate(pengeluaran['tgl'])}',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
                                                                         14,
+                                                                    color: Colors
+                                                                        .black,
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                             SizedBox(
-                                                                height: 20),
+                                                                height: 10),
                                                             Text(
                                                               rupiah(pengeluaran[
                                                                   'jumlah']),
@@ -372,29 +396,26 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                           ],
                                                         ),
                                                       ),
-                                                      SizedBox(height: 20),
+                                                      SizedBox(height: 10),
+                                                      Text(
+                                                        'Digunakan :',
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
                                                       pengeluaran['foto'] !=
                                                               null
                                                           ? Column(
                                                               children: [
-                                                                Text(
-                                                                  'Digunakan :',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    height: 20),
                                                                 Padding(
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
                                                                       horizontal:
-                                                                          20),
+                                                                          20,
+                                                                      vertical:
+                                                                          10),
                                                                   child:
                                                                       ClipRRect(
                                                                     borderRadius:
@@ -412,19 +433,17 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                                 ),
                                                               ],
                                                             )
-                                                          : const SizedBox(),
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
+                                                          : SizedBox(height: 5),
                                                       Text(
                                                         pengeluaran[
                                                             'keterangan'],
                                                         style: TextStyle(
                                                           fontSize: 14,
+                                                          color: Colors.black,
                                                         ),
                                                       ),
                                                       SizedBox(
-                                                        height: 30,
+                                                        height: 20,
                                                       ),
                                                     ],
                                                   ),

@@ -211,7 +211,21 @@ class _KasPageState extends State<KasPage> {
                         height: 30,
                       ),
                       if (kasData.length > 0)
-                        Text('Saldo Kas : ${rupiah(saldo_kas)}'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Saldo Kas : ',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            Text(
+                              '${rupiah(saldo_kas)},-',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       SizedBox(height: 10),
                       kasData.length > 0
                           ? ListView.builder(

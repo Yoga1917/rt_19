@@ -8,7 +8,7 @@ import 'package:rt_19/app/splash_screen.dart';
 void main() async {
   Intl.defaultLocale = 'id_ID';
   runApp(MyApp());
-}
+}  
 
 class MyApp extends StatelessWidget {
   @override

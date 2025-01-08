@@ -50,9 +50,10 @@ class KartuLaporan extends StatelessWidget {
             children: [
               const Padding(
                 padding: EdgeInsets.only(right: 6),
-                child: Icon(Icons.person_2_outlined, size: 16),
+                child: Icon(Icons.person_2_outlined,
+                    size: 16, color: Colors.black),
               ),
-              Text(aksiBy),
+              Text(aksiBy, style: TextStyle(color: Colors.black)),
             ],
           ),
           SizedBox(height: 15),
@@ -61,11 +62,14 @@ class KartuLaporan extends StatelessWidget {
             children: [
               Text(
                 'Pemasukan:',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                style: TextStyle(color: Colors.black, fontSize: 14),
               ),
               Text(
-                income,
-                style: TextStyle(fontSize: 14),
+                '$income,-',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -75,11 +79,14 @@ class KartuLaporan extends StatelessWidget {
             children: [
               Text(
                 'Pengeluaran:',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                style: TextStyle(color: Colors.black, fontSize: 14),
               ),
               Text(
-                expense,
-                style: TextStyle(fontSize: 14),
+                '$expense,-',
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
             ],
           ),
@@ -112,32 +119,32 @@ class KartuLaporan extends StatelessWidget {
                   ),
                 ),
               ),
-              if(publish == "0")
-              GestureDetector(
-                onTap: onPublish,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xff30C083),
-                    border: Border.all(
-                      color: Color(0xff30C083),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: const Text(
-                      'Publish',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 16,
+              if (publish == "0")
+                GestureDetector(
+                  onTap: onPublish,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xff30C083),
+                      border: Border.all(
+                        color: Color(0xff30C083),
+                        width: 2,
                       ),
-                      textAlign: TextAlign.center,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: const Text(
+                        'Publish',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ],

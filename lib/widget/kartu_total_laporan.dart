@@ -33,7 +33,7 @@ class TotalCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Total',
+            'Rekapitulasi Dana',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
@@ -42,11 +42,14 @@ class TotalCard extends StatelessWidget {
             children: [
               Text(
                 'Pemasukan:',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                style: TextStyle(color: Colors.black, fontSize: 14),
               ),
               Text(
-                totalIncome,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                '$totalIncome,-',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.black),
               ),
             ],
           ),
@@ -56,11 +59,14 @@ class TotalCard extends StatelessWidget {
             children: [
               Text(
                 'Pengeluaran:',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                style: TextStyle(color: Colors.black, fontSize: 14),
               ),
               Text(
-                totalExpense,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                '$totalExpense,-',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.black),
               ),
             ],
           ),
@@ -70,11 +76,14 @@ class TotalCard extends StatelessWidget {
             children: [
               Text(
                 'Sisa Dana:',
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                style: TextStyle(color: Colors.black, fontSize: 14),
               ),
               Text(
-                remainingFunds,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                '$remainingFunds,-',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.black),
               ),
             ],
           ),
