@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'package:rt_19/app/splash_screen.dart';
 
 void main() async {
@@ -26,8 +25,27 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(),
         textSelectionTheme: TextSelectionThemeData(
-          selectionColor: Color(0xff30C083), // Mengatur warna blok seleksi
-          cursorColor: Color(0xff30C083), // Mengatur warna cursor
+          selectionColor: Color(0xff30C083),
+          cursorColor: Color(0xff30C083),
+          selectionHandleColor: Color(0xff30C083),
+        ),
+        dialogTheme: DialogTheme(
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(color: Color(0xff30C083)),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: Color(0xff30C083),
+          ),
+        ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Color(0xff30C083),
+          textTheme: ButtonTextTheme.primary,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xff30C083)),
+          ),
         ),
       ),
     );
