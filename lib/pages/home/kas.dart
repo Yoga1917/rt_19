@@ -24,6 +24,7 @@ class _KasPageState extends State<KasPage> {
   @override
   void initState() {
     super.initState();
+    selectedYear = DateTime.now().year.toString();
     _fetchKas();
   }
 

@@ -8,7 +8,7 @@ import 'package:rt_19/app/splash_screen.dart';
 void main() async {
   Intl.defaultLocale = 'id_ID';
   runApp(MyApp());
-}  
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -25,6 +25,10 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(),
+        textSelectionTheme: TextSelectionThemeData(
+          selectionColor: Color(0xff30C083), // Mengatur warna blok seleksi
+          cursorColor: Color(0xff30C083), // Mengatur warna cursor
+        ),
       ),
     );
   }

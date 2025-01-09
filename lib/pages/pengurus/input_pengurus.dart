@@ -11,6 +11,7 @@ class InputPengurusPage extends StatefulWidget {
 
 class _InputPengurusPageState extends State<InputPengurusPage> {
   final TextEditingController _nikController = TextEditingController();
+  final TextEditingController _periodeController = TextEditingController();
   String? _nama;
   String? _tglLahir;
   String? _noRumah;
@@ -18,7 +19,6 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   String? _foto;
 
   String? _selectedJabatan;
-  String? _selectedPeriode;
   bool isLoading = false;
 
   void _cekNIK() async {
@@ -83,19 +83,36 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
     }
   }
 
-  void _simpan() {
-    if (_selectedJabatan != null || _selectedPeriode != null) {
-      print('NIK: ${_nikController.text}');
-      print('Jabatan: $_selectedJabatan');
-      print('Periode: $_selectedPeriode');
+  bool _isValidPeriode(String periode) {
+    final RegExp regex = RegExp(r'^\d{4}-\d{4}$');
+    return regex.hasMatch(periode);
+  }
 
-      _savePengurus(_nikController.text, _selectedJabatan, _selectedPeriode);
-    } else {
+  void _simpan() {
+    if (_selectedJabatan == null && _periodeController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text('Pilih jabatan dan periode pengurus terlebih dahulu!')),
+          content: Text(
+            'Pilih jabatan dan isi periode pengurus terlebih dahulu!',
+          ),
+        ),
       );
+    } else if (_selectedJabatan == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pilih jabatan terlebih dahulu!'),
+        ),
+      );
+    } else if (_periodeController.text.isEmpty ||
+        !_isValidPeriode(_periodeController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Isi periode pengurus dengan format yyyy-yyyy!'),
+        ),
+      );
+    } else {
+      _savePengurus(
+          _nikController.text, _selectedJabatan, _periodeController.text);
     }
   }
 
@@ -164,11 +181,11 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
               SizedBox(height: 30),
               TextFormField(
                 controller: _nikController,
-                cursorColor: Color(0xff30C083),
+                textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.credit_card),
                   labelText: 'NIK',
-                  floatingLabelStyle: const TextStyle(color: Colors.black),
+                  floatingLabelStyle: TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -223,15 +240,25 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                     : Container(),
                 SizedBox(height: 20),
                 Text('${_nama}',
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Text('Jenis Kelamin: $_jenisKelamin'),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+                SizedBox(height: 5),
+                Text(
+                  'Jenis Kelamin: $_jenisKelamin',
+                  style: TextStyle(color: Colors.black),
+                ),
                 SizedBox(height: 2),
                 Text(
-                    'Tanggal Lahir: ${_tglLahir != null ? formatDate(_tglLahir!) : 'Unknown'}'),
+                  'Tanggal Lahir: ${_tglLahir != null ? formatDate(_tglLahir!) : 'Unknown'}',
+                  style: TextStyle(color: Colors.black),
+                ),
                 SizedBox(height: 2),
-                Text('No Rumah: $_noRumah'),
+                Text(
+                  'No Rumah: $_noRumah',
+                  style: TextStyle(color: Colors.black),
+                ),
                 SizedBox(height: 20),
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
@@ -247,7 +274,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                         width: 2,
                       ),
                     ),
-                    prefixIcon: Icon(Icons.work, color: Colors.black),
+                    prefixIcon: Icon(Icons.work),
                   ),
                   items: [
                     'Ketua RT',
@@ -268,10 +295,13 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                   },
                 ),
                 SizedBox(height: 20),
-                DropdownButtonFormField<String>(
+                TextFormField(
+                  controller: _periodeController,
                   decoration: InputDecoration(
-                    labelText: 'Pilih Periode',
-                    floatingLabelStyle: const TextStyle(color: Colors.black),
+                    prefixIcon: const Icon(Icons.credit_card),
+                    labelText: 'Periode',
+                    labelStyle: TextStyle(color: Colors.black),
+                    floatingLabelStyle: TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -282,23 +312,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                         width: 2,
                       ),
                     ),
-                    prefixIcon: Icon(Icons.list, color: Colors.black),
                   ),
-                  items: [
-                    '2019-2024',
-                    '2024-2029',
-                    '2029-2034',
-                  ].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedPeriode = newValue;
-                    });
-                  },
                 ),
                 SizedBox(height: 20),
                 GestureDetector(
