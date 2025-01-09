@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:rt_19/pages/home/fasilitas.dart';
 import 'package:http/http.dart' as http;
+import 'package:rt_19/pages/home/fasilitas.dart';
 
 class EditFasilitasPage extends StatefulWidget {
   final String id_fasilitas;
@@ -24,7 +24,7 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
   @override
   void initState() {
     super.initState();
-    
+
     jumlahController.text = widget.jml;
     kondisi = widget.status;
   }
@@ -49,7 +49,10 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
     });
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/fasilitas/update/${widget.id_fasilitas}'));
+      var request = http.MultipartRequest(
+          'POST',
+          Uri.parse(
+              'https://pexadont.agsa.site/api/fasilitas/update/${widget.id_fasilitas}'));
       request.fields['nama'] = widget.nama;
       request.fields['jml'] = jumlahController.text;
       request.fields['status'] = kondisi!;
@@ -60,8 +63,7 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
 
       if (response['status'] == 202) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Data fasilitas berhasil diperbarui')),
+          const SnackBar(content: Text('Data fasilitas berhasil diperbarui')),
         );
         Navigator.pushReplacement(
           context,
@@ -140,7 +142,6 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             controller: jumlahController,
-                            cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.list),
                               labelText: 'Jumlah',

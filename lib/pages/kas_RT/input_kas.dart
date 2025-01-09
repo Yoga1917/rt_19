@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:rt_19/pages/home/kas.dart';
 import 'package:rt_19/widget/toggle_tabs.dart';
 
@@ -281,7 +282,6 @@ class _InputKASPageState extends State<InputKASPage> {
                                       child: TextFormField(
                                         controller: _jumlahPemasukanController,
                                         keyboardType: TextInputType.number,
-                                        cursorColor: Color(0xff30C083),
                                         decoration: InputDecoration(
                                           prefixIcon:
                                               const Icon(Icons.attach_money),

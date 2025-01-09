@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:rt_19/pages/home/kegiatan.dart';
 
 class InputKegiatanPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   String? pilihKegiatan;
   List<dynamic> rkbData = [];
   Map<String, dynamic>? rkbDataFiltered;
-  
+
   @override
   void initState() {
     super.initState();
@@ -210,7 +211,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
       rkbDataFiltered = selectedData;
     });
 
-    if(selectedData['data'].isEmpty){
+    if (selectedData['data'].isEmpty) {
       showSnackbar("Tidak ada kegiatan di bulan tersebut");
     }
   }
@@ -293,7 +294,6 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 left: 20, right: 20, top: 20),
                             child: TextFormField(
                               controller: nikController,
-                              cursorColor: Color(0xff30C083),
                               decoration: InputDecoration(
                                 prefixIcon: const Icon(Icons.person),
                                 labelText: 'NIK Pelaksana',
@@ -389,25 +389,50 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                     color: Colors.black),
                               ),
                               items: [
-                                'Januari ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Februari ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Maret ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'April ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Mei ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Juni ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Juli ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Agustus ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'September ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Oktober ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'November ' + DateFormat('yyyy').format(new DateTime.now()),
-                                'Desember ' + DateFormat('yyyy').format(new DateTime.now()),
+                                'Januari ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Februari ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Maret ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'April ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Mei ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Juni ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Juli ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Agustus ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'September ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Oktober ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'November ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
+                                'Desember ' +
+                                    DateFormat('yyyy')
+                                        .format(new DateTime.now()),
                               ].map((String month) {
                                 return DropdownMenuItem<String>(
                                   value: month,
                                   child: Text(month),
                                 );
                               }).toList(),
-                              onChanged: (String? newMonth) => _pilihBulan(newMonth),
+                              onChanged: (String? newMonth) =>
+                                  _pilihBulan(newMonth),
                             ),
                           ),
                         if (validNIK && pilihBulan != null)
@@ -432,16 +457,20 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 prefixIcon:
                                     Icon(Icons.event, color: Colors.black),
                               ),
-                              items: (rkbDataFiltered != null && rkbDataFiltered!['data'] != null)
-                                ? rkbDataFiltered!['data'].map<DropdownMenuItem<String>>((activity) {
-                                    return DropdownMenuItem<String>(
-                                      value: activity['keterangan'],
-                                      child: Text(activity['keterangan']),
-                                    );
-                                  }).toList()
-                                : [],
+                              items: (rkbDataFiltered != null &&
+                                      rkbDataFiltered!['data'] != null)
+                                  ? rkbDataFiltered!['data']
+                                      .map<DropdownMenuItem<String>>(
+                                          (activity) {
+                                      return DropdownMenuItem<String>(
+                                        value: activity['keterangan'],
+                                        child: Text(activity['keterangan']),
+                                      );
+                                    }).toList()
+                                  : [],
                               value: pilihKegiatan,
-                              onChanged: (String? newActivity) => _pilihKegiatan(newActivity),
+                              onChanged: (String? newActivity) =>
+                                  _pilihKegiatan(newActivity),
                             ),
                           ),
                         if (validNIK)

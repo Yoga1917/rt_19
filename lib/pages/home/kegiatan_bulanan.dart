@@ -237,7 +237,6 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                 child: TextFormField(
                                   controller: _keteranganController,
                                   maxLines: 5,
-                                  cursorColor: Color(0xff30C083),
                                   decoration: InputDecoration(
                                     labelText: 'Keterangan Kegiatan',
                                     floatingLabelStyle: const TextStyle(

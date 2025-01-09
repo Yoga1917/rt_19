@@ -20,11 +20,14 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   String? _foto;
 
   String? _selectedJabatan;
-  bool isLoading = false;
+  bool isLoadingCek = false;
+  bool isLoadingSimpan = false;
+  bool isCekData = false;
 
   void _cekNIK() async {
     setState(() {
-      isLoading = true;
+      isLoadingCek = true;
+      isCekData = true;
     });
 
     if (_nikController.text.isEmpty) {
@@ -32,7 +35,8 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
         SnackBar(content: Text('Harap isi data NIK!')),
       );
       setState(() {
-        isLoading = false;
+        isLoadingCek = false;
+        isCekData = false;
       });
       return;
     }
@@ -42,7 +46,8 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
         SnackBar(content: Text('NIK harus 16 digit angka!')),
       );
       setState(() {
-        isLoading = false;
+        isLoadingCek = false;
+        isCekData = false;
       });
       return;
     }
@@ -52,7 +57,8 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
         SnackBar(content: Text('Data NIK harus berupa angka!')),
       );
       setState(() {
-        isLoading = false;
+        isLoadingCek = false;
+        isCekData = false;
       });
       return;
     }
@@ -66,7 +72,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
     final response = jsonDecode(request.body);
 
     setState(() {
-      isLoading = false;
+      isLoadingCek = false;
     });
 
     if (response["status"] == 200) {
@@ -78,9 +84,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
         _foto = response["data"]["foto"];
       });
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data warga tidak ditemukan')),
-      );
+      setState(() {
+        _nama = null;
+      });
     }
   }
 
@@ -118,29 +124,43 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
   }
 
   void _savePengurus(nik, jabatan, periode) async {
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('https://pexadont.agsa.site/api/pengurus/simpan'));
-    request.fields['nik'] = nik;
-    request.fields['jabatan'] = jabatan;
-    request.fields['periode'] = periode;
+    setState(() {
+      isLoadingSimpan = true;
+    });
 
-    var streamedResponse = await request.send();
-    var responseData = await http.Response.fromStream(streamedResponse);
-    var response = jsonDecode(responseData.body);
+    try {
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('https://pexadont.agsa.site/api/pengurus/simpan'));
+      request.fields['nik'] = nik;
+      request.fields['jabatan'] = jabatan;
+      request.fields['periode'] = periode;
 
-    if (response["status"] == 201) {
+      var streamedResponse = await request.send();
+      var responseData = await http.Response.fromStream(streamedResponse);
+      var response = jsonDecode(responseData.body);
+
+      if (response["status"] == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Data pengurus berhasil ditambahkan')),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => PengurusPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response["data"])),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data pengurus berhasil ditambahkan')),
+        SnackBar(content: Text('Terjadi kesalahan, coba lagi!')),
       );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => PengurusPage()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response["data"])),
-      );
+    } finally {
+      setState(() {
+        isLoadingSimpan = false;
+      });
     }
   }
 
@@ -174,7 +194,10 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
           },
         ),
       ),
-      body: SingleChildScrollView(
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -182,7 +205,6 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
               SizedBox(height: 30),
               TextFormField(
                 controller: _nikController,
-                textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.credit_card),
                   labelText: 'NIK',
@@ -202,7 +224,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
               SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  if (!isLoading) {
+                  if (!isLoadingCek) {
                     _cekNIK();
                   }
                 },
@@ -216,7 +238,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(15),
                     child: Text(
-                      isLoading ? 'Cek Warga...' : 'Cek Warga',
+                      isLoadingCek ? 'Cek Warga...' : 'Cek Warga',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
@@ -228,119 +250,158 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                 ),
               ),
               SizedBox(height: 30),
-              if (_nama != null) ...[
-                _foto != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(
-                          'https://pexadont.agsa.site/uploads/warga/${_foto}',
-                          fit: BoxFit.cover,
-                          width: double.infinity,
+              Expanded(
+                child: isLoadingCek
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xff30C083),
                         ),
                       )
-                    : Container(),
-                SizedBox(height: 20),
-                Text('${_nama}',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black)),
-                SizedBox(height: 5),
-                Text(
-                  'Jenis Kelamin: $_jenisKelamin',
-                  style: TextStyle(color: Colors.black),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'Tanggal Lahir: ${_tglLahir != null ? formatDate(_tglLahir!) : 'Unknown'}',
-                  style: TextStyle(color: Colors.black),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'No Rumah: $_noRumah',
-                  style: TextStyle(color: Colors.black),
-                ),
-                SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: 'Jabatan',
-                    floatingLabelStyle: const TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color(0xff30C083),
-                        width: 2,
-                      ),
-                    ),
-                    prefixIcon: Icon(Icons.work),
-                  ),
-                  items: [
-                    'Ketua RT',
-                    'Sekretaris',
-                    'Bendahara',
-                    'Kordinator Kebersihan',
-                    'Kordinator Keamanan',
-                  ].map((String jabatan) {
-                    return DropdownMenuItem<String>(
-                      value: jabatan,
-                      child: Text(jabatan),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedJabatan = newValue;
-                    });
-                  },
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _periodeController,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.credit_card),
-                    labelText: 'Periode',
-                    labelStyle: TextStyle(color: Colors.black),
-                    floatingLabelStyle: TextStyle(color: Colors.black),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Color(0xff30C083),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                GestureDetector(
-                  onTap: isLoading ? null : _simpan,
-                  child: Container(
-                    width: double.infinity,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff30C083),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Text(
-                        isLoading ? 'Simpan...' : 'Simpan',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
-              ],
+                    : _nama == null && isCekData
+                        ? Center(
+                            child: Text(
+                              'Data tidak ditemukan.',
+                            ),
+                          )
+                        : (_nama != null
+                            ? SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    if (_foto != null)
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Image.network(
+                                          'https://pexadont.agsa.site/uploads/warga/${_foto}',
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                        ),
+                                      ),
+                                    const SizedBox(height: 20),
+                                    Text(
+                                      '${_nama}',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'Jenis Kelamin: $_jenisKelamin',
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Tanggal Lahir: ${_tglLahir != null ? formatDate(_tglLahir!) : 'Unknown'}',
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'No Rumah: $_noRumah',
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    DropdownButtonFormField<String>(
+                                      autofocus: false,
+                                      decoration: InputDecoration(
+                                        labelText: 'Jabatan',
+                                        floatingLabelStyle: const TextStyle(
+                                            color: Colors.black),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xff30C083),
+                                            width: 2,
+                                          ),
+                                        ),
+                                        prefixIcon: const Icon(Icons.work),
+                                      ),
+                                      items: [
+                                        'Ketua RT',
+                                        'Sekretaris',
+                                        'Bendahara',
+                                        'Kordinator Kebersihan',
+                                        'Kordinator Keamanan',
+                                      ].map((String jabatan) {
+                                        return DropdownMenuItem<String>(
+                                          value: jabatan,
+                                          child: Text(jabatan),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedJabatan = newValue;
+                                        });
+                                        FocusScope.of(context).unfocus();
+                                      },
+                                    ),
+                                    const SizedBox(height: 20),
+                                    TextFormField(
+                                      controller: _periodeController,
+                                      decoration: InputDecoration(
+                                        prefixIcon:
+                                            const Icon(Icons.credit_card),
+                                        labelText: 'Periode',
+                                        labelStyle: const TextStyle(
+                                            color: Colors.black),
+                                        floatingLabelStyle: const TextStyle(
+                                            color: Colors.black),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: const BorderSide(
+                                            color: Color(0xff30C083),
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    GestureDetector(
+                                      onTap: isLoadingSimpan ? null : _simpan,
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 55,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xff30C083),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: Text(
+                                            isLoadingSimpan
+                                                ? 'Simpan...'
+                                                : 'Simpan',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 18,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 30),
+                                  ],
+                                ),
+                              )
+                            : SizedBox()),
+              ),
             ],
           ),
         ),

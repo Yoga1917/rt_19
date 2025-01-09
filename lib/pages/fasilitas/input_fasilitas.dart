@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -151,7 +152,6 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             controller: namaController,
-                            cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.home),
                               labelText: 'Nama Fasilitas',

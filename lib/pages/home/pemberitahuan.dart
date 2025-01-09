@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/pages/pemberitahuan/input_pemberitahuan.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class PemberitahuanPage extends StatefulWidget {
@@ -185,7 +185,6 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                           Expanded(
                             child: TextField(
                               controller: searchController,
-                              cursorColor: Color(0xff30C083),
                               decoration: InputDecoration(
                                 hintText: 'Cari Pemberitahuan...',
                                 border: OutlineInputBorder(

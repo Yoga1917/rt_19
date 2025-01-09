@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/home/pemberitahuan.dart';
-import 'package:file_picker/file_picker.dart';
 
 class InputPemberitahuanPage extends StatefulWidget {
   @override
@@ -40,8 +40,7 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
         deskripsiController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content:
-                Text('Nama dan Isi Pemberitahuan harus diisi!')),
+            content: Text('Nama dan Isi Pemberitahuan harus diisi!')),
       );
       return;
     }
@@ -158,7 +157,6 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             controller: pemberitahuanController,
-                            cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               prefixIcon:
                                   const Icon(Icons.notifications_active_sharp),

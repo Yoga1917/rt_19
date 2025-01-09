@@ -215,7 +215,6 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                   horizontal: 20, vertical: 20),
                               child: TextField(
                                 controller: searchController,
-                                cursorColor: Color(0xff30C083),
                                 decoration: InputDecoration(
                                   hintText: 'Cari data warga Aktif...',
                                   border: OutlineInputBorder(

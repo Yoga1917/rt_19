@@ -177,7 +177,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
                               Expanded(
                                 child: TextField(
                                   controller: searchController,
-                                  cursorColor: Color(0xff30C083),
                                   decoration: InputDecoration(
                                     hintText: 'Cari Kegiatan...',
                                     border: OutlineInputBorder(
