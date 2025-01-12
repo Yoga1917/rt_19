@@ -235,7 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                                         : Icons.visibility_off,
                                     color: _isPasswordVisible
                                         ? Color(0xff30C083)
-                                        : Colors.black,
+                                        : null,
                                   ),
                                   onPressed: () {
                                     setState(() {

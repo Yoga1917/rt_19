@@ -19,7 +19,63 @@ class _PengurusPageState extends State<PengurusPage> {
   @override
   void initState() {
     super.initState();
+    generatePeriodList(); // generate periods first
+    selectedPeriode = getCurrentPeriod();
     fetchPengurusData();
+  }
+
+  // Fungsi untuk mendapatkan periode yang sesuai dengan tahun sekarang
+  String? getCurrentPeriod() {
+    int currentYear = DateTime.now().year;
+    List<String> periods = generatePeriodList();
+    // Cari periode yang mencakup tahun sekarang
+    for (String period in periods) {
+      int startYear = int.parse(period.split('-')[0]);
+      int endYear = int.parse(period.split('-')[1]);
+      if (currentYear >= startYear && currentYear <= endYear) {
+        return period;
+      }
+    }
+    return null;
+  }
+
+  List<String> generatePeriodList() {
+    int currentYear = DateTime.now().year;
+    int startYear = 2009;
+    List<String> periods = [];
+
+    for (int i = startYear; i <= currentYear + 10; i += 5) {
+      int endYear = i + 5;
+      periods.add('$i-$endYear');
+    }
+
+    List<String> selectedPeriods = [];
+    bool foundCurrentPeriod = false;
+
+    for (int i = periods.length - 1; i >= 0; i--) {
+      String period = periods[i];
+      int startPeriod = int.parse(period.split('-')[0]);
+      int endPeriod = int.parse(period.split('-')[1]);
+
+      if (currentYear >= startPeriod && currentYear <= endPeriod) {
+        selectedPeriods.add(period);
+        foundCurrentPeriod = true;
+      }
+
+      if (foundCurrentPeriod && selectedPeriods.length < 4) {
+        if (!selectedPeriods.contains(period)) {
+          selectedPeriods.add(period);
+        }
+      }
+    }
+
+    selectedPeriods.sort((a, b) {
+      int aStart = int.parse(a.split('-')[0]);
+      int bStart = int.parse(b.split('-')[0]);
+      return bStart.compareTo(aStart);
+    });
+
+    return selectedPeriods;
   }
 
   Future<void> fetchPengurusData() async {
@@ -146,8 +202,8 @@ class _PengurusPageState extends State<PengurusPage> {
                               dropdownColor: Color(0xff30C083),
                               iconEnabledColor: Colors.white,
                               hint: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 15),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
                                 child: Text(
                                   'Periode',
                                   style: TextStyle(
@@ -155,11 +211,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                 ),
                               ),
                               value: selectedPeriode,
-                              items: [
-                                '2019-2024',
-                                '2024-2029',
-                                '2029-2034',
-                              ].map((String value) {
+                              items: generatePeriodList().map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Padding(
