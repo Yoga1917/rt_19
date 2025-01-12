@@ -262,8 +262,7 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
                                   ),
                                 )),
                           ),
-                          if (_image !=
-                              null) // Display image preview if selected
+                          if (_image != null)
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 20),

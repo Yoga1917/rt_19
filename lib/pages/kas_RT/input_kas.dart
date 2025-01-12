@@ -225,326 +225,334 @@ class _InputKASPageState extends State<InputKASPage> {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return Column();
-          } else {
-            return Column(
-              children: [
-                SizedBox(height: 30),
-                ToggleTabs(
-                  isSelectedLeft: isPemasukanSelected,
-                  leftLabel: 'Pemasukan',
-                  rightLabel: 'Pengeluaran',
-                  onToggle: (value) {
-                    setState(() {
-                      isPemasukanSelected = value;
-                    });
-                  },
-                ),
-                SizedBox(height: 30),
-                Text(
-                  periode.toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-                SizedBox(height: 30),
-                Center(
-                  child: isPemasukanSelected
-                      ? Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(width: 1, color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      spreadRadius: 1,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: TextFormField(
-                                        controller: _jumlahPemasukanController,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          prefixIcon:
-                                              const Icon(Icons.attach_money),
-                                          labelText: 'Pemasukan',
-                                          floatingLabelStyle: const TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: const Color(0xff30C083),
-                                              width: 2,
-                                            ),
-                                          ),
-                                        ),
+      body: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: SingleChildScrollView(
+          child: LayoutBuilder(builder: (context, constraints) {
+            if (constraints.maxWidth > 600) {
+              return Column();
+            } else {
+              return Column(
+                children: [
+                  SizedBox(height: 30),
+                  ToggleTabs(
+                    isSelectedLeft: isPemasukanSelected,
+                    leftLabel: 'Pemasukan',
+                    rightLabel: 'Pengeluaran',
+                    onToggle: (value) {
+                      setState(() {
+                        isPemasukanSelected = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  Text(
+                    periode.toString(),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  SizedBox(height: 30),
+                  Center(
+                    child: isPemasukanSelected
+                        ? Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        spreadRadius: 1,
+                                        blurRadius: 5,
+                                        offset: Offset(0, 3),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: TextFormField(
-                                        controller:
-                                            _keteranganPemasukanController,
-                                        maxLines: 5,
-                                        cursorColor: Color(0xff30C083),
-                                        decoration: InputDecoration(
-                                          labelText: 'Keterangan',
-                                          floatingLabelStyle: const TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: const Color(0xff30C083),
-                                              width: 2,
-                                            ),
-                                          ),
-                                        ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 30,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: GestureDetector(
-                                        onTap: isLoading
-                                            ? () => _simpanPemasukan()
-                                            : null,
-                                        child: Container(
-                                          width: double.infinity,
-                                          height: 55,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xff30C083),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(15),
-                                            child: Text(
-                                              isLoading ? 'Kirim' : 'Kirim...',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w900,
-                                                fontSize: 18,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border:
-                                      Border.all(width: 1, color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      spreadRadius: 1,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: TextFormField(
-                                        controller:
-                                            _jumlahPengeluaranController,
-                                        cursorColor: Color(0xff30C083),
-                                        decoration: InputDecoration(
-                                          prefixIcon:
-                                              const Icon(Icons.money_off),
-                                          labelText: 'Pengeluaran',
-                                          floatingLabelStyle: const TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: const Color(0xff30C083),
-                                              width: 2,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 20),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: GestureDetector(
-                                          onTap: _pickImage,
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 15),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.grey),
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: const Row(
-                                              children: [
-                                                Icon(Icons.upload_file),
-                                                SizedBox(width: 10),
-                                                Text("Upload Nota")
-                                              ],
-                                            ),
-                                          )),
-                                    ),
-                                    SizedBox(height: 10),
-                                    if (_fotoPengeluaran !=
-                                        null) // Display image preview if selected
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 10),
-                                        child: Image.file(
-                                          _fotoPengeluaran!,
-                                          height: 100,
-                                          width: 100,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: TextFormField(
-                                        controller:
-                                            _keteranganPengeluaranController,
-                                        maxLines: 5,
-                                        cursorColor: Color(0xff30C083),
-                                        decoration: InputDecoration(
-                                          labelText: 'Keterangan',
-                                          floatingLabelStyle: const TextStyle(
-                                            color: Colors.black,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            borderSide: const BorderSide(
-                                              color: const Color(0xff30C083),
-                                              width: 2,
+                                            horizontal: 20),
+                                        child: TextFormField(
+                                          controller:
+                                              _jumlahPemasukanController,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            prefixIcon:
+                                                const Icon(Icons.attach_money),
+                                            labelText: 'Pemasukan',
+                                            floatingLabelStyle: const TextStyle(
+                                              color: Colors.black,
                                             ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: GestureDetector(
-                                        onTap: isLoading
-                                            ? () => _simpanPengeluaran()
-                                            : null,
-                                        child: Container(
-                                          width: double.infinity,
-                                          height: 55,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xff30C083),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(15),
-                                            child: Text(
-                                              isLoading ? 'Kirim' : 'Kirim...',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w900,
-                                                fontSize: 18,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: const Color(0xff30C083),
+                                                width: 2,
                                               ),
-                                              textAlign: TextAlign.center,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                  ],
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: TextFormField(
+                                          controller:
+                                              _keteranganPemasukanController,
+                                          maxLines: 5,
+                                          decoration: InputDecoration(
+                                            labelText: 'Keterangan',
+                                            floatingLabelStyle: const TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: const Color(0xff30C083),
+                                                width: 2,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: GestureDetector(
+                                          onTap: isLoading
+                                              ? () => _simpanPemasukan()
+                                              : null,
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: 55,
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff30C083),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(15),
+                                              child: Text(
+                                                isLoading
+                                                    ? 'Kirim'
+                                                    : 'Kirim...',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 18,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                ),
-              ],
-            );
-          }
-        }),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        width: 1, color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        spreadRadius: 1,
+                                        blurRadius: 5,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: TextFormField(
+                                          controller:
+                                              _jumlahPengeluaranController,
+                                          decoration: InputDecoration(
+                                            prefixIcon:
+                                                const Icon(Icons.money_off),
+                                            labelText: 'Pengeluaran',
+                                            floatingLabelStyle: const TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: const Color(0xff30C083),
+                                                width: 2,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 20),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: GestureDetector(
+                                            onTap: _pickImage,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 15),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.grey),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: const Row(
+                                                children: [
+                                                  Icon(Icons.upload_file),
+                                                  SizedBox(width: 10),
+                                                  Text("Upload Nota")
+                                                ],
+                                              ),
+                                            )),
+                                      ),
+                                      SizedBox(height: 10),
+                                      if (_fotoPengeluaran !=
+                                          null) // Display image preview if selected
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 10),
+                                          child: Image.file(
+                                            _fotoPengeluaran!,
+                                            height: 100,
+                                            width: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: TextFormField(
+                                          controller:
+                                              _keteranganPengeluaranController,
+                                          maxLines: 5,
+                                          decoration: InputDecoration(
+                                            labelText: 'Keterangan',
+                                            floatingLabelStyle: const TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                color: const Color(0xff30C083),
+                                                width: 2,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: GestureDetector(
+                                          onTap: isLoading
+                                              ? () => _simpanPengeluaran()
+                                              : null,
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: 55,
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xff30C083),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(15),
+                                              child: Text(
+                                                isLoading
+                                                    ? 'Kirim'
+                                                    : 'Kirim...',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 18,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                ],
+              );
+            }
+          }),
+        ),
       ),
     );
   }
