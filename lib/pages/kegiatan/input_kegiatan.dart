@@ -60,13 +60,6 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Lengkapi data yang diperlukan!')));
     } else {
-      // print("NIK : ${nikController.text}");
-      // print("Kegiatan : $pilihKegiatan");
-      // print("Tgl : ${tglController.text}");
-      // print("Proposal : ${_proposal}");
-      // print("Desc : ${keteranganController.text}");
-      // return;
-
       setState(() {
         isLoading = true;
       });
