@@ -41,7 +41,7 @@ class _PengurusPageState extends State<PengurusPage> {
 
   List<String> generatePeriodList() {
     int currentYear = DateTime.now().year;
-    int startYear = 2009;
+    int startYear = 2014;
     List<String> periods = [];
 
     for (int i = startYear; i <= currentYear + 10; i += 5) {
@@ -50,7 +50,6 @@ class _PengurusPageState extends State<PengurusPage> {
     }
 
     List<String> selectedPeriods = [];
-    bool foundCurrentPeriod = false;
 
     for (int i = periods.length - 1; i >= 0; i--) {
       String period = periods[i];
@@ -59,13 +58,16 @@ class _PengurusPageState extends State<PengurusPage> {
 
       if (currentYear >= startPeriod && currentYear <= endPeriod) {
         selectedPeriods.add(period);
-        foundCurrentPeriod = true;
+        break;
       }
+    }
 
-      if (foundCurrentPeriod && selectedPeriods.length < 4) {
-        if (!selectedPeriods.contains(period)) {
-          selectedPeriods.add(period);
-        }
+    for (int i = periods.length - 1; i >= 0; i--) {
+      String period = periods[i];
+      int startPeriod = int.parse(period.split('-')[0]);
+
+      if (!selectedPeriods.contains(period) && startPeriod <= currentYear) {
+        selectedPeriods.add(period);
       }
     }
 
@@ -205,7 +207,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 15),
                                 child: Text(
-                                  'Periode',
+                                  '',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 18),
                                 ),
@@ -215,7 +217,7 @@ class _PengurusPageState extends State<PengurusPage> {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
+                                    padding: const EdgeInsets.only(left: 15),
                                     child: Text(
                                       value,
                                       style:
