@@ -262,12 +262,11 @@ class _PengaduanPageState extends State<PengaduanPage> {
                               onTap: () {
                                 searchPengaduan(searchController.text);
                               },
-                              child: Icon(Icons.search, color: Colors.black),
+                              child: Icon(Icons.search),
                             ),
                             suffixIcon: isSearching
                                 ? IconButton(
-                                    icon:
-                                        Icon(Icons.clear, color: Colors.black),
+                                    icon: Icon(Icons.clear),
                                     onPressed: () {
                                       searchController.clear();
                                       searchPengaduan('');
@@ -342,15 +341,13 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                 SizedBox(height: 10),
                                                 Row(
                                                   children: [
-                                                    Icon(Icons.calendar_month,
-                                                        size: 20,
-                                                        color: Colors.black),
+                                                    Icon(
+                                                      Icons.calendar_month,
+                                                      size: 20,
+                                                    ),
                                                     SizedBox(width: 5),
                                                     Text(
                                                       '${formatDate(pengaduan['tgl'])}',
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -364,9 +361,6 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                 ),
                                                 Text(
                                                   pengaduan['nik'],
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -402,13 +396,10 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                 horizontal: 20),
                                             child: Text(
                                               pengaduan['isi'],
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                              ),
                                             ),
                                           ),
                                           SizedBox(
-                                            height: 20,
+                                            height: 15,
                                           ),
                                           pengaduan['balasan'] == null
                                               ? GestureDetector(
@@ -519,7 +510,6 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                       child: Text(
                                                         'Balasan Oleh\n${pengaduan['aksiBy']} :',
                                                         style: TextStyle(
-                                                          fontSize: 14,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),

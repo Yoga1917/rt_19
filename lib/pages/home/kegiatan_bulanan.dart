@@ -212,9 +212,6 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                     prefixIcon:
                                         const Icon(Icons.calendar_today),
                                     labelText: 'Tanggal',
-                                    floatingLabelStyle: const TextStyle(
-                                      color: Colors.black,
-                                    ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -239,9 +236,6 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                   maxLines: 5,
                                   decoration: InputDecoration(
                                     labelText: 'Keterangan Kegiatan',
-                                    floatingLabelStyle: const TextStyle(
-                                      color: Colors.black,
-                                    ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),

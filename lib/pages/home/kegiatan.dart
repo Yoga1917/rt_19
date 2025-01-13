@@ -181,8 +181,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                     hintText: 'Cari Kegiatan...',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
-                                      borderSide:
-                                          BorderSide(color: Colors.black),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -193,13 +191,11 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                       onTap: () {
                                         searchKegiatan(searchController.text);
                                       },
-                                      child: Icon(Icons.search,
-                                          color: Colors.black),
+                                      child: Icon(Icons.search),
                                     ),
                                     suffixIcon: isSearching
                                         ? IconButton(
-                                            icon: Icon(Icons.clear,
-                                                color: Colors.black),
+                                            icon: Icon(Icons.clear),
                                             onPressed: () {
                                               searchController.clear();
                                               searchKegiatan('');
@@ -265,10 +261,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                               SizedBox(width: 10),
                                               Text(
                                                 kegiatan['ketua_pelaksana'],
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                ),
                                               ),
                                             ],
                                           ),
@@ -281,10 +273,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                               SizedBox(width: 10),
                                               Text(
                                                 '${formatDate(kegiatan['tgl'])}',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                ),
                                               ),
                                             ],
                                           ),
@@ -312,10 +300,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                   const EdgeInsets.all(20.0),
                                               child: Text(
                                                 kegiatan['keterangan'],
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                ),
                                                 textAlign: TextAlign.justify,
                                               ),
                                             ),

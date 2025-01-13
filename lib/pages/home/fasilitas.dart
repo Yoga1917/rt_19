@@ -173,13 +173,11 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                     onTap: () {
                                       searchFasilitas(searchController.text);
                                     },
-                                    child:
-                                        Icon(Icons.search, color: Colors.black),
+                                    child: Icon(Icons.search),
                                   ),
                                   suffixIcon: isSearching
                                       ? IconButton(
-                                          icon: Icon(Icons.clear,
-                                              color: Colors.black),
+                                          icon: Icon(Icons.clear),
                                           onPressed: () {
                                             searchController.clear();
                                             searchFasilitas('');
