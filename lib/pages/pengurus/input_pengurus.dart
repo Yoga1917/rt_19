@@ -208,7 +208,6 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.credit_card),
                   labelText: 'NIK',
-                  floatingLabelStyle: TextStyle(color: Colors.black),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -309,8 +308,6 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                                       autofocus: false,
                                       decoration: InputDecoration(
                                         labelText: 'Jabatan',
-                                        floatingLabelStyle: const TextStyle(
-                                            color: Colors.black),
                                         border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(10),
@@ -352,8 +349,6 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                                             const Icon(Icons.credit_card),
                                         labelText: 'Periode',
                                         labelStyle: const TextStyle(
-                                            color: Colors.black),
-                                        floatingLabelStyle: const TextStyle(
                                             color: Colors.black),
                                         border: OutlineInputBorder(
                                           borderRadius:

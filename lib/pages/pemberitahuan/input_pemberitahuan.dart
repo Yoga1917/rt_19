@@ -122,7 +122,10 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
           },
         ),
       ),
-      body: SingleChildScrollView(
+      body: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         child: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth > 600) {
             return Column();
@@ -161,9 +164,6 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                               prefixIcon:
                                   const Icon(Icons.notifications_active_sharp),
                               labelText: 'Nama Pemberitahuan',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -184,21 +184,16 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             readOnly: true,
-                            onTap: _pickPDF, // Fungsi untuk memilih file PDF
+                            onTap: _pickPDF,
                             controller: TextEditingController(
                               text: _file != null
                                   ? _file!.path.split('/').last
-                                  : '', // Menampilkan nama file jika ada
+                                  : '',
                             ),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
                               labelText: 'Upload File Surat',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              hintText: _file == null
-                                  ? 'Pilih file PDF'
-                                  : null, // Menambahkan hint jika belum ada file
+                              hintText: _file == null ? 'Pilih file PDF' : null,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -211,12 +206,11 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                               ),
                               suffixIcon: _file != null
                                   ? IconButton(
-                                      icon: Icon(Icons.clear,
-                                          color:
-                                              Colors.red), // Tombol hapus file
+                                      icon:
+                                          Icon(Icons.clear, color: Colors.red),
                                       onPressed: () {
                                         setState(() {
-                                          _file = null; // Menghapus file
+                                          _file = null;
                                         });
                                       },
                                     )
@@ -225,9 +219,6 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                           ),
                         ),
                         SizedBox(height: 20),
-                        SizedBox(
-                          height: 20,
-                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
@@ -236,9 +227,6 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                             cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               labelText: 'Isi Pemberitahuan',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),

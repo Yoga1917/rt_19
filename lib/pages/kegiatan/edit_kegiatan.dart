@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'package:rt_19/pages/home/kegiatan.dart';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:rt_19/pages/home/kegiatan.dart';
 
 class EditKegiatanPage extends StatefulWidget {
   final String id_kegiatan;
@@ -30,19 +31,22 @@ class _EditKegiatanPageState extends State<EditKegiatanPage> {
       });
     } else {
       // Menangani jika tidak ada file yang dipilih
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tidak ada file yang dipilih')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Tidak ada file yang dipilih')));
     }
   }
 
   void _kirimData() async {
-    if(_lpj == null){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lengkapi data yang diperlukan!')));
-    }else{
+    if (_lpj == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lengkapi data yang diperlukan!')));
+    } else {
       setState(() {
         isLoading = true;
       });
 
-      var request = http.MultipartRequest('POST', Uri.parse('https://pexadont.agsa.site/api/kegiatan/lpj'));
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('https://pexadont.agsa.site/api/kegiatan/lpj'));
       request.fields['id_kegiatan'] = widget.id_kegiatan;
       request.files.add(await http.MultipartFile.fromPath('lpj', _lpj!.path));
 
@@ -91,7 +95,10 @@ class _EditKegiatanPageState extends State<EditKegiatanPage> {
           },
         ),
       ),
-      body: SingleChildScrollView(
+      body: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         child: LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth > 600) {
             return Column();
@@ -133,9 +140,7 @@ class _EditKegiatanPageState extends State<EditKegiatanPage> {
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
                               labelText: 'LPJ',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
+
                               hintText: _lpj == null
                                   ? 'Upload file LPJ'
                                   : null, // Menambahkan hint jika belum ada file

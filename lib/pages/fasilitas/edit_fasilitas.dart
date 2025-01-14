@@ -149,9 +149,6 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
                               decoration: InputDecoration(
                                 prefixIcon: const Icon(Icons.list),
                                 labelText: 'Jumlah',
-                                floatingLabelStyle: const TextStyle(
-                                  color: Colors.black,
-                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -174,9 +171,6 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
                               decoration: InputDecoration(
                                 prefixIcon: const Icon(Icons.info),
                                 labelText: 'Kondisi',
-                                floatingLabelStyle: const TextStyle(
-                                  color: Colors.black,
-                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
