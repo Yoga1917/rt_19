@@ -461,8 +461,7 @@ class _InputKASPageState extends State<InputKASPage> {
                                             )),
                                       ),
                                       SizedBox(height: 10),
-                                      if (_fotoPengeluaran !=
-                                          null) // Display image preview if selected
+                                      if (_fotoPengeluaran != null)
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 20, vertical: 10),

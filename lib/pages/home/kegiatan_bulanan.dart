@@ -217,6 +217,9 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                       prefixIcon:
                                           const Icon(Icons.calendar_today),
                                       labelText: 'Tanggal Rencana Kegiatan',
+                                      floatingLabelStyle: const TextStyle(
+                                        color: Colors.black,
+                                      ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -241,6 +244,9 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.event),
                                       labelText: 'Nama Rencana Kegiatan',
+                                      floatingLabelStyle: const TextStyle(
+                                        color: Colors.black,
+                                      ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
@@ -435,7 +441,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
     int currentYear = DateTime.now().year;
     List<String> years = [];
 
-    for (int i = currentYear - 10; i <= currentYear; i++) {
+    for (int i = 2014; i <= currentYear; i++) {
       years.add(i.toString());
     }
     return years;

@@ -164,6 +164,9 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                               prefixIcon:
                                   const Icon(Icons.notifications_active_sharp),
                               labelText: 'Nama Pemberitahuan',
+                              floatingLabelStyle: const TextStyle(
+                                color: Colors.black,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -193,6 +196,9 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
                               labelText: 'Upload File Surat',
+                              floatingLabelStyle: const TextStyle(
+                                color: Colors.black,
+                              ),
                               hintText: _file == null ? 'Pilih file PDF' : null,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -227,6 +233,9 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                             cursorColor: Color(0xff30C083),
                             decoration: InputDecoration(
                               labelText: 'Isi Pemberitahuan',
+                              floatingLabelStyle: const TextStyle(
+                                color: Colors.black,
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),

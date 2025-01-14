@@ -291,6 +291,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(Icons.person),
                                   labelText: 'NIK Pelaksana',
+                                  floatingLabelStyle: const TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -342,6 +345,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                   fillColor: Colors.grey[200],
                                   prefixIcon: const Icon(Icons.person),
                                   labelText: 'Nama Pelaksana',
+                                  floatingLabelStyle: const TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -362,6 +368,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                               child: DropdownButtonFormField<String>(
                                 decoration: InputDecoration(
                                   labelText: 'Pilih Bulan',
+                                  floatingLabelStyle: const TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -430,6 +439,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                               child: DropdownButtonFormField<String>(
                                 decoration: InputDecoration(
                                   labelText: 'Pilih Rencana Kegiatan',
+                                  floatingLabelStyle: const TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -497,6 +509,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(Icons.calendar_today),
                                   labelText: 'Tanggal Acara',
+                                  floatingLabelStyle: const TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -525,10 +540,12 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(Icons.upload_file),
                                   labelText: 'Proposal',
-
+                                  floatingLabelStyle: const TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   hintText: _proposal == null
                                       ? 'Upload file proposal'
-                                      : null, // Menambahkan hint jika belum ada file
+                                      : null,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -542,12 +559,10 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                   suffixIcon: _proposal != null
                                       ? IconButton(
                                           icon: Icon(Icons.clear,
-                                              color: Colors
-                                                  .red), // Tombol hapus file
+                                              color: Colors.red),
                                           onPressed: () {
                                             setState(() {
-                                              _proposal =
-                                                  null; // Menghapus file
+                                              _proposal = null;
                                             });
                                           },
                                         )
@@ -566,6 +581,9 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 cursorColor: Color(0xff30C083),
                                 decoration: InputDecoration(
                                   labelText: 'Deskripsi Kegiatan',
+                                  floatingLabelStyle: const TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),

@@ -159,6 +159,9 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
                               decoration: InputDecoration(
                                 prefixIcon: const Icon(Icons.home),
                                 labelText: 'Nama Fasilitas',
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -182,6 +185,9 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
                               decoration: InputDecoration(
                                 prefixIcon: const Icon(Icons.list),
                                 labelText: 'Jumlah',
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),

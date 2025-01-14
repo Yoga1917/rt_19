@@ -187,6 +187,9 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: InputDecoration(
                                 prefixIcon: const Icon(Icons.person),
                                 labelText: 'NIK',
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -212,6 +215,9 @@ class _LoginPageState extends State<LoginPage> {
                               decoration: InputDecoration(
                                 prefixIcon: const Icon(Icons.lock),
                                 labelText: 'Password',
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),

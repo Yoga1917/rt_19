@@ -131,19 +131,19 @@ class _EditKegiatanPageState extends State<EditKegiatanPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TextFormField(
                             readOnly: true,
-                            onTap: _pickPDF, // Fungsi untuk memilih file PDF
+                            onTap: _pickPDF,
                             controller: TextEditingController(
                               text: _lpj != null
                                   ? _lpj!.path.split('/').last
-                                  : '', // Menampilkan nama file jika ada
+                                  : '',
                             ),
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.upload_file),
                               labelText: 'LPJ',
-
-                              hintText: _lpj == null
-                                  ? 'Upload file LPJ'
-                                  : null, // Menambahkan hint jika belum ada file
+                              floatingLabelStyle: const TextStyle(
+                                color: Colors.black,
+                              ),
+                              hintText: _lpj == null ? 'Upload file LPJ' : null,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -156,12 +156,11 @@ class _EditKegiatanPageState extends State<EditKegiatanPage> {
                               ),
                               suffixIcon: _lpj != null
                                   ? IconButton(
-                                      icon: Icon(Icons.clear,
-                                          color:
-                                              Colors.red), // Tombol hapus file
+                                      icon:
+                                          Icon(Icons.clear, color: Colors.red),
                                       onPressed: () {
                                         setState(() {
-                                          _lpj = null; // Menghapus file
+                                          _lpj = null;
                                         });
                                       },
                                     )
