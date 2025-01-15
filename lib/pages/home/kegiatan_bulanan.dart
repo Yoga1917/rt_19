@@ -386,7 +386,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                               Text(aksiBy!),
                                             ],
                                           ),
-                                        SizedBox(height: 20),
+                                        SizedBox(height: 10),
                                         rkbKegiatan.length > 0
                                             ? Column(
                                                 crossAxisAlignment:
