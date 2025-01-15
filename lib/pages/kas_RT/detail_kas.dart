@@ -151,7 +151,8 @@ class _DetailKASPageState extends State<DetailKASPage> {
                         child: isPemasukanSelected
                             ? pemasukanData.isEmpty
                                 ? Center(
-                                    child: Text("Tidak ada data pemasukan dibulan ini."))
+                                    child: Text(
+                                        "Tidak ada data pemasukan dibulan ini."))
                                 : ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: pemasukanData.length,
@@ -199,18 +200,12 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                     Row(
                                                       children: [
                                                         Icon(
-                                                            Icons
-                                                                .calendar_month,
-                                                            size: 20,
-                                                            color:
-                                                                Colors.black),
+                                                          Icons.calendar_month,
+                                                          size: 20,
+                                                        ),
                                                         SizedBox(width: 10),
                                                         Text(
                                                           '${formatDate(pemasukan['tgl'])}',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.black,
-                                                          ),
                                                         ),
                                                       ],
                                                     ),
@@ -238,10 +233,6 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                               SizedBox(height: 5),
                                               Text(
                                                 pemasukan['keterangan'],
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                ),
                                               ),
                                               SizedBox(height: 15),
                                             ],
@@ -302,18 +293,12 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                     Row(
                                                       children: [
                                                         Icon(
-                                                            Icons
-                                                                .calendar_month,
-                                                            size: 20,
-                                                            color:
-                                                                Colors.black),
+                                                          Icons.calendar_month,
+                                                          size: 20,
+                                                        ),
                                                         SizedBox(width: 10),
                                                         Text(
                                                           '${formatDate(pengeluaran['tgl'])}',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.black,
-                                                          ),
                                                         ),
                                                       ],
                                                     ),
@@ -367,10 +352,6 @@ class _DetailKASPageState extends State<DetailKASPage> {
                                                   : SizedBox(height: 5),
                                               Text(
                                                 pengeluaran['keterangan'],
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                ),
                                               ),
                                               SizedBox(height: 20),
                                             ],

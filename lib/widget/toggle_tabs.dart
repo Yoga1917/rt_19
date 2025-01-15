@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ToggleTabs extends StatelessWidget {
-  final bool isSelectedLeft; // Untuk menentukan apakah tab kiri dipilih
-  final String leftLabel; // Label untuk tab kiri
-  final String rightLabel; // Label untuk tab kanan
-  final Function(bool) onToggle; // Callback saat tab diklik
+  final bool isSelectedLeft; 
+  final String leftLabel; 
+  final String rightLabel; 
+  final Function(bool) onToggle; 
 
   const ToggleTabs({
     Key? key,
@@ -20,7 +20,7 @@ class ToggleTabs extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         GestureDetector(
-          onTap: () => onToggle(true), // Saat tab kiri diklik
+          onTap: () => onToggle(true),
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
@@ -46,20 +46,20 @@ class ToggleTabs extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () => onToggle(false), // Saat tab kanan diklik
+          onTap: () => onToggle(false), 
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
               color: isSelectedLeft
                   ? Colors.white
-                  : Color(0xff30C083), // Warna latar belakang
+                  : Color(0xff30C083), 
               border: Border.all(
                 width: 2,
                 color: isSelectedLeft
                     ? Color(0xff30C083)
-                    : Color(0xff30C083), // Border hijau
+                    : Color(0xff30C083), 
               ),
-              borderRadius: BorderRadius.circular(10), // Radius sudut kotak
+              borderRadius: BorderRadius.circular(10), 
             ),
             child: Text(
               rightLabel,
