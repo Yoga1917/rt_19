@@ -262,7 +262,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               SizedBox(
-                                                height: 30,
+                                                height: 20,
                                               ),
                                               Text(
                                                 pemberitahuan['pemberitahuan'],
@@ -307,7 +307,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: 20,
+                                        height: 15,
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
