@@ -19,6 +19,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
   TextEditingController searchController = TextEditingController();
   bool isSearching = false;
   bool isLoading = true;
+  List<bool> isExpanded = [];
 
   @override
   void initState() {
@@ -34,6 +35,9 @@ class _KegiatanPageState extends State<KegiatanPage> {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       setState(() {
         kegiatanList = responseData['data'];
+        for (var kegiatan in kegiatanList) {
+          kegiatan['isExpanded'] = false;
+        }
         filteredKegiatanList = kegiatanList;
         isLoading = false;
       });
@@ -311,10 +315,72 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                       padding:
                                                           const EdgeInsets.all(
                                                               20.0),
-                                                      child: Text(
-                                                        kegiatan['keterangan'],
-                                                        textAlign:
-                                                            TextAlign.justify,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            kegiatan[
+                                                                    'isExpanded']
+                                                                ? kegiatan[
+                                                                    'keterangan']
+                                                                : (kegiatan['keterangan']
+                                                                            .length >
+                                                                        100
+                                                                    ? kegiatan['keterangan'].substring(
+                                                                            0,
+                                                                            100) +
+                                                                        '...'
+                                                                    : kegiatan[
+                                                                        'keterangan']),
+                                                            textAlign: TextAlign
+                                                                .justify,
+                                                          ),
+                                                          SizedBox(height: 10),
+                                                          if (kegiatan[
+                                                                      'keterangan']
+                                                                  .length >
+                                                              100) ...[
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  kegiatan[
+                                                                          'isExpanded'] =
+                                                                      !kegiatan[
+                                                                          'isExpanded'];
+                                                                });
+                                                              },
+                                                              child: Align(
+                                                                alignment: Alignment
+                                                                    .bottomRight,
+                                                                child: Text(
+                                                                  kegiatan[
+                                                                          'isExpanded']
+                                                                      ? 'Klik lagi untuk sembunyikan'
+                                                                      : 'Lihat selengkapnya',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xff30C083),
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .underline,
+                                                                    decorationColor:
+                                                                        Color(
+                                                                            0xff30C083),
+                                                                    height: 1.5,
+                                                                    decorationThickness:
+                                                                        2,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ]
+                                                        ],
                                                       ),
                                                     ),
                                                   ),

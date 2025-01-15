@@ -359,10 +359,8 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                                   '...'
                                                               : pemberitahuan[
                                                                   'deskripsi']),
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.black,
-                                                      ),
+                                                      textAlign:
+                                                          TextAlign.justify,
                                                     ),
                                                     SizedBox(height: 10),
                                                     if (pemberitahuan[
