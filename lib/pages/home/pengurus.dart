@@ -15,11 +15,13 @@ class _PengurusPageState extends State<PengurusPage> {
   String? selectedPeriode;
   List<dynamic> pengurusData = [];
   bool isLoading = true;
+  bool loadingUpdate = false;
+  bool isActive = true;
 
   @override
   void initState() {
     super.initState();
-    generatePeriodList(); // generate periods first
+    generatePeriodList();
     selectedPeriode = getCurrentPeriod();
     fetchPengurusData();
   }
@@ -106,6 +108,83 @@ class _PengurusPageState extends State<PengurusPage> {
       }
     } catch (e) {
       showSnackbar('Terjadi kesalahan: $e');
+    }
+  }
+
+  void _updateStatus(
+      id_pengurus, nik, jabatan, periode, status_pengurus) async {
+    setState(() => loadingUpdate = true);
+
+    // Cetak data yang akan dikirim sebelum request
+    print("Data yang akan dikirim ke API:");
+    print("id_pengurus: $id_pengurus");
+    print("nik: $nik");
+    print("jabatan: $jabatan");
+    print("periode: $periode");
+    print("status_pengurus: $status_pengurus");
+
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://pexadont.agsa.site/api/pengurus/update/${nik}'),
+      );
+
+      // Tambahkan data ke request
+      request.fields['id_pengurus'] = id_pengurus;
+      request.fields['nik'] = nik;
+      request.fields['jabatan'] = jabatan;
+      request.fields['periode'] = periode;
+      request.fields['status_pengurus'] = status_pengurus;
+
+      // Cetak URL dan data request
+      print("URL: ${request.url}");
+      print("Fields: ${request.fields}");
+
+      // Kirim request
+      var streamedResponse = await request.send();
+
+      // Ambil respons dari stream
+      var responseData = await http.Response.fromStream(streamedResponse);
+      print("Response status code: ${responseData.statusCode}");
+      print("Response body: ${responseData.body}");
+
+      // Decode respons JSON
+      var response = jsonDecode(responseData.body);
+
+      if (response["status"] == 200) {
+        // Berhasil update
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['data'])),
+        );
+
+        // Ubah status aktif/non-aktif
+        setState(() {
+          isActive = status_pengurus == "1";
+        });
+
+        // Refresh halaman
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => PengurusPage()),
+        );
+      } else {
+        // Gagal update
+        print("Error dari API: ${response['error'] ?? 'Tidak diketahui'}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                "Gagal update status warga: ${response['error'] ?? 'Tidak diketahui'}"),
+          ),
+        );
+      }
+    } catch (e) {
+      // Tangkap error saat request
+      print("Error saat mengirim request: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Terjadi kesalahan: $e")),
+      );
+    } finally {
+      setState(() => loadingUpdate = false);
     }
   }
 
@@ -324,23 +403,47 @@ class _PengurusPageState extends State<PengurusPage> {
                                                       TextStyle(fontSize: 14),
                                                 ),
                                                 SizedBox(height: 20),
-                                                InkWell(
-                                                  onTap: () {},
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    final newStatus =
+                                                        isActive ? "2" : "1";
+                                                    _updateStatus(
+                                                      pengurus['id_pengurus'],
+                                                      pengurus['nik'],
+                                                      pengurus['jabatan'],
+                                                      pengurus['periode'],
+                                                      newStatus,
+                                                    );
+                                                  },
                                                   child: Container(
                                                     decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        color: const Color(
-                                                            0xff30C083)),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 15),
-                                                    child: const Text(
-                                                      "Aktif",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
+                                                      color: isActive
+                                                          ? const Color(
+                                                              0xff30C083)
+                                                          : Colors.red,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Text(
+                                                        loadingUpdate
+                                                            ? 'Update...'
+                                                            : isActive
+                                                                ? 'Aktif     '
+                                                                : 'Nonaktif',
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                          fontSize: 18,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),

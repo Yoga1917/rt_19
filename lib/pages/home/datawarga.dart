@@ -144,7 +144,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Gagal update status warga")),
+        SnackBar(content: Text("Gagal update status akun warga")),
       );
     }
 
