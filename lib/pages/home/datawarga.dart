@@ -7,6 +7,10 @@ import 'package:rt_19/pages/halaman_utama/home.dart';
 import 'package:rt_19/widget/toggle_tabs.dart';
 
 class DataWargaPage extends StatefulWidget {
+  final String initialTab;
+
+  DataWargaPage({required this.initialTab});
+
   @override
   _DataWargaPageState createState() => _DataWargaPageState();
 }
@@ -31,6 +35,9 @@ class _DataWargaPageState extends State<DataWargaPage> {
   void initState() {
     super.initState();
     fetchWargaData();
+    if (widget.initialTab == 'tidak_aktif') {
+      isDataAktifSelected = false;
+    }
   }
 
   Future<void> fetchWargaData() async {
@@ -131,16 +138,16 @@ class _DataWargaPageState extends State<DataWargaPage> {
     var responseData = await http.Response.fromStream(streamedResponse);
     var response = jsonDecode(responseData.body);
 
-    print(response);
-
     if (response["status"] == 202) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response['data'])),
+        SnackBar(content: Text('Status akun warga berhasil diubah')),
       );
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => DataWargaPage()),
+        MaterialPageRoute(
+            builder: (context) => DataWargaPage(
+                initialTab: status == '1' ? 'aktif' : 'tidak_aktif')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -198,8 +205,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                   SizedBox(height: 30),
                   ToggleTabs(
                     isSelectedLeft: isDataAktifSelected,
-                    leftLabel: '    Aktif    ',
-                    rightLabel: 'Non Aktif',
+                    leftLabel: '      Aktif      ',
+                    rightLabel: 'Tidak Aktif',
                     onToggle: (value) {
                       setState(() {
                         isDataAktifSelected = value;

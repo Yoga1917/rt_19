@@ -111,75 +111,43 @@ class _PengurusPageState extends State<PengurusPage> {
     }
   }
 
-  void _updateStatus(
-      id_pengurus, nik, jabatan, periode, status_pengurus) async {
+  Future<void> _updateStatus(
+    String id_pengurus,
+    String nik,
+    String jabatan,
+    String periode,
+    String status_pengurus,
+  ) async {
     setState(() => loadingUpdate = true);
-
-    // Cetak data yang akan dikirim sebelum request
-    print("Data yang akan dikirim ke API:");
-    print("id_pengurus: $id_pengurus");
-    print("nik: $nik");
-    print("jabatan: $jabatan");
-    print("periode: $periode");
-    print("status_pengurus: $status_pengurus");
 
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://pexadont.agsa.site/api/pengurus/update/${nik}'),
+        Uri.parse('https://pexadont.agsa.site/api/pengurus/update/$nik'),
       );
 
-      // Tambahkan data ke request
       request.fields['id_pengurus'] = id_pengurus;
       request.fields['nik'] = nik;
       request.fields['jabatan'] = jabatan;
       request.fields['periode'] = periode;
       request.fields['status_pengurus'] = status_pengurus;
 
-      // Cetak URL dan data request
-      print("URL: ${request.url}");
-      print("Fields: ${request.fields}");
-
-      // Kirim request
-      var streamedResponse = await request.send();
-
-      // Ambil respons dari stream
-      var responseData = await http.Response.fromStream(streamedResponse);
-      print("Response status code: ${responseData.statusCode}");
-      print("Response body: ${responseData.body}");
-
-      // Decode respons JSON
+      var responseData = await http.Response.fromStream(await request.send());
       var response = jsonDecode(responseData.body);
 
       if (response["status"] == 200) {
-        // Berhasil update
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['data'])),
+          SnackBar(content: Text('Status akun pengurus berhasil diubah')),
         );
-
-        // Ubah status aktif/non-aktif
         setState(() {
           isActive = status_pengurus == "1";
         });
-
-        // Refresh halaman
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => PengurusPage()),
-        );
       } else {
-        // Gagal update
-        print("Error dari API: ${response['error'] ?? 'Tidak diketahui'}");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                "Gagal update status warga: ${response['error'] ?? 'Tidak diketahui'}"),
-          ),
+          SnackBar(content: Text("Gagal update status akun warga")),
         );
       }
     } catch (e) {
-      // Tangkap error saat request
-      print("Error saat mengirim request: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Terjadi kesalahan: $e")),
       );
@@ -404,16 +372,29 @@ class _PengurusPageState extends State<PengurusPage> {
                                                 ),
                                                 SizedBox(height: 20),
                                                 GestureDetector(
-                                                  onTap: () {
+                                                  onTap: () async {
+                                                    if (loadingUpdate) return;
+
+                                                    setState(() {
+                                                      loadingUpdate = true;
+                                                    });
+
                                                     final newStatus =
                                                         isActive ? "2" : "1";
-                                                    _updateStatus(
+
+                                                    await _updateStatus(
                                                       pengurus['id_pengurus'],
                                                       pengurus['nik'],
                                                       pengurus['jabatan'],
                                                       pengurus['periode'],
                                                       newStatus,
                                                     );
+
+                                                    setState(() {
+                                                      isActive =
+                                                          newStatus == "1";
+                                                      loadingUpdate = false;
+                                                    });
                                                   },
                                                   child: Container(
                                                     decoration: BoxDecoration(
@@ -432,9 +413,9 @@ class _PengurusPageState extends State<PengurusPage> {
                                                       child: Text(
                                                         loadingUpdate
                                                             ? 'Update...'
-                                                            : isActive
-                                                                ? 'Aktif     '
-                                                                : 'Nonaktif',
+                                                            : (isActive
+                                                                ? 'Aktif      '
+                                                                : 'Tidak Aktif'),
                                                         style: const TextStyle(
                                                           color: Colors.white,
                                                           fontWeight:

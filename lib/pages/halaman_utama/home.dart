@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   void _logout() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.clear();
-    
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
@@ -46,8 +46,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(jabatan);
-
     return Scaffold(
       body: Column(
         children: [
@@ -56,8 +54,7 @@ class _HomePageState extends State<HomePage> {
             height: 220,
             decoration: BoxDecoration(
               color: Color(0xff30C083),
-              borderRadius:
-                  BorderRadius.only(bottomLeft: Radius.circular(40)),
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -104,18 +101,20 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSpacing: 20,
                 ),
                 children: [
-                  if(jabatan == "Sekretaris")
-                  CustomCategoryContainer(
-                    icon: Icons.group,
-                    text: 'Data Warga',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DataWargaPage()),
-                      );
-                    },
-                  ),
+                  if (jabatan == "Sekretaris")
+                    CustomCategoryContainer(
+                      icon: Icons.group,
+                      text: 'Data Warga',
+                      onTap: () {
+                        String initialTab = 'aktif';
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DataWargaPage(initialTab: initialTab)),
+                        );
+                      },
+                    ),
                   CustomCategoryContainer(
                     icon: Icons.feedback,
                     text: 'Pengaduan',
@@ -127,93 +126,89 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   ),
-                  if(jabatan == "Bendahara")
-                  CustomCategoryContainer(
-                    icon: Icons.account_balance_wallet,
-                    text: 'KAS',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => KasPage()),
-                      );
-                    },
-                  ),
-                  if(jabatan == "Sekretaris")
-                  CustomCategoryContainer(
-                    icon: Icons.event,
-                    text: 'Kegiatan',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => KegiatanPage()),
-                      );
-                    },
-                  ),
-                  if(jabatan == "Ketua RT")
-                  CustomCategoryContainer(
-                    icon: Icons.person,
-                    text: 'Pengurus',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PengurusPage()),
-                      );
-                    },
-                  ),
-                  if(jabatan == "Ketua RT")
-                  CustomCategoryContainer(
-                    icon: Icons.home,
-                    text: 'Fasilitas',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FasilitasPage()),
-                      );
-                    },
-                  ),
-                  if(jabatan == "Sekretaris")
-                  CustomCategoryContainer(
-                    icon: Icons.calendar_month,
-                    text: 'RKB',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                KegiatanBulananPage()),
-                      );
-                    },
-                  ),
-                  if(jabatan == "Sekretaris")
-                  CustomCategoryContainer(
-                    icon: Icons.notifications_active_sharp,
-                    text: 'Pemberitahuan',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                PemberitahuanPage()),
-                      );
-                    },
-                  ),
-                  if(jabatan == "Sekretaris")
-                  CustomCategoryContainer(
-                    icon: Icons.person_add,
-                    text: 'Pendaftaran',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                PendaftaranPage()),
-                      );
-                    },
-                  ),
+                  if (jabatan == "Bendahara")
+                    CustomCategoryContainer(
+                      icon: Icons.account_balance_wallet,
+                      text: 'KAS',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => KasPage()),
+                        );
+                      },
+                    ),
+                  if (jabatan == "Sekretaris")
+                    CustomCategoryContainer(
+                      icon: Icons.event,
+                      text: 'Kegiatan',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => KegiatanPage()),
+                        );
+                      },
+                    ),
+                  if (jabatan == "Ketua RT")
+                    CustomCategoryContainer(
+                      icon: Icons.person,
+                      text: 'Pengurus',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PengurusPage()),
+                        );
+                      },
+                    ),
+                  if (jabatan == "Ketua RT")
+                    CustomCategoryContainer(
+                      icon: Icons.home,
+                      text: 'Fasilitas',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FasilitasPage()),
+                        );
+                      },
+                    ),
+                  if (jabatan == "Sekretaris")
+                    CustomCategoryContainer(
+                      icon: Icons.calendar_month,
+                      text: 'RKB',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => KegiatanBulananPage()),
+                        );
+                      },
+                    ),
+                  if (jabatan == "Sekretaris")
+                    CustomCategoryContainer(
+                      icon: Icons.notifications_active_sharp,
+                      text: 'Pemberitahuan',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PemberitahuanPage()),
+                        );
+                      },
+                    ),
+                  if (jabatan == "Sekretaris")
+                    CustomCategoryContainer(
+                      icon: Icons.person_add,
+                      text: 'Pendaftaran',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PendaftaranPage()),
+                        );
+                      },
+                    ),
                   CustomCategoryContainer(
                     icon: Icons.logout,
                     text: 'Logout',

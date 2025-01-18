@@ -59,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
       final String apiUrl =
           "https://pexadont.agsa.site/api/login/pengurus?nik=$nik&password=$password";
       final response = await http.get(Uri.parse(apiUrl));
+      var data = json.decode(response.body);
 
       setState(() {
         isLoading = false;
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        if (responseData['error'] == false) {
+        if (data['data']['status_pengurus'] == "1") {
           _saveLoginInfo(responseData['data']['nik'],
               responseData['data']['nama'], responseData['data']['jabatan']);
 
@@ -77,6 +78,10 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        } else if (data['data']['status_pengurus'] == "2") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Pengurus sudah tidak menjabat!")),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
