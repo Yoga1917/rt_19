@@ -83,7 +83,6 @@ class _HomePageState extends State<HomePage> {
                       'Data yang akurat sangat penting untuk kepentingan bersama',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 14,
                         color: Colors.white,
                       ),
                     ),

@@ -20,6 +20,8 @@ class _KegiatanPageState extends State<KegiatanPage> {
   bool isSearching = false;
   bool isLoading = true;
   List<bool> isExpanded = [];
+  String? aksiBy;
+  String? fotoAksiBy;
 
   @override
   void initState() {
@@ -38,8 +40,19 @@ class _KegiatanPageState extends State<KegiatanPage> {
         for (var kegiatan in kegiatanList) {
           kegiatan['isExpanded'] = false;
         }
+
+        kegiatanList = kegiatanList.map((kegiatan) {
+          kegiatan['foto_ketua_pelaksana'] = kegiatan['foto_ketua_pelaksana'] !=
+                  null
+              ? "https://pexadont.agsa.site/uploads/warga/${kegiatan['foto_ketua_pelaksana']}"
+              : null;
+          return kegiatan;
+        }).toList();
+
         filteredKegiatanList = kegiatanList;
         isLoading = false;
+        aksiBy = responseData['aksiBy'];
+        fotoAksiBy = responseData['fotoAksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -263,7 +276,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                     kegiatan['nama_kegiatan'],
                                                     style: TextStyle(
                                                       fontSize: 20,
-                                                      color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
@@ -271,11 +283,54 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                   SizedBox(height: 10),
                                                   Row(
                                                     children: [
-                                                      Icon(Icons.person_outline,
-                                                          size: 20),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return Dialog(
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20),
+                                                                ),
+                                                                child:
+                                                                    ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20),
+                                                                  child: Image
+                                                                      .network(
+                                                                    kegiatan[
+                                                                        'foto_ketua_pelaksana'],
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width: double
+                                                                        .infinity,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        child: CircleAvatar(
+                                                          radius: 10,
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                            kegiatan[
+                                                                'foto_ketua_pelaksana'],
+                                                          ),
+                                                        ),
+                                                      ),
                                                       SizedBox(width: 10),
-                                                      Text(kegiatan[
-                                                          'ketua_pelaksana']),
+                                                      Text(
+                                                        "${kegiatan['ketua_pelaksana']} (Ketua Pelaksana)",
+                                                      ),
                                                     ],
                                                   ),
                                                   SizedBox(height: 10),
@@ -491,7 +546,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                                         color: Colors
                                                                             .white,
                                                                         fontWeight:
-                                                                            FontWeight.w900,
+                                                                            FontWeight.bold,
                                                                         fontSize:
                                                                             12,
                                                                       ),
@@ -624,7 +679,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                                         color: Colors
                                                                             .white,
                                                                         fontWeight:
-                                                                            FontWeight.w900,
+                                                                            FontWeight.bold,
                                                                         fontSize:
                                                                             12,
                                                                       ),
@@ -640,8 +695,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                   ),
                                                   SizedBox(height: 30),
                                                   kegiatan['lpj'] != null
-                                                      ? const SizedBox(
-                                                          height: 10)
+                                                      ? const SizedBox()
                                                       : Center(
                                                           child:
                                                               GestureDetector(
@@ -686,7 +740,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                                         0xff30C083),
                                                                     fontWeight:
                                                                         FontWeight
-                                                                            .w900,
+                                                                            .bold,
                                                                     fontSize:
                                                                         16,
                                                                   ),
@@ -698,6 +752,83 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                             ),
                                                           ),
                                                         ),
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 20),
+                                                    child: Center(
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            'Terakhir diedit oleh:',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        5),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return Dialog(
+                                                                      shape:
+                                                                          RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20),
+                                                                      ),
+                                                                      child:
+                                                                          ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                        child: Image
+                                                                            .network(
+                                                                          'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          width:
+                                                                              double.infinity,
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                              child:
+                                                                  CircleAvatar(
+                                                                radius: 10,
+                                                                backgroundImage:
+                                                                    NetworkImage(
+                                                                  'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            '${aksiBy}',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ),

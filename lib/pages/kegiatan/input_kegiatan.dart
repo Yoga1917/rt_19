@@ -14,7 +14,7 @@ class InputKegiatanPage extends StatefulWidget {
 
 class _InputKegiatanPageState extends State<InputKegiatanPage> {
   final TextEditingController nikController = TextEditingController();
-  final TextEditingController tglController = TextEditingController();
+
   final TextEditingController keteranganController = TextEditingController();
   File? _proposal;
   bool isLoading = false;
@@ -51,11 +51,10 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   void _kirimData() async {
     if (pilihKegiatan == null ||
         nikController.text.isEmpty ||
-        tglController.text.isEmpty ||
         keteranganController.text.isEmpty ||
         _proposal == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lengkapi data yang diperlukan!')));
+          SnackBar(content: Text('Harap Lengkapi semua data yang ada!')));
     } else {
       setState(() {
         isLoading = true;
@@ -71,7 +70,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
     request.fields['nik'] = nikController.text;
     request.fields['nama_kegiatan'] = pilihKegiatan!;
     request.fields['keterangan'] = keteranganController.text;
-    request.fields['tgl'] = tglController.text;
+
     if (_proposal != null) {
       request.files
           .add(await http.MultipartFile.fromPath('proposal', _proposal!.path));
@@ -91,8 +90,6 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
         MaterialPageRoute(builder: (context) => KegiatanPage()),
       );
     } else {
-      print(response);
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Gagal menambahkan data kegiatan.")),
       );
@@ -171,10 +168,10 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
           rkbData = responseData['data'];
         });
       } else {
-        showSnackbar('Gagal mendapatkan data rencana kegiatan');
+        showSnackbar('Gagal mendapatkan data kegiatan');
       }
     } catch (e) {
-      showSnackbar('Gagal mendapatkan data rencana kegiatan');
+      showSnackbar('Gagal mendapatkan data kegiatan');
     }
   }
 
@@ -188,7 +185,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
     setState(() {
       pilihBulan = bulan;
       pilihKegiatan = null;
-      tglController.clear();
+
       rkbDataFiltered = null;
     });
 
@@ -202,7 +199,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
     });
 
     if (selectedData['data'].isEmpty) {
-      showSnackbar("Tidak ada kegiatan di bulan tersebut");
+      showSnackbar("Tidak ada kegiatan di bulan tersebut!");
     }
   }
 
@@ -219,10 +216,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
       (item) => item["keterangan"] == kegiatan,
       orElse: () => null,
     );
-
-    setState(() {
-      tglController.text = getKegiatanSelected['tgl'];
-    });
+    if (getKegiatanSelected != null) {}
   }
 
   @override
@@ -279,13 +273,10 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                       ),
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 10,
-                          ),
                           if (!validNIK)
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 20, right: 20, top: 20),
+                                  left: 20, right: 20, top: 30),
                               child: TextFormField(
                                 controller: nikController,
                                 decoration: InputDecoration(
@@ -321,10 +312,10 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(15),
                                   child: Text(
-                                    nikLoading ? 'Loading...' : 'Cek Data',
+                                    nikLoading ? 'Mengecek...' : 'Cek Data',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                     ),
                                     textAlign: TextAlign.center,
@@ -334,8 +325,8 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                             ),
                           if (validNIK)
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
+                              padding: const EdgeInsets.only(
+                                  left: 20, right: 20, top: 30, bottom: 20),
                               child: TextFormField(
                                 readOnly: true,
                                 initialValue: pelaksana,
@@ -367,7 +358,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                   const EdgeInsets.symmetric(horizontal: 20),
                               child: DropdownButtonFormField<String>(
                                 decoration: InputDecoration(
-                                  labelText: 'Pilih Bulan',
+                                  labelText: 'Pilih Bulan Kegiatan',
                                   floatingLabelStyle: const TextStyle(
                                     color: Colors.black,
                                   ),
@@ -438,7 +429,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                   left: 20, right: 20, top: 20),
                               child: DropdownButtonFormField<String>(
                                 decoration: InputDecoration(
-                                  labelText: 'Pilih Rencana Kegiatan',
+                                  labelText: 'Pilih Kegiatan',
                                   floatingLabelStyle: const TextStyle(
                                     color: Colors.black,
                                   ),
@@ -472,63 +463,8 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                             ),
                           if (validNIK)
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 20),
-                              child: TextFormField(
-                                controller: tglController,
-                                readOnly: true,
-                                onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(1900),
-                                    lastDate: DateTime(2100),
-                                    builder:
-                                        (BuildContext context, Widget? child) {
-                                      return Theme(
-                                        data: ThemeData.light().copyWith(
-                                          primaryColor: Color(0xff30C083),
-                                          colorScheme: ColorScheme.light(
-                                              primary: Color(0xff30C083)),
-                                          buttonTheme: ButtonThemeData(
-                                              textTheme:
-                                                  ButtonTextTheme.primary),
-                                        ),
-                                        child: child ?? Container(),
-                                      );
-                                    },
-                                  );
-                                  if (pickedDate != null) {
-                                    setState(() {
-                                      tglController.text =
-                                          "${pickedDate.toLocal()}"
-                                              .split(' ')[0];
-                                    });
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  prefixIcon: const Icon(Icons.calendar_today),
-                                  labelText: 'Tanggal Acara',
-                                  floatingLabelStyle: const TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                      color: const Color(0xff30C083),
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          if (validNIK)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.only(
+                                  left: 20, right: 20, top: 20),
                               child: TextFormField(
                                 readOnly: true,
                                 onTap: _pickPDF,
@@ -577,7 +513,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                   const EdgeInsets.symmetric(horizontal: 20),
                               child: TextFormField(
                                 controller: keteranganController,
-                                maxLines: 3,
+                                maxLines: 5,
                                 cursorColor: Color(0xff30C083),
                                 decoration: InputDecoration(
                                   labelText: 'Deskripsi Kegiatan',
@@ -604,7 +540,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                               child: GestureDetector(
                                 onTap: () => _kirimData(),
                                 child: Container(
-                                  margin: const EdgeInsets.only(bottom: 20),
+                                  margin: const EdgeInsets.only(bottom: 30),
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: const Color(0xff30C083),
@@ -616,7 +552,7 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                       isLoading ? 'Mengirim...' : 'Kirim',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                       ),
                                       textAlign: TextAlign.center,

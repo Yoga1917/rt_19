@@ -187,7 +187,7 @@ class _EditKegiatanPageState extends State<EditKegiatanPage> {
                                   isLoading ? 'Mengirim...' : 'Kirim',
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
                                   textAlign: TextAlign.center,

@@ -20,6 +20,7 @@ class _KasPageState extends State<KasPage> {
   List<dynamic> kasSaldo = [];
   bool isLoading = true;
   String? aksiBy;
+  String? fotoAksiBy;
   int saldoKas = 0;
   int sisaDana = 0;
   int totalIncome = 0;
@@ -56,6 +57,7 @@ class _KasPageState extends State<KasPage> {
           perhitunganTotal();
           isLoading = false;
           aksiBy = responseData['aksiBy'];
+          fotoAksiBy = responseData['fotoAksiBy'];
         });
       } else {
         showSnackbar('Gagal memuat data kas');
@@ -268,21 +270,19 @@ class _KasPageState extends State<KasPage> {
                     SizedBox(
                       height: 30,
                     ),
-                    if (kasData.length > 0)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Saldo Kas : ',
-                          ),
-                          Text(
-                            '${rupiah(saldoKas)},-',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Saldo Kas : ',
+                        ),
+                        Text(
+                          '${rupiah(saldoKas)},-',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 20),
                     Expanded(
                       child: kasData.length > 0
@@ -300,6 +300,7 @@ class _KasPageState extends State<KasPage> {
                                       return KartuLaporan(
                                         month:
                                             kas['bulan'] + " " + kas['tahun'],
+                                        fotoAksiBy: fotoAksiBy!,
                                         aksiBy: aksiBy!,
                                         income: rupiah(kas['pemasukan'] ?? 0),
                                         expense:

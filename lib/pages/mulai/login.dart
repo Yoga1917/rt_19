@@ -209,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           SizedBox(
-                            height: 30,
+                            height: 20,
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -252,12 +252,12 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           SizedBox(
-                            height: 30,
+                            height: 20,
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             child: GestureDetector(
-                              onTap: () => login(context), // call func login
+                              onTap: () => login(context),
                               child: Container(
                                 width: double.infinity,
                                 height: 55,
@@ -271,7 +271,7 @@ class _LoginPageState extends State<LoginPage> {
                                     isLoading ? 'Masuk...' : 'Masuk',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                     ),
                                     textAlign: TextAlign.center,

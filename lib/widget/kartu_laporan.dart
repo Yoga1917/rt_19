@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class KartuLaporan extends StatelessWidget {
   final String month;
   final String aksiBy;
+  final String fotoAksiBy;
   final String income;
   final String expense;
   final String publish;
@@ -12,6 +13,7 @@ class KartuLaporan extends StatelessWidget {
   KartuLaporan({
     required this.month,
     required this.aksiBy,
+    required this.fotoAksiBy,
     required this.income,
     required this.expense,
     required this.publish,
@@ -48,11 +50,34 @@ class KartuLaporan extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 6),
-                child: Icon(Icons.person_2_outlined,
-                    size: 16, color: Colors.black),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 10,
+                  backgroundImage: NetworkImage(
+                      'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy'),
+                ),
               ),
+              SizedBox(width: 10),
               Text(aksiBy, style: TextStyle(color: Colors.black)),
             ],
           ),
@@ -108,7 +133,7 @@ class KartuLaporan extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: const Text(
-                      'Detail',
+                      'Detail  ',
                       style: TextStyle(
                         color: Color(0xff30C083),
                         fontWeight: FontWeight.w900,

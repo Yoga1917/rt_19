@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rt_19/pages/fasilitas/edit_fasilitas.dart';
 import 'package:rt_19/pages/fasilitas/input_fasilitas.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
@@ -19,6 +20,8 @@ class _FasilitasPageState extends State<FasilitasPage> {
   bool isSearching = false;
   bool isLoading = true;
   String? aksiBy;
+  String? fotoAksiBy;
+  String formattedTotalFasilitas = '';
 
   @override
   void initState() {
@@ -45,7 +48,12 @@ class _FasilitasPageState extends State<FasilitasPage> {
         filteredFasilitasList = fasilitasList;
         isLoading = false;
         totalFasilitas = fasilitasList.length;
+
+        formattedTotalFasilitas =
+            NumberFormat.decimalPattern('id').format(totalFasilitas);
+
         aksiBy = data['aksiBy'];
+        fotoAksiBy = data['fotoAksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -162,7 +170,6 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                   hintText: 'Cari Fasilitas...',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(color: Colors.black),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -191,7 +198,18 @@ class _FasilitasPageState extends State<FasilitasPage> {
                           ],
                         ),
                       ),
-                      Text('Total Fasilitas: $totalFasilitas Fasilitas'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Total Fasilitas : '),
+                          Text(
+                            NumberFormat.decimalPattern('id')
+                                .format(totalFasilitas),
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(' Fasilitas'),
+                        ],
+                      ),
                       SizedBox(height: 20),
                       Expanded(
                         child: filteredFasilitasList.isEmpty
@@ -249,7 +267,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                SizedBox(height: 10),
+                                                SizedBox(height: 5),
                                                 Text(
                                                   'Jumlah: ${fasilitas['jml']}',
                                                   style:
@@ -261,11 +279,74 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                                       TextStyle(fontSize: 14),
                                                 ),
                                                 SizedBox(height: 10),
-                                                Text(
-                                                  'Terakhir diedit oleh: \n${aksiBy}',
-                                                  style:
-                                                      TextStyle(fontSize: 14),
-                                                  textAlign: TextAlign.center,
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Terakhir diedit oleh:',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 5),
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return Dialog(
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20),
+                                                                ),
+                                                                child:
+                                                                    ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  child: Image
+                                                                      .network(
+                                                                    'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width: double
+                                                                        .infinity,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        child: CircleAvatar(
+                                                          radius: 10,
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                            'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${aksiBy}',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ],
                                                 ),
                                                 SizedBox(height: 20),
                                                 GestureDetector(
@@ -311,7 +392,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                                           color:
                                                               Color(0xff30C083),
                                                           fontWeight:
-                                                              FontWeight.w900,
+                                                              FontWeight.bold,
                                                           fontSize: 16,
                                                         ),
                                                         textAlign:

@@ -22,6 +22,9 @@ class _DataWargaPageState extends State<DataWargaPage> {
   List<dynamic> wargaInactiveList = [];
   List<dynamic> filteredWargaInactiveList = [];
 
+  String formattedTotalWarga = '';
+  String formattedTotalWargaInactive = '';
+
   int totalWarga = 0;
   int totalWargaInactive = 0;
 
@@ -56,6 +59,11 @@ class _DataWargaPageState extends State<DataWargaPage> {
 
         totalWarga = wargaList.length;
         totalWargaInactive = wargaInactiveList.length;
+
+        formattedTotalWarga =
+            NumberFormat.decimalPattern('id').format(totalWarga);
+        formattedTotalWargaInactive =
+            NumberFormat.decimalPattern('id').format(totalWargaInactive);
 
         isLoading = false;
       });
@@ -222,8 +230,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
                           : searchInactiveController,
                       decoration: InputDecoration(
                         hintText: isDataAktifSelected
-                            ? 'Cari data warga Aktif...'
-                            : 'Cari data warga Non Aktif...',
+                            ? 'Cari warga aktif...'
+                            : 'Cari warga tidak aktif...',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -258,11 +266,36 @@ class _DataWargaPageState extends State<DataWargaPage> {
                             : SingleChildScrollView(
                                 child: Column(
                                   children: [
-                                    Text(
-                                        'Total Warga : ${totalWarga + totalWargaInactive} Warga'),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Total Warga : '),
+                                        Text(
+                                          NumberFormat.decimalPattern('id')
+                                              .format(totalWarga +
+                                                  totalWargaInactive),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(' Warga')
+                                      ],
+                                    ),
                                     SizedBox(height: 5),
-                                    Text(
-                                        'Total Warga Aktif : $totalWarga Warga'),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Total Warga Tidak Aktif : '),
+                                        Text(
+                                          NumberFormat.decimalPattern('id')
+                                              .format(totalWarga),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(' Warga'),
+                                      ],
+                                    ),
                                     SizedBox(height: 20),
                                     ListView.builder(
                                         padding: EdgeInsets.zero,
@@ -324,7 +357,6 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                           MainAxisAlignment
                                                               .start,
                                                       children: <Widget>[
-                                                        SizedBox(height: 10),
                                                         Text(
                                                           warga['nama'] ??
                                                               'Unknown Name',
@@ -334,26 +366,21 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                 FontWeight.bold,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 10),
+                                                        SizedBox(height: 5),
                                                         Text(
                                                           'Nik : ${warga['nik']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
+                                                        SizedBox(height: 2),
                                                         Text(
                                                           'Tanggal Lahir : ${formatDate(warga['tgl_lahir'])}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
+                                                        SizedBox(height: 2),
                                                         Text(
                                                           'Jenis Kelamin : ${warga['jenis_kelamin']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
+                                                        SizedBox(height: 2),
                                                         Text(
                                                           'No. Rumah : ${warga['no_rumah']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
                                                         SizedBox(height: 20),
                                                         GestureDetector(
@@ -384,14 +411,14 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                       .all(10),
                                                               child: Text(
                                                                 loadingUpdate
-                                                                    ? 'Update...'
+                                                                    ? 'Perbarui...'
                                                                     : 'Aktif      ',
                                                                 style: const TextStyle(
                                                                     color: Colors
                                                                         .white,
                                                                     fontWeight:
                                                                         FontWeight
-                                                                            .w900,
+                                                                            .bold,
                                                                     fontSize:
                                                                         18),
                                                                 textAlign:
@@ -401,7 +428,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(height: 30),
+                                                        SizedBox(height: 20),
                                                       ],
                                                     ),
                                                   ),
@@ -421,11 +448,36 @@ class _DataWargaPageState extends State<DataWargaPage> {
                             : SingleChildScrollView(
                                 child: Column(
                                   children: [
-                                    Text(
-                                        'Total Warga : ${totalWarga + totalWargaInactive} Warga'),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Total Warga : '),
+                                        Text(
+                                          NumberFormat.decimalPattern('id')
+                                              .format(totalWarga +
+                                                  totalWargaInactive),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(' Warga')
+                                      ],
+                                    ),
                                     SizedBox(height: 5),
-                                    Text(
-                                        'Total Warga Non Aktif : $totalWargaInactive Warga'),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Total Warga Tidak Aktif : '),
+                                        Text(
+                                          NumberFormat.decimalPattern('id')
+                                              .format(totalWargaInactive),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(' Warga'),
+                                      ],
+                                    ),
                                     SizedBox(height: 20),
                                     ListView.builder(
                                         padding: EdgeInsets.zero,
@@ -488,7 +540,6 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                           MainAxisAlignment
                                                               .start,
                                                       children: <Widget>[
-                                                        SizedBox(height: 10),
                                                         Text(
                                                           warga['nama'] ??
                                                               'Unknown Name',
@@ -498,26 +549,21 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                 FontWeight.bold,
                                                           ),
                                                         ),
-                                                        SizedBox(height: 10),
+                                                        SizedBox(height: 5),
                                                         Text(
                                                           'Nik : ${warga['nik']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
+                                                        SizedBox(height: 2),
                                                         Text(
                                                           'Tanggal Lahir : ${warga['tgl_lahir']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
+                                                        SizedBox(height: 2),
                                                         Text(
                                                           'Jenis Kelamin : ${warga['jenis_kelamin']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
+                                                        SizedBox(height: 2),
                                                         Text(
                                                           'No. Rumah : ${warga['no_rumah']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
                                                         ),
                                                         SizedBox(height: 20),
                                                         GestureDetector(
@@ -535,8 +581,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                           child: Container(
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Colors
-                                                                  .red[700],
+                                                              color: Colors.red,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -548,14 +593,14 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                       .all(10),
                                                               child: Text(
                                                                 loadingUpdate
-                                                                    ? 'Update...'
+                                                                    ? 'Perbarui...'
                                                                     : 'Tidak Aktif',
                                                                 style: const TextStyle(
                                                                     color: Colors
                                                                         .white,
                                                                     fontWeight:
                                                                         FontWeight
-                                                                            .w900,
+                                                                            .bold,
                                                                     fontSize:
                                                                         18),
                                                                 textAlign:
@@ -565,7 +610,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                             ),
                                                           ),
                                                         ),
-                                                        SizedBox(height: 30),
+                                                        SizedBox(height: 20),
                                                       ],
                                                     ),
                                                   ),

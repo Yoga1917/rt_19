@@ -365,7 +365,7 @@ class _InputKASPageState extends State<InputKASPage> {
                                                     : 'Kirim...',
                                                 style: TextStyle(
                                                   color: Colors.white,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 18,
                                                 ),
                                                 textAlign: TextAlign.center,
@@ -528,7 +528,7 @@ class _InputKASPageState extends State<InputKASPage> {
                                                     : 'Kirim...',
                                                 style: TextStyle(
                                                   color: Colors.white,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 18,
                                                 ),
                                                 textAlign: TextAlign.center,

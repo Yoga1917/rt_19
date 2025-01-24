@@ -19,6 +19,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
   TextEditingController searchController = TextEditingController();
   bool isLoading = true;
   bool isSearching = false;
+  String formattedTotalPengaduan = '';
 
   @override
   void initState() {
@@ -44,82 +45,67 @@ class _PengaduanPageState extends State<PengaduanPage> {
     });
 
     try {
-      if (jabatan == "Ketua RT") {
-        final kinerjaResponse = await http.get(Uri.parse(
-            "https://pexadont.agsa.site/api/pengaduan/jenis/Kinerja"));
-        final fasilitasResponse = await http.get(Uri.parse(
-            "https://pexadont.agsa.site/api/pengaduan/jenis/Fasilitas"));
-        final kinerjaData = json.decode(kinerjaResponse.body)['data'];
-        final fasilitasData = json.decode(fasilitasResponse.body)['data'];
+      final endpoint = jabatan == "Ketua RT"
+          ? ["Kinerja", "Fasilitas"]
+          : [
+              jabatan == "Sekretaris"
+                  ? "Kegiatan"
+                  : jabatan == "Bendahara"
+                      ? "Keuangan"
+                      : jabatan == "Kordinator Kebersihan"
+                          ? "Kebersihan"
+                          : "Keamanan"
+            ];
 
-        // gabung data
-        List datas = [...kinerjaData, ...fasilitasData];
-        // order by tgl
-        datas.sort((a, b) => b['tgl'].compareTo(a['tgl']));
-
-        setState(() {
-          pengaduanData = datas;
-          isLoading = false;
-        });
-      } else if (jabatan == "Sekretaris") {
-        final kegiatanResponse = await http.get(Uri.parse(
-            "https://pexadont.agsa.site/api/pengaduan/jenis/Kegiatan"));
-        List kegiatanData = json.decode(kegiatanResponse.body)['data'];
-
-        kegiatanData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
-
-        setState(() {
-          pengaduanData = kegiatanData;
-          isLoading = false;
-        });
-      } else if (jabatan == "Bendahara") {
-        final keuanganResponse = await http.get(Uri.parse(
-            "https://pexadont.agsa.site/api/pengaduan/jenis/Keuangan"));
-        List keuanganData = json.decode(keuanganResponse.body)['data'];
-
-        keuanganData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
-
-        setState(() {
-          pengaduanData = keuanganData;
-          isLoading = false;
-        });
-      } else if (jabatan == "Kordinator Kebersihan") {
-        final kebersihanResponse = await http.get(Uri.parse(
-            "https://pexadont.agsa.site/api/pengaduan/jenis/Kebersihan"));
-        List kebersihanData = json.decode(kebersihanResponse.body)['data'];
-
-        kebersihanData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
-
-        setState(() {
-          pengaduanData = kebersihanData;
-          isLoading = false;
-        });
-      } else if (jabatan == "Kordinator Keamanan") {
-        final keamananResponse = await http.get(Uri.parse(
-            "https://pexadont.agsa.site/api/pengaduan/jenis/Keamanan"));
-        List keamananData = json.decode(keamananResponse.body)['data'];
-
-        keamananData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
-
-        setState(() {
-          pengaduanData = keamananData;
-          isLoading = false;
-        });
+      List combinedData = [];
+      for (var jenis in endpoint) {
+        final response = await http.get(
+            Uri.parse("https://pexadont.agsa.site/api/pengaduan/jenis/$jenis"));
+        final data = json.decode(response.body)['data'];
+        combinedData.addAll(data);
       }
-    } catch (e) {
-      print("Terjadi kesalahan mengambil data pengaduan");
+
+      combinedData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
+
+      combinedData = combinedData.map((item) {
+        item['foto_warga'] = item['foto_warga'] != null
+            ? "https://pexadont.agsa.site/uploads/warga/${item['foto_warga']}"
+            : null;
+
+        item['fotoAksiBy'] = item['fotoAksiBy'] != null
+            ? "https://pexadont.agsa.site/uploads/warga/${item['fotoAksiBy']}"
+            : null;
+
+        return item;
+      }).toList();
+
+      setState(() {
+        pengaduanData = combinedData;
+        filteredPengaduanList = combinedData;
+        totalPengaduan = combinedData.length;
+
+        formattedTotalPengaduan =
+            NumberFormat.decimalPattern('id').format(totalPengaduan);
+
+        isLoading = false;
+      });
+    } catch (e, stacktrace) {
+      print("Terjadi kesalahan mengambil data pengaduan: $e");
+      print(stacktrace);
       setState(() {
         isLoading = false;
       });
     }
-
-    setState(() {
-      filteredPengaduanList = pengaduanData;
-      totalPengaduan = pengaduanData.length;
-    });
   }
 
   void _balasPengaduan(String id_pengaduan, String balasan) async {
+    if (balasan.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Pesan balasan tidak boleh kosong!")),
+      );
+      return;
+    }
+
     var request = http.MultipartRequest(
         'POST', Uri.parse('https://pexadont.agsa.site/api/pengaduan/balas'));
     request.fields['id_pengaduan'] = id_pengaduan;
@@ -131,7 +117,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
 
     if (response["status"] == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Balasan pengaduan berhasil dikirim')),
+        SnackBar(content: Text('Balasan pengaduan berhasil dikirim!')),
       );
 
       Navigator.pushReplacement(
@@ -140,7 +126,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Gagal mengirim balasan pengaduan")),
+        SnackBar(content: Text("Gagal mengirim balasan pengaduan!")),
       );
     }
   }
@@ -252,7 +238,6 @@ class _PengaduanPageState extends State<PengaduanPage> {
                             hintText: 'Cari Jenis Pengaduan...',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.black),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -277,7 +262,18 @@ class _PengaduanPageState extends State<PengaduanPage> {
                           onChanged: searchPengaduan,
                         ),
                       ),
-                      Text('Total Pengaduan : $totalPengaduan Pengaduan'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Total Pengaduan : '),
+                          Text(
+                            NumberFormat.decimalPattern('id')
+                                .format(totalPengaduan),
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(' Pengaduan'),
+                        ],
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -352,15 +348,70 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                   ],
                                                 ),
                                                 SizedBox(height: 10),
-                                                Text(
-                                                  pengaduan['nama'],
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  pengaduan['nik'],
+                                                Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return Dialog(
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20),
+                                                              ),
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20),
+                                                                child: Image
+                                                                    .network(
+                                                                  pengaduan[
+                                                                      'foto_warga'],
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  width: double
+                                                                      .infinity,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      child: CircleAvatar(
+                                                        radius: 20,
+                                                        backgroundImage:
+                                                            NetworkImage(
+                                                          pengaduan[
+                                                              'foto_warga'],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          pengaduan['nama'],
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          pengaduan['nik'],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
@@ -495,7 +546,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                           color:
                                                               Color(0xff30C083),
                                                           fontWeight:
-                                                              FontWeight.w900,
+                                                              FontWeight.bold,
                                                           fontSize: 16,
                                                         ),
                                                         textAlign:
@@ -507,14 +558,77 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                               : Column(
                                                   children: [
                                                     Container(
-                                                      child: Text(
-                                                        'Balasan Oleh\n${pengaduan['aksiBy']} :',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                            'Balasan Oleh',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical:
+                                                                        5),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return Dialog(
+                                                                      shape:
+                                                                          RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20),
+                                                                      ),
+                                                                      child:
+                                                                          ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20),
+                                                                        child: Image
+                                                                            .network(
+                                                                          '${pengaduan['fotoAksiBy']}',
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          width:
+                                                                              double.infinity,
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                              child:
+                                                                  CircleAvatar(
+                                                                radius: 10,
+                                                                backgroundImage:
+                                                                    NetworkImage(
+                                                                  '${pengaduan['fotoAksiBy']}',
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            '${pengaduan['aksiBy']} :',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                     SizedBox(height: 5),

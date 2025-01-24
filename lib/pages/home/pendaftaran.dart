@@ -49,7 +49,8 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
   }
 
   Future<void> _acceptWarga(String nik) async {
-    final String apiUrl = 'https://pexadont.agsa.site/api/warga/terima?nik=${nik}';
+    final String apiUrl =
+        'https://pexadont.agsa.site/api/warga/terima?nik=${nik}';
 
     try {
       final response = await http.get(
@@ -79,7 +80,8 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
   }
 
   Future<void> _tolakWarga(String nik, String keterangan) async {
-    final url = 'https://pexadont.agsa.site/api/warga/tolak?nik=${nik}&keterangan=${Uri.encodeComponent(keterangan)}';
+    final url =
+        'https://pexadont.agsa.site/api/warga/tolak?nik=${nik}&keterangan=${Uri.encodeComponent(keterangan)}';
     final response = await http.get(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -94,8 +96,8 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                "Gagal menolak pendaftaran, coba ulangi beberapa saat.")),
+            content:
+                Text("Gagal menolak pendaftaran, coba ulangi beberapa saat.")),
       );
     }
   }
@@ -170,12 +172,12 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
           : data.isEmpty
               ? Center(child: Text('Tidak ada data pendaftaran.'))
               : ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 30),
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final item = data[index];
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
+                      padding: const EdgeInsets.only(bottom: 20),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -207,7 +209,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                             ),
                             Container(
                               width: double.infinity,
-                              padding: EdgeInsets.symmetric(horizontal: 25),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
                                 children: [
                                   Text(
@@ -217,21 +219,21 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  SizedBox(height: 5),
                                   Text(
                                     'NIK: ${item['nik']}',
-                                    style: TextStyle(fontSize: 14),
                                   ),
+                                  SizedBox(height: 2),
                                   Text(
                                     'Tanggal Lahir: ${item['tgl_lahir']}',
-                                    style: TextStyle(fontSize: 14),
                                   ),
+                                  SizedBox(height: 2),
                                   Text(
                                     'Jenis Kelamin: ${item['jenis_kelamin']}',
-                                    style: TextStyle(fontSize: 14),
                                   ),
+                                  SizedBox(height: 2),
                                   Text(
                                     'No. Rumah: ${item['no_rumah']}',
-                                    style: TextStyle(fontSize: 14),
                                   ),
                                 ],
                               ),
@@ -256,10 +258,10 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: const Text(
-                                        'Tolak',
+                                        'Tolak   ',
                                         style: TextStyle(
                                           color: Color(0xff30C083),
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
                                         textAlign: TextAlign.center,
@@ -275,6 +277,10 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                     decoration: BoxDecoration(
                                       color: const Color(0xff30C083),
                                       borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: const Color(0xff30C083),
+                                        width: 2,
+                                      ),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(10),
@@ -282,7 +288,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                         'Terima',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
                                         textAlign: TextAlign.center,

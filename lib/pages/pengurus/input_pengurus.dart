@@ -150,7 +150,9 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response["data"])),
+          SnackBar(
+              content: Text(
+                  'Pengurus dengan NIK tersebut sudah menjabat di periode ini!')),
         );
       }
     } catch (e) {
@@ -285,28 +287,21 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black,
                                       ),
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
                                       'Jenis Kelamin: $_jenisKelamin',
-                                      style:
-                                          const TextStyle(color: Colors.black),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       'Tanggal Lahir: ${_tglLahir != null ? formatDate(_tglLahir!) : 'Unknown'}',
-                                      style:
-                                          const TextStyle(color: Colors.black),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       'No Rumah: $_noRumah',
-                                      style:
-                                          const TextStyle(color: Colors.black),
                                     ),
-                                    const SizedBox(height: 20),
+                                    SizedBox(height: 20),
                                     DropdownButtonFormField<String>(
                                       autofocus: false,
                                       decoration: InputDecoration(
@@ -357,8 +352,6 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                                         floatingLabelStyle: const TextStyle(
                                           color: Colors.black,
                                         ),
-                                        labelStyle: const TextStyle(
-                                            color: Colors.black),
                                         border: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(10),
@@ -400,7 +393,7 @@ class _InputPengurusPageState extends State<InputPengurusPage> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 30),
+                                    SizedBox(height: 30),
                                   ],
                                 ),
                               )

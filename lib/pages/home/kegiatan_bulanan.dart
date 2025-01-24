@@ -17,10 +17,13 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
   List<dynamic> rkbData = [];
   bool isLoading = true;
   String? aksiBy;
+  String? fotoAksiBy;
+  bool isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
+    selectedYear = DateTime.now().year.toString();
     _getRkb();
   }
 
@@ -39,6 +42,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
           rkbData = responseData['data'];
           isLoading = false;
           aksiBy = responseData['aksiBy'];
+          fotoAksiBy = responseData['fotoAksiBy'];
         });
       } else {
         showSnackbar('Gagal memuat kegiatan bulanan');
@@ -55,6 +59,10 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
     if (tgl == "" || keterangan == "") {
       showSnackbar("Harap lengkapi semua data!");
     } else {
+      setState(() {
+        isSubmitting = true;
+      });
+
       var request = http.MultipartRequest(
           'POST', Uri.parse('https://pexadont.agsa.site/api/rkb/simpan'));
       request.fields['tgl'] = tgl;
@@ -64,8 +72,12 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
       var responseData = await http.Response.fromStream(streamedResponse);
       var response = jsonDecode(responseData.body);
 
+      setState(() {
+        isSubmitting = false;
+      });
+
       if (response["status"] == 201) {
-        showSnackbar("Kegiatan bulanan berhasil disimpan.");
+        showSnackbar("Rencana kegiatan bulanan berhasil disimpan.");
 
         Navigator.pushReplacement(
           context,
@@ -216,7 +228,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                     decoration: InputDecoration(
                                       prefixIcon:
                                           const Icon(Icons.calendar_today),
-                                      labelText: 'Tanggal Rencana Kegiatan',
+                                      labelText: 'Tanggal Kegiatan',
                                       floatingLabelStyle: const TextStyle(
                                         color: Colors.black,
                                       ),
@@ -243,7 +255,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                     controller: _keteranganController,
                                     decoration: InputDecoration(
                                       prefixIcon: Icon(Icons.event),
-                                      labelText: 'Nama Rencana Kegiatan',
+                                      labelText: 'Nama Kegiatan',
                                       floatingLabelStyle: const TextStyle(
                                         color: Colors.black,
                                       ),
@@ -276,11 +288,11 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(15),
-                                        child: const Text(
-                                          'Kirim',
+                                        child: Text(
+                                          isSubmitting ? 'Kirim...' : 'Kirim',
                                           style: TextStyle(
                                             color: Colors.white,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 18,
                                           ),
                                           textAlign: TextAlign.center,
@@ -306,11 +318,11 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                             dropdownColor: Color(0xff30C083),
                             iconEnabledColor: Colors.white,
                             hint: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(vertical: 15),
                               child: Text(
-                                'Pilih Tahun',
-                                style: TextStyle(color: Colors.white),
+                                '',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
                               ),
                             ),
                             value: selectedYear,
@@ -319,10 +331,12 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                               return DropdownMenuItem<String>(
                                 value: year,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding:
+                                      const EdgeInsets.only(left: 20, right: 5),
                                   child: Text(
                                     year,
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
                                   ),
                                 ),
                               );
@@ -333,6 +347,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                               });
                               _getRkb();
                             },
+                            itemHeight: null,
                           ),
                         ),
                         SizedBox(height: 30),
@@ -377,12 +392,46 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
+                                        SizedBox(height: 5),
                                         if (rkbKegiatan.length > 0)
                                           Row(
                                             children: [
-                                              Icon(Icons.person_2_outlined,
-                                                  size: 16),
-                                              SizedBox(width: 6),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return Dialog(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                        ),
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                          child: Image.network(
+                                                            'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                            fit: BoxFit.cover,
+                                                            width:
+                                                                double.infinity,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: CircleAvatar(
+                                                  radius: 10,
+                                                  backgroundImage: NetworkImage(
+                                                    'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 10),
                                               Text(aksiBy!),
                                             ],
                                           ),
@@ -401,9 +450,6 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                                         formatTgl(item['tgl']) +
                                                             " => " +
                                                             item['keterangan'],
-                                                        style: const TextStyle(
-                                                          fontSize: 14,
-                                                        ),
                                                       ),
                                                     ),
                                                   const SizedBox(height: 20)
@@ -413,10 +459,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                                 margin: const EdgeInsets.only(
                                                     bottom: 20),
                                                 child: const Text(
-                                                  'Tidak ada kegiatan di bulan ini',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
+                                                  'Tidak ada kegiatan di bulan ini.',
                                                 ),
                                               ),
                                       ],

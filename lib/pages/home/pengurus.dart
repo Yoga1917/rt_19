@@ -97,7 +97,10 @@ class _PengurusPageState extends State<PengurusPage> {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (!responseData['error']) {
           setState(() {
-            pengurusData = responseData['data'];
+            pengurusData = responseData['data']
+                .map((item) =>
+                    {...item, 'status_pengurus': item['status_pengurus']})
+                .toList();
             isLoading = false;
           });
         } else {
@@ -341,7 +344,6 @@ class _PengurusPageState extends State<PengurusPage> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: <Widget>[
-                                                SizedBox(height: 10),
                                                 Text(
                                                   pengurus['nama'],
                                                   style: TextStyle(
@@ -349,38 +351,32 @@ class _PengurusPageState extends State<PengurusPage> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                SizedBox(height: 10),
+                                                SizedBox(height: 5),
                                                 Text(
                                                   'NIK : ${pengurus['nik']}',
-                                                  style:
-                                                      TextStyle(fontSize: 14),
                                                 ),
+                                                SizedBox(height: 2),
                                                 Text(
                                                   'Tanggal Lahir : ${formatDate(pengurus['tgl_lahir'])}',
-                                                  style:
-                                                      TextStyle(fontSize: 14),
                                                 ),
+                                                SizedBox(height: 2),
                                                 Text(
                                                   'Jenis Kelamin : ${pengurus['jenis_kelamin']}',
-                                                  style:
-                                                      TextStyle(fontSize: 14),
                                                 ),
+                                                SizedBox(height: 2),
                                                 Text(
                                                   'No. Rumah : ${pengurus['no_rumah']}',
-                                                  style:
-                                                      TextStyle(fontSize: 14),
                                                 ),
                                                 SizedBox(height: 20),
                                                 GestureDetector(
                                                   onTap: () async {
                                                     if (loadingUpdate) return;
 
-                                                    setState(() {
-                                                      loadingUpdate = true;
-                                                    });
-
-                                                    final newStatus =
-                                                        isActive ? "2" : "1";
+                                                    final newStatus = pengurus[
+                                                                'status_pengurus'] ==
+                                                            "1"
+                                                        ? "2"
+                                                        : "1";
 
                                                     await _updateStatus(
                                                       pengurus['id_pengurus'],
@@ -391,14 +387,16 @@ class _PengurusPageState extends State<PengurusPage> {
                                                     );
 
                                                     setState(() {
-                                                      isActive =
-                                                          newStatus == "1";
-                                                      loadingUpdate = false;
+                                                      pengurusData[index][
+                                                              'status_pengurus'] =
+                                                          newStatus;
                                                     });
                                                   },
                                                   child: Container(
                                                     decoration: BoxDecoration(
-                                                      color: isActive
+                                                      color: pengurus[
+                                                                  'status_pengurus'] ==
+                                                              "1"
                                                           ? const Color(
                                                               0xff30C083)
                                                           : Colors.red,
@@ -413,8 +411,9 @@ class _PengurusPageState extends State<PengurusPage> {
                                                       child: Text(
                                                         loadingUpdate
                                                             ? 'Update...'
-                                                            : (isActive
-                                                                ? 'Aktif      '
+                                                            : (pengurus['status_pengurus'] ==
+                                                                    "1"
+                                                                ? 'Aktif'
                                                                 : 'Tidak Aktif'),
                                                         style: const TextStyle(
                                                           color: Colors.white,

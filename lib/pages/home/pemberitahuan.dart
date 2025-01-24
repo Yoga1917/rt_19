@@ -20,6 +20,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
   bool isLoading = true;
   List<bool> isExpanded = [];
   String? aksiBy;
+  String? fotoAksiBy;
 
   @override
   void initState() {
@@ -50,6 +51,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
         filteredPemberitahuanList = pemberitahuanList;
         isLoading = false;
         aksiBy = data['aksiBy'];
+        fotoAksiBy = data['fotoAksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -232,8 +234,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                               var pemberitahuan =
                                   filteredPemberitahuanList[index];
                               return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
+                                padding: EdgeInsets.symmetric(horizontal: 20),
                                 child: Container(
                                   margin: EdgeInsets.only(bottom: 20),
                                   width: double.infinity,
@@ -268,7 +269,6 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                 pemberitahuan['pemberitahuan'],
                                                 style: TextStyle(
                                                     fontSize: 20,
-                                                    color: Colors.black,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
@@ -277,8 +277,46 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                               ),
                                               Row(
                                                 children: [
-                                                  Icon(Icons.person_2_outlined,
-                                                      size: 18),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return Dialog(
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                            ),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              child:
+                                                                  Image.network(
+                                                                'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                width: double
+                                                                    .infinity,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: CircleAvatar(
+                                                      radius: 10,
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                        'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                      ),
+                                                    ),
+                                                  ),
                                                   SizedBox(
                                                     width: 10,
                                                   ),
@@ -287,13 +325,13 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(height: 5),
+                                              SizedBox(height: 10),
                                               Row(
                                                 children: [
                                                   Icon(
                                                       Icons
                                                           .calendar_month_outlined,
-                                                      size: 18),
+                                                      size: 20),
                                                   SizedBox(
                                                     width: 10,
                                                   ),
@@ -474,7 +512,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontWeight:
-                                                              FontWeight.w900,
+                                                              FontWeight.bold,
                                                           fontSize: 16,
                                                         ),
                                                       ),
@@ -483,7 +521,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(height: 30),
+                                            SizedBox(height: 20),
                                           ],
                                         ),
                                       ),

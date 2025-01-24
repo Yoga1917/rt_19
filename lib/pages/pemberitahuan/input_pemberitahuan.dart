@@ -18,18 +18,16 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
   bool isLoading = false;
 
   Future<void> _pickPDF() async {
-    // Memilih file dengan tipe pdf
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'], // Membatasi hanya memilih file PDF
+      allowedExtensions: ['pdf'],
     );
 
     if (result != null) {
       setState(() {
-        _file = File(result.files.single.path!); // Menyimpan file yang dipilih
+        _file = File(result.files.single.path!);
       });
     } else {
-      // Menangani jika tidak ada file yang dipilih
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Tidak ada file yang dipilih')));
     }
@@ -266,10 +264,10 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(15),
                                 child: Text(
-                                  isLoading ? 'Mengirim...' : 'Kirim',
+                                  isLoading ? 'Kirim...' : 'Kirim',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
                                   textAlign: TextAlign.center,

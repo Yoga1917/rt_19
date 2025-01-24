@@ -63,7 +63,7 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
 
       if (response['status'] == 202) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Data fasilitas berhasil diperbarui')),
+          const SnackBar(content: Text('Data fasilitas berhasil diperbarui!')),
         );
         Navigator.pushReplacement(
           context,
@@ -224,7 +224,7 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
                                     isLoading ? 'Mengirim...' : 'Kirim',
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                     ),
                                     textAlign: TextAlign.center,
