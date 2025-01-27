@@ -200,8 +200,8 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                           await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
-                                        firstDate: DateTime(2010),
-                                        lastDate: DateTime(2050),
+                                        firstDate: DateTime(1900),
+                                        lastDate: DateTime(2100),
                                         builder: (BuildContext context,
                                             Widget? child) {
                                           return Theme(
@@ -219,9 +219,9 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                       );
                                       if (pickedDate != null) {
                                         setState(() {
-                                          _tglController.text =
-                                              "${pickedDate.toLocal()}"
-                                                  .split(' ')[0];
+                                          _tglController.text = DateFormat(
+                                                  'dd MMMM yyyy', 'id_ID')
+                                              .format(pickedDate);
                                         });
                                       }
                                     },

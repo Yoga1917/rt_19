@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
 
 class PendaftaranPage extends StatefulWidget {
@@ -99,6 +100,16 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
             content:
                 Text("Gagal menolak pendaftaran, coba ulangi beberapa saat.")),
       );
+    }
+  }
+
+  String formatDate(String date) {
+    if (date.isEmpty) return 'Unknown Date';
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      return DateFormat('dd MMMM yyyy').format(parsedDate);
+    } catch (e) {
+      return 'Invalid Date';
     }
   }
 
@@ -225,7 +236,7 @@ class _PendaftaranPageState extends State<PendaftaranPage> {
                                   ),
                                   SizedBox(height: 2),
                                   Text(
-                                    'Tanggal Lahir: ${item['tgl_lahir']}',
+                                    'Tanggal Lahir : ${formatDate(item['tgl_lahir'])}',
                                   ),
                                   SizedBox(height: 2),
                                   Text(
