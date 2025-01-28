@@ -30,13 +30,15 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
   }
 
   Future<void> _kirimData() async {
+    if (isLoading) return;
+
     if (namaController.text.isEmpty ||
         jumlahController.text.isEmpty ||
         kondisi == null ||
         _image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Harap lengkapi semua data dan pilih foto')),
+            content: Text('Harap lengkapi semua data dan pilih foto!')),
       );
       return;
     }
