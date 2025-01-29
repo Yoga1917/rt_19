@@ -65,7 +65,6 @@ class _InputKASPageState extends State<InputKASPage> {
   }
 
   void _simpanPemasukan() {
-    // Validasi jika form belum diisi
     if (_jumlahPemasukanController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Harap isi data Pemasukan!')),
@@ -73,7 +72,6 @@ class _InputKASPageState extends State<InputKASPage> {
       return;
     }
 
-    // Validasi angka pada jumlah pemasukan
     if (int.tryParse(_jumlahPemasukanController.text) == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Jumlah pemasukan harus berupa angka!')),
@@ -81,7 +79,6 @@ class _InputKASPageState extends State<InputKASPage> {
       return;
     }
 
-    // Validasi keterangan tidak kosong
     if (_keteranganPemasukanController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Keterangan tidak boleh kosong!')),
@@ -93,10 +90,6 @@ class _InputKASPageState extends State<InputKASPage> {
       isLoading = true;
     });
 
-    // Jika validasi berhasil
-    print('Jumlah: ${_jumlahPemasukanController.text}');
-    print('Keterangan: ${_keteranganPemasukanController.text}');
-
     _postPemasukan();
 
     setState(() {
@@ -105,7 +98,6 @@ class _InputKASPageState extends State<InputKASPage> {
   }
 
   void _simpanPengeluaran() {
-    // Validasi jika form belum diisi
     if (_jumlahPengeluaranController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Harap isi data Pengeluaran!')),
@@ -113,7 +105,6 @@ class _InputKASPageState extends State<InputKASPage> {
       return;
     }
 
-    // Validasi angka pada jumlah pengeluaran
     if (int.tryParse(_jumlahPengeluaranController.text) == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Jumlah pengeluaran harus berupa angka!')),
@@ -121,7 +112,6 @@ class _InputKASPageState extends State<InputKASPage> {
       return;
     }
 
-    // Validasi keterangan tidak kosong
     if (_keteranganPengeluaranController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Keterangan tidak boleh kosong!')),
@@ -132,11 +122,6 @@ class _InputKASPageState extends State<InputKASPage> {
     setState(() {
       isLoading = true;
     });
-
-    // Jika validasi berhasil
-    print('Jumlah: ${_jumlahPengeluaranController.text}');
-    print('Keterangan: ${_keteranganPengeluaranController.text}');
-    print('Foto: ${_fotoPengeluaran}');
 
     _postPengeluaran();
 

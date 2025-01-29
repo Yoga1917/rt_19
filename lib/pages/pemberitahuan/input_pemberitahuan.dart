@@ -34,6 +34,8 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
   }
 
   Future<void> _kirimData() async {
+    if (isLoading) return;
+
     if (pemberitahuanController.text.isEmpty ||
         deskripsiController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -124,169 +126,172 @@ class _InputPemberitahuanPageState extends State<InputPemberitahuanPage> {
         onTap: () {
           FocusManager.instance.primaryFocus?.unfocus();
         },
-        child: LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return Column();
-          } else {
-            return Column(
-              children: [
-                SizedBox(
-                  height: 30,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            controller: pemberitahuanController,
-                            decoration: InputDecoration(
-                              prefixIcon:
-                                  const Icon(Icons.notifications_active_sharp),
-                              labelText: 'Nama Pemberitahuan',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
+        child: SingleChildScrollView(
+          child: LayoutBuilder(builder: (context, constraints) {
+            if (constraints.maxWidth > 600) {
+              return Column();
+            } else {
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(width: 1, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
                           ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            readOnly: true,
-                            onTap: _pickPDF,
-                            controller: TextEditingController(
-                              text: _file != null
-                                  ? _file!.path.split('/').last
-                                  : '',
-                            ),
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.upload_file),
-                              labelText: 'Upload File Surat',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              hintText: _file == null ? 'Pilih file PDF' : null,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Color(0xff30C083),
-                                  width: 2,
-                                ),
-                              ),
-                              suffixIcon: _file != null
-                                  ? IconButton(
-                                      icon:
-                                          Icon(Icons.clear, color: Colors.red),
-                                      onPressed: () {
-                                        setState(() {
-                                          _file = null;
-                                        });
-                                      },
-                                    )
-                                  : null,
-                            ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 30,
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: TextFormField(
-                            controller: deskripsiController,
-                            maxLines: 5,
-                            cursorColor: Color(0xff30C083),
-                            decoration: InputDecoration(
-                              labelText: 'Isi Pemberitahuan',
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: const Color(0xff30C083),
-                                  width: 2,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: TextFormField(
+                              controller: pemberitahuanController,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(
+                                    Icons.notifications_active_sharp),
+                                labelText: 'Nama Pemberitahuan',
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.black,
                                 ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: GestureDetector(
-                            onTap: isLoading ? null : _kirimData,
-                            child: Container(
-                              width: double.infinity,
-                              height: 55,
-                              decoration: BoxDecoration(
-                                color: const Color(0xff30C083),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15),
-                                child: Text(
-                                  isLoading ? 'Kirim...' : 'Kirim',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: const Color(0xff30C083),
+                                    width: 2,
                                   ),
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                      ],
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: TextFormField(
+                              readOnly: true,
+                              onTap: _pickPDF,
+                              controller: TextEditingController(
+                                text: _file != null
+                                    ? _file!.path.split('/').last
+                                    : '',
+                              ),
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.upload_file),
+                                labelText: 'Upload File Surat',
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
+                                hintText:
+                                    _file == null ? 'Pilih file PDF' : null,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xff30C083),
+                                    width: 2,
+                                  ),
+                                ),
+                                suffixIcon: _file != null
+                                    ? IconButton(
+                                        icon: Icon(Icons.clear,
+                                            color: Colors.red),
+                                        onPressed: () {
+                                          setState(() {
+                                            _file = null;
+                                          });
+                                        },
+                                      )
+                                    : null,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: TextFormField(
+                              controller: deskripsiController,
+                              maxLines: 5,
+                              cursorColor: Color(0xff30C083),
+                              decoration: InputDecoration(
+                                labelText: 'Isi Pemberitahuan',
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    color: const Color(0xff30C083),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: GestureDetector(
+                              onTap: isLoading ? null : _kirimData,
+                              child: Container(
+                                width: double.infinity,
+                                height: 55,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xff30C083),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: Text(
+                                    isLoading ? 'Kirim...' : 'Kirim',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          }
-        }),
+                ],
+              );
+            }
+          }),
+        ),
       ),
     );
   }

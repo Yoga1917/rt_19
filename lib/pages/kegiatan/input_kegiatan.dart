@@ -49,6 +49,8 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   }
 
   void _kirimData() async {
+    if (isLoading) return;
+
     if (pilihKegiatan == null ||
         nikController.text.isEmpty ||
         keteranganController.text.isEmpty ||

@@ -38,12 +38,51 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        setState(() {
-          rkbData = responseData['data'];
-          isLoading = false;
-          aksiBy = responseData['aksiBy'];
-          fotoAksiBy = responseData['fotoAksiBy'];
-        });
+        List<dynamic> rkbList = responseData['data'];
+
+        if (rkbList.isNotEmpty) {
+          rkbList.forEach((bulanData) {
+            List<dynamic> dataKegiatan = bulanData['data'] ?? [];
+
+            dataKegiatan.forEach((item) {
+              String tgl = item['tgl'] ?? '';
+
+              if (tgl.isNotEmpty) {
+                DateTime? date = DateTime.tryParse(tgl);
+                if (date == null) {}
+              }
+            });
+          });
+
+          rkbList.forEach((bulanData) {
+            List<dynamic> dataKegiatan = bulanData['data'] ?? [];
+            dataKegiatan.sort((a, b) {
+              try {
+                String tglA = a['tgl'] ?? '';
+                String tglB = b['tgl'] ?? '';
+
+                if (tglA.isNotEmpty && tglB.isNotEmpty) {
+                  DateTime? dateA = DateTime.tryParse(tglA);
+                  DateTime? dateB = DateTime.tryParse(tglB);
+
+                  if (dateA != null && dateB != null) {
+                    return dateA.compareTo(dateB);
+                  }
+                }
+              } catch (e) {}
+              return 0;
+            });
+          });
+
+          setState(() {
+            rkbData = rkbList;
+            isLoading = false;
+            aksiBy = responseData['aksiBy'];
+            fotoAksiBy = responseData['fotoAksiBy'];
+          });
+        } else {
+          showSnackbar('Data kegiatan tidak ditemukan');
+        }
       } else {
         showSnackbar('Gagal memuat kegiatan bulanan');
       }
@@ -63,9 +102,12 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
         isSubmitting = true;
       });
 
+      DateTime date = DateFormat('dd MMMM yyyy', 'id_ID').parse(tgl);
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+
       var request = http.MultipartRequest(
           'POST', Uri.parse('https://pexadont.agsa.site/api/rkb/simpan'));
-      request.fields['tgl'] = tgl;
+      request.fields['tgl'] = formattedDate;
       request.fields['keterangan'] = keterangan;
 
       var streamedResponse = await request.send();
@@ -279,7 +321,8 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20),
                                   child: GestureDetector(
-                                    onTap: () => _kirimRkb(),
+                                    onTap:
+                                        isSubmitting ? null : () => _kirimRkb(),
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -356,8 +399,10 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: rkbData.length,
                             itemBuilder: (context, index) {
-                              final rkbBulan = rkbData[index]['bulan'];
-                              final rkbKegiatan = rkbData[index]['data'];
+                              final rkbBulan =
+                                  rkbData.reversed.toList()[index]['bulan'];
+                              final rkbKegiatan =
+                                  rkbData.reversed.toList()[index]['data'];
                               return Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 20),
                                 child: Container(
