@@ -20,89 +20,65 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   Future<void> login(BuildContext context) async {
-    final String nik = nikController.text;
-    final String password = passwordController.text;
+    final String nik = nikController.text.trim();
+    final String password = passwordController.text.trim();
 
     if (nik.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Harap isi data NIK!')),
-      );
-      return;
+      showSnackbar(context, 'Harap isi data NIK!');
     }
 
     if (nik.length < 16) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('NIK harus 16 digit angka!')),
-      );
-      return;
-    }
-
-    if (int.tryParse(nik) == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data NIK harus berupa angka!')),
-      );
+      showSnackbar(context, 'NIK harus 16 digit angka!');
       return;
     }
 
     if (password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Harap masukan password anda!')),
-      );
+      showSnackbar(context, 'Harap masukkan password!');
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
     try {
       final String apiUrl =
-          "https://pexadont.agsa.site/api/login/pengurus?nik=$nik&password=$password";
-      final response = await http.get(Uri.parse(apiUrl));
-      var data = json.decode(response.body);
+          "https://pexadont.agsa.site/api/login/pengurus?nik=$nik&password=$password&status_pengurus=1";
 
-      setState(() {
-        isLoading = false;
-      });
+      final response = await http.get(Uri.parse(apiUrl));
+
+      setState(() => isLoading = false);
+
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        if (data['data']['status_pengurus'] == "1") {
-          _saveLoginInfo(responseData['data']['nik'],
-              responseData['data']['nama'], responseData['data']['jabatan']);
+        final data = responseData['data'];
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Berhasil login!')),
+        if (data != null && data['status_pengurus'] == "1") {
+          await _saveLoginInfo(
+            data['nik']?.toString() ?? "",
+            data['nama']?.toString() ?? "",
+            data['jabatan']?.toString() ?? "",
           );
-
-          Navigator.push(
+          showSnackbar(context, 'Berhasil login!');
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
           );
-        } else if (data['data']['status_pengurus'] == "2") {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Pengurus sudah tidak menjabat!")),
-          );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(responseData['data'] ?? 'Gagal login!')),
-          );
+          showSnackbar(context, 'Pengurus sudah tidak menjabat!');
         }
       } else {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseData['data'] ?? 'Gagal login!')),
-        );
+        showSnackbar(context, responseData['message'] ?? 'Gagal login!');
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi kesalahan: $e')),
-      );
+      setState(() => isLoading = false);
+      showSnackbar(context, 'Terjadi kesalahan: $e');
     }
+  }
+
+  void showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   Future<void> _saveLoginInfo(String nama, String nik, String jabatan) async {

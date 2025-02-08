@@ -126,7 +126,7 @@ class _PengurusPageState extends State<PengurusPage> {
     try {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('https://pexadont.agsa.site/api/pengurus/update/$nik'),
+        Uri.parse('https://pexadont.agsa.site/api/pengurus/update/$id_pengurus'),
       );
 
       request.fields['id_pengurus'] = id_pengurus;
@@ -140,14 +140,14 @@ class _PengurusPageState extends State<PengurusPage> {
 
       if (response["status"] == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Status akun pengurus berhasil diubah')),
+          SnackBar(content: Text('Status akun pengurus berhasil diubah!')),
         );
         setState(() {
           isActive = status_pengurus == "1";
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Gagal update status akun warga")),
+          SnackBar(content: Text("Gagal update status akun warga!")),
         );
       }
     } catch (e) {
