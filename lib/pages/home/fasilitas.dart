@@ -19,8 +19,6 @@ class _FasilitasPageState extends State<FasilitasPage> {
   TextEditingController searchController = TextEditingController();
   bool isSearching = false;
   bool isLoading = true;
-  String? aksiBy;
-  String? fotoAksiBy;
   String formattedTotalFasilitas = '';
 
   @override
@@ -42,7 +40,9 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   'nama': item['nama'],
                   'jml': item['jml'],
                   'status': item['status'],
-                  'foto': item['foto']
+                  'foto': item['foto'],
+                  'aksiBy': item['aksiBy'],
+                  'fotoAksiBy': item['fotoAksiBy']
                 })
             .toList();
         filteredFasilitasList = fasilitasList;
@@ -51,9 +51,6 @@ class _FasilitasPageState extends State<FasilitasPage> {
 
         formattedTotalFasilitas =
             NumberFormat.decimalPattern('id').format(totalFasilitas);
-
-        aksiBy = data['aksiBy'];
-        fotoAksiBy = data['fotoAksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -317,7 +314,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                                                               10),
                                                                   child: Image
                                                                       .network(
-                                                                    'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                    'https://pexadont.agsa.site/uploads/warga/${fasilitas['fotoAksiBy']}',
                                                                     fit: BoxFit
                                                                         .cover,
                                                                     width: double
@@ -332,13 +329,13 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                                           radius: 10,
                                                           backgroundImage:
                                                               NetworkImage(
-                                                            'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                            'https://pexadont.agsa.site/uploads/warga/${fasilitas['fotoAksiBy']}',
                                                           ),
                                                         ),
                                                       ),
                                                     ),
                                                     Text(
-                                                      '${aksiBy}',
+                                                      '${fasilitas['aksiBy']}',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,

@@ -20,8 +20,6 @@ class _KegiatanPageState extends State<KegiatanPage> {
   bool isSearching = false;
   bool isLoading = true;
   List<bool> isExpanded = [];
-  String? aksiBy;
-  String? fotoAksiBy;
 
   @override
   void initState() {
@@ -46,13 +44,12 @@ class _KegiatanPageState extends State<KegiatanPage> {
                   null
               ? "https://pexadont.agsa.site/uploads/warga/${kegiatan['foto_ketua_pelaksana']}"
               : null;
+          print("Foto Ketua Pelaksana: ${kegiatan['foto_ketua_pelaksana']}");
           return kegiatan;
         }).toList();
 
         filteredKegiatanList = kegiatanList;
         isLoading = false;
-        aksiBy = responseData['aksiBy'];
-        fotoAksiBy = responseData['fotoAksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -795,7 +792,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                                             BorderRadius.circular(10),
                                                                         child: Image
                                                                             .network(
-                                                                          'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                          'https://pexadont.agsa.site/uploads/warga/${kegiatan['fotoAksiBy']}',
                                                                           fit: BoxFit
                                                                               .cover,
                                                                           width:
@@ -811,13 +808,13 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                                 radius: 10,
                                                                 backgroundImage:
                                                                     NetworkImage(
-                                                                  'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                  'https://pexadont.agsa.site/uploads/warga/${kegiatan['fotoAksiBy']}',
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
                                                           Text(
-                                                            '${aksiBy}',
+                                                            '${kegiatan['aksiBy']}',
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight

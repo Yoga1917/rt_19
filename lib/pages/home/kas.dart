@@ -8,6 +8,7 @@ import 'package:rt_19/pages/kas_RT/detail_kas.dart';
 import 'package:rt_19/pages/kas_RT/input_kas.dart';
 import 'package:rt_19/widget/kartu_laporan.dart';
 import 'package:rt_19/widget/kartu_total_laporan.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KasPage extends StatefulWidget {
   @override
@@ -19,19 +20,29 @@ class _KasPageState extends State<KasPage> {
   List<dynamic> kasData = [];
   List<dynamic> kasSaldo = [];
   bool isLoading = true;
-  String? aksiBy;
-  String? fotoAksiBy;
   int saldoKas = 0;
   int sisaDana = 0;
   int totalIncome = 0;
   int totalExpense = 0;
+  String? id_pengurus;
 
   @override
   void initState() {
     super.initState();
     selectedYear = DateTime.now().year.toString();
+    _loadIdPengurus();
     _fetchKas();
     _fetchAllKas();
+  }
+
+  Future<String?> getIdPengurus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('id_pengurus');
+  }
+
+  Future<void> _loadIdPengurus() async {
+    id_pengurus = await getIdPengurus();
+    setState(() {});
   }
 
   void _fetchKas() async {
@@ -56,8 +67,6 @@ class _KasPageState extends State<KasPage> {
 
           perhitunganTotal();
           isLoading = false;
-          aksiBy = responseData['aksiBy'];
-          fotoAksiBy = responseData['fotoAksiBy'];
         });
       } else {
         showSnackbar('Gagal memuat data kas');
@@ -130,21 +139,35 @@ class _KasPageState extends State<KasPage> {
     );
   }
 
-  void _publishKas(id_kas) async {
-    final response = await http.post(
+  void _publishKas(String id_kas) async {
+    if (id_pengurus == null) {
+      showSnackbar('ID Pengurus tidak ditemukan. Silakan login ulang.');
+      return;
+    }
+
+    print('Mengirim request: id_kas=$id_kas, id_pengurus=$id_pengurus');
+
+    try {
+      final response = await http.post(
         Uri.parse('https://pexadont.agsa.site/api/kas/publish/simpan'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'id_kas': id_kas,
-        }));
+          'id_pengurus': id_pengurus, 
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      showSnackbar('Berhasil Publish KAS');
-
-      Navigator.of(context).pop();
-      _fetchKas();
-    } else {
-      showSnackbar('Gagal memuat data kas');
+      if (response.statusCode == 200) {
+        showSnackbar('Berhasil Publish KAS');
+        Navigator.of(context).pop();
+        _fetchKas();
+      } else {
+        print('Response body: ${response.body}');
+        print(response.statusCode);
+        showSnackbar('Gagal memuat data kas!');
+      }
+    } catch (e) {
+      showSnackbar('Terjadi kesalahan: $e');
     }
   }
 
@@ -300,8 +323,8 @@ class _KasPageState extends State<KasPage> {
                                       return KartuLaporan(
                                         month:
                                             kas['bulan'] + " " + kas['tahun'],
-                                        fotoAksiBy: fotoAksiBy!,
-                                        aksiBy: aksiBy!,
+                                        fotoAksiBy: '${kas['fotoAksiBy']}',
+                                        aksiBy: '${kas['aksiBy']}',
                                         income: rupiah(kas['pemasukan'] ?? 0),
                                         expense:
                                             rupiah(kas['pengeluaran'] ?? 0),

@@ -19,8 +19,6 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
   bool isSearching = false;
   bool isLoading = true;
   List<bool> isExpanded = [];
-  String? aksiBy;
-  String? fotoAksiBy;
 
   @override
   void initState() {
@@ -44,14 +42,14 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                 'file': item['file'] != null && item['file'].isNotEmpty
                     ? 'https://pexadont.agsa.site/uploads/pemberitahuan/${item['file']}'
                     : null,
+                'aksiBy': item['aksiBy'],
+                'fotoAksiBy': item['fotoAksiBy'],
                 'isExpanded': false,
               },
             )
             .toList();
         filteredPemberitahuanList = pemberitahuanList;
         isLoading = false;
-        aksiBy = data['aksiBy'];
-        fotoAksiBy = data['fotoAksiBy'];
       });
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');
@@ -298,7 +296,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                                           10),
                                                               child:
                                                                   Image.network(
-                                                                'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                                'https://pexadont.agsa.site/uploads/warga/${pemberitahuan['fotoAksiBy']}',
                                                                 fit: BoxFit
                                                                     .cover,
                                                                 width: double
@@ -313,7 +311,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                       radius: 10,
                                                       backgroundImage:
                                                           NetworkImage(
-                                                        'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                        'https://pexadont.agsa.site/uploads/warga/${pemberitahuan['fotoAksiBy']}',
                                                       ),
                                                     ),
                                                   ),
@@ -321,7 +319,7 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
                                                     width: 10,
                                                   ),
                                                   Text(
-                                                    aksiBy!,
+                                                    '${pemberitahuan['aksiBy']}',
                                                   ),
                                                 ],
                                               ),

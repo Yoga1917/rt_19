@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             data['nik']?.toString() ?? "",
             data['nama']?.toString() ?? "",
             data['jabatan']?.toString() ?? "",
+            data['id_pengurus']?.toString() ?? "",
           );
           showSnackbar(context, 'Berhasil login!');
           Navigator.pushReplacement(
@@ -81,11 +82,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _saveLoginInfo(String nama, String nik, String jabatan) async {
+  Future<void> _saveLoginInfo(String nama, String nik, String jabatan, String id_pengurus) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('nik', nik);
     await prefs.setString('nama', nama);
     await prefs.setString('jabatan', jabatan);
+    await prefs.setString('id_pengurus', id_pengurus);
   }
 
   @override

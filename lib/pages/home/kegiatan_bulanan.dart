@@ -16,8 +16,6 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
   String? selectedYear;
   List<dynamic> rkbData = [];
   bool isLoading = true;
-  String? aksiBy;
-  String? fotoAksiBy;
   bool isSubmitting = false;
 
   @override
@@ -77,8 +75,6 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
           setState(() {
             rkbData = rkbList;
             isLoading = false;
-            aksiBy = responseData['aksiBy'];
-            fotoAksiBy = responseData['fotoAksiBy'];
           });
         } else {
           showSnackbar('Data kegiatan tidak ditemukan');
@@ -459,7 +455,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                                               BorderRadius
                                                                   .circular(20),
                                                           child: Image.network(
-                                                            'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                            'https://pexadont.agsa.site/uploads/warga/${rkbKegiatan.isNotEmpty ? rkbKegiatan[0]['fotoAksiBy'] ?? 'default.jpg' : 'default.jpg'}',
                                                             fit: BoxFit.cover,
                                                             width:
                                                                 double.infinity,
@@ -472,12 +468,14 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                                 child: CircleAvatar(
                                                   radius: 10,
                                                   backgroundImage: NetworkImage(
-                                                    'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                                    'https://pexadont.agsa.site/uploads/warga/${rkbKegiatan.isNotEmpty ? rkbKegiatan[0]['fotoAksiBy'] ?? 'default.jpg' : 'default.jpg'}',
                                                   ),
                                                 ),
                                               ),
                                               SizedBox(width: 10),
-                                              Text(aksiBy!),
+                                              Text(
+                                                rkbKegiatan[index]['aksiBy']
+                                              ),
                                             ],
                                           ),
                                         SizedBox(height: 10),

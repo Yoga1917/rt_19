@@ -46,42 +46,45 @@ class KartuLaporan extends StatelessWidget {
             month,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
+          publish == "1"
+            ? Padding(
+              padding: const EdgeInsets.only(top: 5, bottom: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.network(
+                                'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-                child: CircleAvatar(
-                  radius: 10,
-                  backgroundImage: NetworkImage(
-                      'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy'),
-                ),
+                    child: CircleAvatar(
+                      radius: 10,
+                      backgroundImage: NetworkImage(
+                          'https://pexadont.agsa.site/uploads/warga/$fotoAksiBy'),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Text(aksiBy, style: TextStyle(color: Colors.black)),
+                ],
               ),
-              SizedBox(width: 10),
-              Text(aksiBy, style: TextStyle(color: Colors.black)),
-            ],
-          ),
-          SizedBox(height: 15),
+            )
+            : SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
