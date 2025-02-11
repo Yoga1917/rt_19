@@ -141,11 +141,9 @@ class _KasPageState extends State<KasPage> {
 
   void _publishKas(String id_kas) async {
     if (id_pengurus == null) {
-      showSnackbar('ID Pengurus tidak ditemukan. Silakan login ulang.');
+      showSnackbar('ID Pengurus tidak ditemukan. Silakan login ulang!');
       return;
     }
-
-    print('Mengirim request: id_kas=$id_kas, id_pengurus=$id_pengurus');
 
     try {
       final response = await http.post(
@@ -153,7 +151,7 @@ class _KasPageState extends State<KasPage> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'id_kas': id_kas,
-          'id_pengurus': id_pengurus, 
+          'id_pengurus': id_pengurus,
         }),
       );
 
@@ -162,8 +160,6 @@ class _KasPageState extends State<KasPage> {
         Navigator.of(context).pop();
         _fetchKas();
       } else {
-        print('Response body: ${response.body}');
-        print(response.statusCode);
         showSnackbar('Gagal memuat data kas!');
       }
     } catch (e) {

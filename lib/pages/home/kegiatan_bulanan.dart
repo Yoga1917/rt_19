@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class KegiatanBulananPage extends StatefulWidget {
   @override
@@ -101,10 +102,14 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
       DateTime date = DateFormat('dd MMMM yyyy', 'id_ID').parse(tgl);
       String formattedDate = DateFormat('yyyy-MM-dd').format(date);
 
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id_pengurus = prefs.getString('id_pengurus');
+
       var request = http.MultipartRequest(
           'POST', Uri.parse('https://pexadont.agsa.site/api/rkb/simpan'));
       request.fields['tgl'] = formattedDate;
       request.fields['keterangan'] = keterangan;
+      request.fields['id_pengurus'] = id_pengurus!;
 
       var streamedResponse = await request.send();
       var responseData = await http.Response.fromStream(streamedResponse);

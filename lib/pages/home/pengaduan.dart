@@ -13,6 +13,7 @@ class PengaduanPage extends StatefulWidget {
 
 class _PengaduanPageState extends State<PengaduanPage> {
   String? jabatan;
+  String? id_pengurus;
   int totalPengaduan = 0;
   List pengaduanData = [];
   List<dynamic> filteredPengaduanList = [];
@@ -33,6 +34,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
 
     setState(() {
       jabatan = prefs.getString('jabatan');
+      id_pengurus = prefs.getString('id_pengurus');
     });
   }
 
@@ -65,7 +67,17 @@ class _PengaduanPageState extends State<PengaduanPage> {
         combinedData.addAll(data);
       }
 
-      combinedData.sort((a, b) => b['tgl'].compareTo(a['tgl']));
+      combinedData.sort((a, b) {
+        // Urutkan berdasarkan tanggal (dari terbaru ke terlama)
+        int compareDate = b['tgl'].compareTo(a['tgl']);
+
+        // Jika tanggalnya sama, urutkan berdasarkan id_pengaduan (dari terbaru ke terlama)
+        if (compareDate == 0) {
+          return b['id_pengaduan'].compareTo(a['id_pengaduan']);
+        }
+
+        return compareDate;
+      });
 
       combinedData = combinedData.map((item) {
         item['foto_warga'] = item['foto_warga'] != null
@@ -99,6 +111,17 @@ class _PengaduanPageState extends State<PengaduanPage> {
   }
 
   void _balasPengaduan(String id_pengaduan, String balasan) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? id_pengurus = prefs.getString('id_pengurus');
+
+    if (id_pengurus == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("ID Pengurus tidak ditemukan. Silakan login ulang!")),
+      );
+      return;
+    }
+
     if (balasan.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Pesan balasan tidak boleh kosong!")),
@@ -110,6 +133,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
         'POST', Uri.parse('https://pexadont.agsa.site/api/pengaduan/balas'));
     request.fields['id_pengaduan'] = id_pengaduan;
     request.fields['balasan'] = balasan;
+    request.fields['id_pengurus'] = id_pengurus;
 
     var streamedResponse = await request.send();
     var responseData = await http.Response.fromStream(streamedResponse);
@@ -328,7 +352,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                               children: [
                                                 SizedBox(height: 20),
                                                 Text(
-                                                  'Pengaduan ${pengaduan['jenis']}',
+                                                  'Pengaduan ${pengaduan['jenis'] ?? "jenis pengaduan tidak tersedia"}',
                                                   style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
@@ -343,7 +367,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                     ),
                                                     SizedBox(width: 5),
                                                     Text(
-                                                      '${formatDate(pengaduan['tgl'])}',
+                                                      '${formatDate(pengaduan['tgl'] ?? "Tanggal tidak tersedia")}',
                                                     ),
                                                   ],
                                                 ),
@@ -365,32 +389,36 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                                             20),
                                                               ),
                                                               child: ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20),
-                                                                child: Image
-                                                                    .network(
-                                                                  pengaduan[
-                                                                      'foto_warga'],
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  width: double
-                                                                      .infinity,
-                                                                ),
-                                                              ),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20),
+                                                                  child: pengaduan[
+                                                                          'foto_warga']
+                                                                      ? Image
+                                                                          .network(
+                                                                          pengaduan[
+                                                                              'foto_warga'],
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          width:
+                                                                              double.infinity,
+                                                                        )
+                                                                      : SizedBox()),
                                                             );
                                                           },
                                                         );
                                                       },
                                                       child: CircleAvatar(
-                                                        radius: 20,
-                                                        backgroundImage:
-                                                            NetworkImage(
-                                                          pengaduan[
-                                                              'foto_warga'],
-                                                        ),
-                                                      ),
+                                                          radius: 20,
+                                                          backgroundImage:
+                                                              pengaduan['foto_warga'] !=
+                                                                      null
+                                                                  ? NetworkImage(
+                                                                      pengaduan[
+                                                                          'foto_warga'],
+                                                                    )
+                                                                  : null),
                                                     ),
                                                     SizedBox(width: 10),
                                                     Column(
@@ -399,7 +427,8 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          pengaduan['nama'],
+                                                          pengaduan['nama'] ??
+                                                              'Nama tidak tersedia',
                                                           style: TextStyle(
                                                             fontSize: 18,
                                                             fontWeight:
@@ -407,7 +436,8 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                           ),
                                                         ),
                                                         Text(
-                                                          pengaduan['nik'],
+                                                          pengaduan['nik'] ??
+                                                              'NIK tidak tersedia',
                                                         ),
                                                       ],
                                                     ),
@@ -446,7 +476,8 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 20),
                                             child: Text(
-                                              pengaduan['isi'],
+                                              pengaduan['isi'] ??
+                                                  'Isi tidak tersedia',
                                             ),
                                           ),
                                           SizedBox(
@@ -591,19 +622,15 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                                         borderRadius:
                                                                             BorderRadius.circular(20),
                                                                       ),
-                                                                      child:
-                                                                          ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(20),
-                                                                        child: Image
-                                                                            .network(
-                                                                          '${pengaduan['fotoAksiBy']}',
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                          width:
-                                                                              double.infinity,
-                                                                        ),
-                                                                      ),
+                                                                      child: ClipRRect(
+                                                                          borderRadius: BorderRadius.circular(20),
+                                                                          child: pengaduan['fotoAksiBy'] != null
+                                                                              ? Image.network(
+                                                                                  pengaduan['fotoAksiBy'],
+                                                                                  fit: BoxFit.cover,
+                                                                                  width: double.infinity,
+                                                                                )
+                                                                              : SizedBox()),
                                                                     );
                                                                   },
                                                                 );
@@ -611,15 +638,27 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                               child:
                                                                   CircleAvatar(
                                                                 radius: 10,
-                                                                backgroundImage:
-                                                                    NetworkImage(
-                                                                  '${pengaduan['fotoAksiBy']}',
-                                                                ),
+                                                                backgroundImage: pengaduan[
+                                                                            'fotoAksiBy'] !=
+                                                                        null
+                                                                    ? NetworkImage(
+                                                                        pengaduan[
+                                                                            'fotoAksiBy'])
+                                                                    : null,
+                                                                child: pengaduan[
+                                                                            'fotoAksiBy'] ==
+                                                                        null
+                                                                    ? Icon(
+                                                                        Icons
+                                                                            .person,
+                                                                        size:
+                                                                            10)
+                                                                    : null,
                                                               ),
                                                             ),
                                                           ),
                                                           Text(
-                                                            '${pengaduan['aksiBy']} :',
+                                                            '${pengaduan['aksiBy'] ?? 'Tidak diketahui'} :',
                                                             style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -632,7 +671,8 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                       ),
                                                     ),
                                                     SizedBox(height: 5),
-                                                    Text(pengaduan['balasan'])
+                                                    Text(pengaduan['balasan'] ??
+                                                        'Belum ada balasan')
                                                   ],
                                                 ),
                                           SizedBox(

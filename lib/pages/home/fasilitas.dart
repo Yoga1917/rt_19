@@ -45,6 +45,10 @@ class _FasilitasPageState extends State<FasilitasPage> {
                   'fotoAksiBy': item['fotoAksiBy']
                 })
             .toList();
+
+        fasilitasList
+            .sort((a, b) => b['id_fasilitas'].compareTo(a['id_fasilitas']));
+
         filteredFasilitasList = fasilitasList;
         isLoading = false;
         totalFasilitas = fasilitasList.length;

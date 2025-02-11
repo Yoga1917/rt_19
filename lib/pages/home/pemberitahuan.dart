@@ -36,9 +36,10 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
         pemberitahuanList = (data['data'] as List)
             .map(
               (item) => {
+                'id_pemberitahuan': item['id_pemberitahuan']?.toString() ?? "0",
                 'pemberitahuan': item['pemberitahuan'],
                 'deskripsi': item['deskripsi'],
-                'tgl': item['tgl'],
+                'tgl': item['tgl']?.toString() ?? '',
                 'file': item['file'] != null && item['file'].isNotEmpty
                     ? 'https://pexadont.agsa.site/uploads/pemberitahuan/${item['file']}'
                     : null,
@@ -48,6 +49,27 @@ class _PemberitahuanPageState extends State<PemberitahuanPage> {
               },
             )
             .toList();
+
+        pemberitahuanList.sort((a, b) {
+          String tglA = a['tgl'] ?? '';
+          String tglB = b['tgl'] ?? '';
+
+          DateTime dateA = DateTime.parse(tglA);
+          DateTime dateB = DateTime.parse(tglB);
+
+          int dateComparison = dateB.compareTo(dateA);
+          if (dateComparison == 0) {
+            String idA = a['id_pemberitahuan'] ?? "0";
+            String idB = b['id_pemberitahuan'] ?? "0";
+
+            int idAInt = int.tryParse(idA) ?? 0;
+            int idBInt = int.tryParse(idB) ?? 0;
+
+            return idBInt.compareTo(idAInt);
+          }
+          return dateComparison;
+        });
+
         filteredPemberitahuanList = pemberitahuanList;
         isLoading = false;
       });

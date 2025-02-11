@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:rt_19/pages/home/fasilitas.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InputFasilitasPage extends StatefulWidget {
   @override
@@ -48,6 +49,9 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
     });
 
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id_pengurus = prefs.getString('id_pengurus');
+      
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('https://pexadont.agsa.site/api/fasilitas/simpan'),
@@ -55,6 +59,7 @@ class _InputFasilitasPageState extends State<InputFasilitasPage> {
       request.fields['nama'] = namaController.text;
       request.fields['jml'] = jumlahController.text;
       request.fields['status'] = kondisi!;
+      request.fields['id_pengurus'] = id_pengurus!;
       request.files
           .add(await http.MultipartFile.fromPath('foto', _image!.path));
 

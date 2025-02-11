@@ -44,9 +44,20 @@ class _KegiatanPageState extends State<KegiatanPage> {
                   null
               ? "https://pexadont.agsa.site/uploads/warga/${kegiatan['foto_ketua_pelaksana']}"
               : null;
-          print("Foto Ketua Pelaksana: ${kegiatan['foto_ketua_pelaksana']}");
           return kegiatan;
         }).toList();
+
+        kegiatanList.sort((a, b) {
+          DateTime tglA = DateTime.parse(a['tgl']);
+          DateTime tglB = DateTime.parse(b['tgl']);
+
+          if (tglA == tglB) {
+            return int.parse(b['id_kegiatan'])
+                .compareTo(int.parse(a['id_kegiatan']));
+          }
+
+          return tglB.compareTo(tglA);
+        });
 
         filteredKegiatanList = kegiatanList;
         isLoading = false;

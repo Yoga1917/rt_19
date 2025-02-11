@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:rt_19/pages/home/kegiatan.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InputKegiatanPage extends StatefulWidget {
   @override
@@ -67,11 +68,15 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   }
 
   void _postKegiatan() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id_pengurus = prefs.getString('id_pengurus');
+
     var request = http.MultipartRequest(
         'POST', Uri.parse('https://pexadont.agsa.site/api/kegiatan/simpan'));
     request.fields['nik'] = nikController.text;
     request.fields['nama_kegiatan'] = pilihKegiatan!;
     request.fields['keterangan'] = keteranganController.text;
+    request.fields['id_pengurus'] = id_pengurus!;
 
     if (_proposal != null) {
       request.files

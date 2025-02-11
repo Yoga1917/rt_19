@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/home/kegiatan.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditKegiatanPage extends StatefulWidget {
   final String id_kegiatan;
@@ -45,9 +46,13 @@ class _EditKegiatanPageState extends State<EditKegiatanPage> {
         isLoading = true;
       });
 
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id_pengurus = prefs.getString('id_pengurus');
+
       var request = http.MultipartRequest(
           'POST', Uri.parse('https://pexadont.agsa.site/api/kegiatan/lpj'));
       request.fields['id_kegiatan'] = widget.id_kegiatan;
+      request.fields['id_pengurus'] = id_pengurus!;
       request.files.add(await http.MultipartFile.fromPath('lpj', _lpj!.path));
 
       var streamedResponse = await request.send();

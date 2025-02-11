@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rt_19/pages/home/fasilitas.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditFasilitasPage extends StatefulWidget {
   final String id_fasilitas;
@@ -49,6 +50,9 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
     });
 
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id_pengurus = prefs.getString('id_pengurus');
+      
       var request = http.MultipartRequest(
           'POST',
           Uri.parse(
@@ -56,6 +60,7 @@ class _EditFasilitasPageState extends State<EditFasilitasPage> {
       request.fields['nama'] = widget.nama;
       request.fields['jml'] = jumlahController.text;
       request.fields['status'] = kondisi!;
+      request.fields['id_pengurus'] = id_pengurus!;
 
       var streamedResponse = await request.send();
       var responseData = await http.Response.fromStream(streamedResponse);
