@@ -479,7 +479,11 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                               ),
                                               SizedBox(width: 10),
                                               Text(
-                                                rkbKegiatan[index]['aksiBy']
+                                                rkbKegiatan.isNotEmpty
+                                                    ? rkbKegiatan[0]
+                                                            ['aksiBy'] ??
+                                                        '-'
+                                                    : '-',
                                               ),
                                             ],
                                           ),
