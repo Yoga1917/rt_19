@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (nik.isEmpty) {
       showSnackbar(context, 'Harap isi data NIK!');
+      return;
     }
 
     if (nik.length < 16) {
