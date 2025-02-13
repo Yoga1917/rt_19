@@ -320,7 +320,7 @@ class _KasPageState extends State<KasPage> {
                                         month:
                                             kas['bulan'] + " " + kas['tahun'],
                                         fotoAksiBy: '${kas['fotoAksiBy']}',
-                                        aksiBy: '${kas['aksiBy']}',
+                                        aksiBy: '${kas['aksiBy']} (Bendahara)',
                                         income: rupiah(kas['pemasukan'] ?? 0),
                                         expense:
                                             rupiah(kas['pengeluaran'] ?? 0),

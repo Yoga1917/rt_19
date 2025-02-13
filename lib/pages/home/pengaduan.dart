@@ -658,7 +658,7 @@ class _PengaduanPageState extends State<PengaduanPage> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            '${pengaduan['aksiBy'] ?? 'Tidak diketahui'} :',
+                                                            '${pengaduan['aksiBy'] ?? 'Tidak diketahui'} (${pengaduan['jabatanAksiBy'] ?? 'Tidak diketahui'}) :',
                                                             style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight

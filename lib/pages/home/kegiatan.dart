@@ -825,7 +825,7 @@ class _KegiatanPageState extends State<KegiatanPage> {
                                                             ),
                                                           ),
                                                           Text(
-                                                            '${kegiatan['aksiBy']}',
+                                                            '${kegiatan['aksiBy']} (Sekretaris)',
                                                             style: TextStyle(
                                                                 fontWeight:
                                                                     FontWeight

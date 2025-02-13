@@ -481,7 +481,7 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                               Text(
                                                 rkbKegiatan.isNotEmpty
                                                     ? rkbKegiatan[0]
-                                                            ['aksiBy'] ??
+                                                            ['aksiBy'] + ' (Sekretaris)' ??
                                                         '-'
                                                     : '-',
                                               ),

@@ -339,7 +339,7 @@ class _FasilitasPageState extends State<FasilitasPage> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      '${fasilitas['aksiBy']}',
+                                                      '${fasilitas['aksiBy']} (Ketua RT)',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
