@@ -25,12 +25,15 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
   String? pilihBulan;
   String? pilihKegiatan;
   List<dynamic> rkbData = [];
+  List<dynamic> _allWargaData = [];
+  List<dynamic> _searchResults = [];
   Map<String, dynamic>? rkbDataFiltered;
 
   @override
   void initState() {
     super.initState();
     _getRkb();
+    _fetchAllWarga();
   }
 
   Future<void> _pickPDF() async {
@@ -103,61 +106,37 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
     }
   }
 
-  void _cekNIK() async {
+  void _searchByName(String name) {
+    if (name.isEmpty) {
+      setState(() {
+        _searchResults = [];
+      });
+      return;
+    }
+
     setState(() {
-      nikLoading = true;
+      _searchResults = _allWargaData
+          .where((warga) =>
+              warga["nama"].toLowerCase().contains(name.toLowerCase()))
+          .toList();
     });
+  }
 
-    if (nikController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Harap isi data NIK!')),
-      );
-      setState(() {
-        nikLoading = false;
-      });
-      return;
-    }
-
-    if (nikController.text.length < 16) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('NIK harus 16 digit angka!')),
-      );
-      setState(() {
-        nikLoading = false;
-      });
-      return;
-    }
-
-    if (int.tryParse(nikController.text) == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data NIK harus berupa angka!')),
-      );
-      setState(() {
-        nikLoading = false;
-      });
-      return;
-    }
-
+  Future<void> _fetchAllWarga() async {
     final request = await http.get(
-      Uri.parse(
-          'https://pexadont.agsa.site/api/warga/edit/${nikController.text}'),
+      Uri.parse('https://pexadont.agsa.site/api/warga'),
       headers: {'Content-Type': 'application/json'},
     );
 
     final response = jsonDecode(request.body);
 
-    setState(() {
-      nikLoading = false;
-    });
-
     if (response["status"] == 200) {
       setState(() {
-        pelaksana = response["data"]["nama"];
-        validNIK = true;
+        _allWargaData = response["data"];
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data warga tidak ditemukan')),
+        SnackBar(content: Text('Gagal mengambil data warga')),
       );
     }
   }
@@ -283,12 +262,12 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                           if (!validNIK)
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 20, right: 20, top: 30),
+                                  left: 20, right: 20, top: 30, bottom: 30),
                               child: TextFormField(
-                                controller: nikController,
+                                initialValue: pelaksana,
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(Icons.person),
-                                  labelText: 'NIK Pelaksana',
+                                  labelText: 'Cari Nama Pelaksana',
                                   floatingLabelStyle: const TextStyle(
                                     color: Colors.black,
                                   ),
@@ -303,31 +282,68 @@ class _InputKegiatanPageState extends State<InputKegiatanPage> {
                                     ),
                                   ),
                                 ),
+                                onChanged: (value) {
+                                  _searchByName(value);
+                                },
                               ),
                             ),
-                          if (!validNIK)
-                            InkWell(
-                              onTap: () => _cekNIK(),
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                    left: 20, right: 20, top: 20, bottom: 30),
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xff30C083),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15),
-                                  child: Text(
-                                    nikLoading ? 'Mengecek...' : 'Cek Data',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+                          if (_searchResults.isNotEmpty)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: _searchResults.length,
+                                itemBuilder: (context, index) {
+                                  final data = _searchResults[index];
+                                  return ListTile(
+                                    leading: GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Dialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                child: Image.network(
+                                                  (data['foto'] != null)
+                                                      ? 'https://pexadont.agsa.site/uploads/warga/${data['foto']}'
+                                                      : 'https://placehold.co/300x300.png',
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: CircleAvatar(
+                                          radius: 20,
+                                          backgroundImage:
+                                              (data['foto'] != null)
+                                                  ? NetworkImage(
+                                                      'https://pexadont.agsa.site/uploads/warga/${data['foto']}',
+                                                    )
+                                                  : null),
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
+                                    title: Text(data['nama']),
+                                    subtitle: Text('NIK: ${data['nik']}'),
+                                    onTap: () {
+                                      setState(() {
+                                        pelaksana = data['nama'];
+                                        nikController.text = data['nik'];
+                                        validNIK = true;
+                                        _searchResults = [];
+                                      });
+                                    },
+                                  );
+                                },
                               ),
                             ),
                           if (validNIK)

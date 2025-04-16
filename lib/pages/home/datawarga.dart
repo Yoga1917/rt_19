@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:rt_19/pages/halaman_utama/home.dart';
+import 'package:rt_19/pages/lokasi_maps.dart';
 import 'package:rt_19/widget/toggle_tabs.dart';
 
 class DataWargaPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class DataWargaPage extends StatefulWidget {
 }
 
 class _DataWargaPageState extends State<DataWargaPage> {
+  List<dynamic> keluargaList = [];
   bool isDataAktifSelected = true;
   List<dynamic> wargaList = [];
   List<dynamic> filteredWargaList = [];
@@ -28,6 +30,9 @@ class _DataWargaPageState extends State<DataWargaPage> {
   int totalWarga = 0;
   int totalWargaInactive = 0;
 
+  Map<String, List<dynamic>> wargaByKeluarga = {};
+  Map<String, List<dynamic>> wargaByKK = {};
+
   TextEditingController searchController = TextEditingController();
   TextEditingController searchInactiveController = TextEditingController();
   bool isLoading = true;
@@ -37,38 +42,64 @@ class _DataWargaPageState extends State<DataWargaPage> {
   @override
   void initState() {
     super.initState();
-    fetchWargaData();
+    fetchData();
     if (widget.initialTab == 'tidak_aktif') {
       isDataAktifSelected = false;
     }
   }
 
-  Future<void> fetchWargaData() async {
-    final response =
-        await http.get(Uri.parse('https://pexadont.agsa.site/api/warga'));
+  Future<void> fetchData() async {
+    try {
+      // Fetch data keluarga dan warga secara bersamaan
+      final responses = await Future.wait([
+        http.get(Uri.parse('https://pexadont.agsa.site/api/keluarga')),
+        http.get(Uri.parse('https://pexadont.agsa.site/api/warga')),
+      ]);
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      if (responses[0].statusCode == 200 && responses[1].statusCode == 200) {
+        final keluargaData = json.decode(responses[0].body);
+        final wargaData = json.decode(responses[1].body);
+
+        setState(() {
+          keluargaList = keluargaData['data'];
+          wargaList =
+              wargaData['data'].where((item) => item['status'] == "1").toList();
+          wargaInactiveList =
+              wargaData['data'].where((item) => item['status'] == "2").toList();
+
+          // Kelompokkan warga berdasarkan no_rumah (keluarga)
+          wargaByKeluarga = {};
+          for (var keluarga in keluargaList) {
+            String noRumah = keluarga['no_rumah'];
+            wargaByKeluarga[noRumah] = wargaList
+                .where((warga) => warga['no_rumah'] == noRumah)
+                .toList();
+          }
+
+          // Kelompokkan warga berdasarkan no_kk
+          wargaByKK = {};
+          for (var warga in wargaList) {
+            String noKK = warga['no_kk'];
+            if (!wargaByKK.containsKey(noKK)) {
+              wargaByKK[noKK] = [];
+            }
+            wargaByKK[noKK]!.add(warga);
+          }
+
+          filteredWargaList = wargaList;
+          filteredWargaInactiveList = wargaInactiveList;
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
       setState(() {
-        wargaList =
-            data['data'].where((item) => item['status'] == "1").toList();
-        filteredWargaList = wargaList;
-        wargaInactiveList =
-            data['data'].where((item) => item['status'] == "2").toList();
-        filteredWargaInactiveList = wargaInactiveList;
-
-        totalWarga = wargaList.length;
-        totalWargaInactive = wargaInactiveList.length;
-
-        formattedTotalWarga =
-            NumberFormat.decimalPattern('id').format(totalWarga);
-        formattedTotalWargaInactive =
-            NumberFormat.decimalPattern('id').format(totalWargaInactive);
-
         isLoading = false;
       });
-    } else {
-      throw Exception('Failed to load data');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
     }
   }
 
@@ -296,147 +327,410 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                         Text(' Warga'),
                                       ],
                                     ),
-                                    SizedBox(height: 20),
                                     ListView.builder(
-                                        padding: EdgeInsets.zero,
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: filteredWargaList.length,
-                                        itemBuilder: (context, index) {
-                                          final warga =
-                                              filteredWargaList[index];
-                                          return Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            child: Container(
-                                              margin:
-                                                  EdgeInsets.only(bottom: 20),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                    width: 1,
-                                                    color: Colors.grey),
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5),
-                                                    spreadRadius: 1,
-                                                    blurRadius: 5,
-                                                    offset: Offset(0, 3),
-                                                  ),
-                                                ],
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: keluargaList.length,
+                                      itemBuilder: (context, index) {
+                                        final keluarga = keluargaList[index];
+                                        final warga = filteredWargaList[index];
+                                        String noRumah = keluarga['no_rumah'];
+                                        List<dynamic> wargaDiRumah =
+                                            wargaByKeluarga[noRumah] ?? [];
+
+                                        // Kelompokkan warga di rumah ini berdasarkan KK
+                                        Map<String, List<dynamic>> kkDiRumah =
+                                            {};
+                                        for (var warga in wargaDiRumah) {
+                                          String noKK = warga['no_kk'];
+                                          if (!kkDiRumah.containsKey(noKK)) {
+                                            kkDiRumah[noKK] = [];
+                                          }
+                                          kkDiRumah[noKK]!.add(warga);
+                                        }
+                                        return Container(
+                                          margin: EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                                width: 1, color: Colors.grey),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey
+                                                    .withOpacity(0.5),
+                                                spreadRadius: 1,
+                                                blurRadius: 5,
+                                                offset: Offset(0, 3),
                                               ),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            20),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                      child: Image.network(
-                                                        (warga['foto'] != null)
-                                                            ? 'https://pexadont.agsa.site/uploads/warga/${warga['foto']}'
-                                                            : 'https://placehold.co/300x300.png',
-                                                        fit: BoxFit.cover,
-                                                        width: double.infinity,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
+                                            ],
+                                          ),
+                                          child: Theme(
+                                            data: Theme.of(context).copyWith(
+                                              dividerColor: Colors.transparent,
+                                              cardColor: Colors.transparent,
+                                            ),
+                                            child: ExpansionTile(
+                                              title: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
                                                               .start,
-                                                      children: <Widget>[
+                                                      children: [
                                                         Text(
-                                                          warga['nama'] ??
-                                                              'Unknown Name',
+                                                          'Nomor Rumah : ${keluarga['no_rumah'] ?? "-"}',
                                                           style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         ),
-                                                        SizedBox(height: 5),
                                                         Text(
-                                                          'Nik : ${warga['nik']}',
+                                                          "Total NO KK : 6",
+                                                          style: TextStyle(
+                                                              fontSize: 14),
                                                         ),
-                                                        SizedBox(height: 2),
                                                         Text(
-                                                          'Tanggal Lahir : ${formatDate(warga['tgl_lahir'])}',
+                                                          "Total Warga : 6",
+                                                          style: TextStyle(
+                                                              fontSize: 14),
                                                         ),
-                                                        SizedBox(height: 2),
-                                                        Text(
-                                                          'Jenis Kelamin : ${warga['jenis_kelamin']}',
-                                                        ),
-                                                        SizedBox(height: 2),
-                                                        Text(
-                                                          'No. Rumah : ${warga['no_rumah']}',
-                                                        ),
-                                                        SizedBox(height: 20),
-                                                        GestureDetector(
-                                                          onTap: () =>
-                                                              _updateStatus(
-                                                            warga['nik'],
-                                                            warga['nama'],
-                                                            warga['tgl_lahir'],
-                                                            warga[
-                                                                'jenis_kelamin'],
-                                                            warga['no_rumah'],
-                                                            warga['no_wa'],
-                                                            "2",
-                                                          ),
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: const Color(
-                                                                  0xff30C083),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(10),
-                                                              child: Text(
-                                                                loadingUpdate
-                                                                    ? 'Perbarui...'
-                                                                    : 'Aktif      ',
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        18),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 20),
                                                       ],
                                                     ),
-                                                  ),
-                                                ],
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        double lat = double
+                                                                .tryParse(keluarga[
+                                                                        'latitude'] ??
+                                                                    '0') ??
+                                                            0;
+                                                        double lng = double
+                                                                .tryParse(keluarga[
+                                                                        'longitude'] ??
+                                                                    '0') ??
+                                                            0;
+
+                                                        if (lat == 0 ||
+                                                            lng == 0) {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                                content: Text(
+                                                                    'Lokasi tidak tersedia')),
+                                                          );
+                                                          return;
+                                                        }
+
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                LokasiMapPage(
+                                                              latitude: lat,
+                                                              longitude: lng,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Column(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.location_on,
+                                                            size: 25,
+                                                            color: Color(
+                                                                0xff30C083),
+                                                          ),
+                                                          Text(
+                                                            "Lihat Maps",
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xff30C083),
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                              decorationColor:
+                                                                  Color(
+                                                                      0xff30C083),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                        width: 1,
+                                                        color: Colors.grey),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.5),
+                                                        spreadRadius: 1,
+                                                        blurRadius: 5,
+                                                        offset: Offset(0, 3),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: ExpansionTile(
+                                                    title: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 0),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            'No KK: ${keluarga['no_kk'] ?? "-"}',
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          Text(
+                                                              "Status Keluarga : Menetap",
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14)),
+                                                          Text(
+                                                            "Total Warga : 6",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        child: Container(
+                                                          width:
+                                                              double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white,
+                                                            border: Border.all(
+                                                                width: 1,
+                                                                color: Colors
+                                                                    .grey),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .withOpacity(
+                                                                        0.5),
+                                                                spreadRadius: 1,
+                                                                blurRadius: 5,
+                                                                offset: Offset(
+                                                                    0, 3),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: <Widget>[
+                                                              SizedBox(
+                                                                  height: 20),
+                                                              Text(
+                                                                warga['status_keluarga'] ??
+                                                                    'Unknown Name',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 22,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              (warga['foto'] ==
+                                                                          null ||
+                                                                      warga['foto']
+                                                                          .isEmpty)
+                                                                  ? SizedBox(
+                                                                      height:
+                                                                          10)
+                                                                  : Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          20),
+                                                                      child:
+                                                                          ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(20),
+                                                                        child: Image
+                                                                            .network(
+                                                                          'https://pexadont.agsa.site/uploads/warga/${warga['foto']}',
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          width:
+                                                                              double.infinity,
+                                                                          errorBuilder: (context, error, stackTrace) =>
+                                                                              SizedBox(),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        20),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: <Widget>[
+                                                                    Text(
+                                                                      warga['nama'] ??
+                                                                          'Unknown Name',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            5),
+                                                                    Text(
+                                                                        'Nik : ${warga['nik']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Jenis Kelamin : ${warga['jenis_kelamin']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Tempat Lahir : ${warga['tempat_lahir']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Tanggal Lahir : ${formatDate(warga['tgl_lahir'])}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Agama : ${warga['agama']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Status Menikah : ${warga['status_nikah']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Nama Ayah : ${warga['nama_ayah']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Nama Ibu : ${warga['nama_ibu']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            20),
+                                                                    GestureDetector(
+                                                                      onTap: () =>
+                                                                          _updateStatus(
+                                                                        warga[
+                                                                            'nik'],
+                                                                        warga[
+                                                                            'nama'],
+                                                                        warga[
+                                                                            'tgl_lahir'],
+                                                                        warga[
+                                                                            'jenis_kelamin'],
+                                                                        warga[
+                                                                            'no_rumah'],
+                                                                        warga[
+                                                                            'no_wa'],
+                                                                        "2",
+                                                                      ),
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              const Color(0xff30C083),
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                        ),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              10),
+                                                                          child:
+                                                                              Text(
+                                                                            loadingUpdate
+                                                                                ? 'Perbarui...'
+                                                                                : 'Aktif      ',
+                                                                            style: const TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontSize: 18),
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            20),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          );
-                                        }),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
                               ))

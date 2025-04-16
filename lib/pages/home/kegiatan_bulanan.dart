@@ -239,11 +239,12 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                     controller: _tglController,
                                     readOnly: true,
                                     onTap: () async {
+                                      DateTime today = DateTime.now();
                                       DateTime? pickedDate =
                                           await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
-                                        firstDate: DateTime(1900),
+                                        firstDate: today,
                                         lastDate: DateTime(2100),
                                         builder: (BuildContext context,
                                             Widget? child) {
@@ -480,8 +481,8 @@ class _KegiatanBulananPageState extends State<KegiatanBulananPage> {
                                               SizedBox(width: 10),
                                               Text(
                                                 rkbKegiatan.isNotEmpty
-                                                    ? rkbKegiatan[0]
-                                                            ['aksiBy'] + ' (Sekretaris)' ??
+                                                    ? rkbKegiatan[0]['aksiBy'] +
+                                                            ' (Sekretaris)' ??
                                                         '-'
                                                     : '-',
                                               ),

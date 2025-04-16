@@ -273,8 +273,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                               _jumlahPemasukanController,
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
-                                            prefixIcon:
-                                                const Icon(Icons.attach_money),
+                                            prefixIcon: const Icon(
+                                                Icons.account_balance_wallet),
                                             labelText: 'Pemasukan',
                                             floatingLabelStyle: const TextStyle(
                                               color: Colors.black,
@@ -400,8 +400,8 @@ class _InputKASPageState extends State<InputKASPage> {
                                           controller:
                                               _jumlahPengeluaranController,
                                           decoration: InputDecoration(
-                                            prefixIcon:
-                                                const Icon(Icons.money_off),
+                                            prefixIcon: const Icon(
+                                                Icons.account_balance_wallet),
                                             labelText: 'Pengeluaran',
                                             floatingLabelStyle: const TextStyle(
                                               color: Colors.black,
