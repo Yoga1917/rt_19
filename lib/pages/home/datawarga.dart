@@ -30,8 +30,8 @@ class _DataWargaPageState extends State<DataWargaPage> {
   int totalWarga = 0;
   int totalWargaInactive = 0;
 
-  Map<String, List<dynamic>> wargaByKeluarga = {};
-  Map<String, List<dynamic>> wargaByKK = {};
+  Map<String, List<dynamic>> rumahToKK = {};
+  Map<String, List<dynamic>> kkToWarga = {};
 
   TextEditingController searchController = TextEditingController();
   TextEditingController searchInactiveController = TextEditingController();
@@ -50,7 +50,6 @@ class _DataWargaPageState extends State<DataWargaPage> {
 
   Future<void> fetchData() async {
     try {
-      // Fetch data keluarga dan warga secara bersamaan
       final responses = await Future.wait([
         http.get(Uri.parse('https://pexadont.agsa.site/api/keluarga')),
         http.get(Uri.parse('https://pexadont.agsa.site/api/warga')),
@@ -67,23 +66,30 @@ class _DataWargaPageState extends State<DataWargaPage> {
           wargaInactiveList =
               wargaData['data'].where((item) => item['status'] == "2").toList();
 
-          // Kelompokkan warga berdasarkan no_rumah (keluarga)
-          wargaByKeluarga = {};
+          totalWarga = wargaList.length;
+          totalWargaInactive = wargaInactiveList.length;
+
+          // Initialize grouping structures
+          rumahToKK = {};
+          kkToWarga = {};
+
+          // First group KK by rumah
           for (var keluarga in keluargaList) {
             String noRumah = keluarga['no_rumah'];
-            wargaByKeluarga[noRumah] = wargaList
-                .where((warga) => warga['no_rumah'] == noRumah)
-                .toList();
+            if (!rumahToKK.containsKey(noRumah)) {
+              rumahToKK[noRumah] = [];
+            }
+            // Add KK to the rumah
+            rumahToKK[noRumah]!.add(keluarga);
           }
 
-          // Kelompokkan warga berdasarkan no_kk
-          wargaByKK = {};
+          // Then group warga by KK
           for (var warga in wargaList) {
             String noKK = warga['no_kk'];
-            if (!wargaByKK.containsKey(noKK)) {
-              wargaByKK[noKK] = [];
+            if (!kkToWarga.containsKey(noKK)) {
+              kkToWarga[noKK] = [];
             }
-            wargaByKK[noKK]!.add(warga);
+            kkToWarga[noKK]!.add(warga);
           }
 
           filteredWargaList = wargaList;
@@ -327,30 +333,36 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                         Text(' Warga'),
                                       ],
                                     ),
+                                    SizedBox(height: 20),
                                     ListView.builder(
                                       padding: EdgeInsets.zero,
                                       shrinkWrap: true,
                                       physics: NeverScrollableScrollPhysics(),
-                                      itemCount: keluargaList.length,
+                                      itemCount: rumahToKK.entries
+                                          .length, // Gunakan rumahToKK bukan rumahtoKK
                                       itemBuilder: (context, index) {
-                                        final keluarga = keluargaList[index];
-                                        final warga = filteredWargaList[index];
-                                        String noRumah = keluarga['no_rumah'];
-                                        List<dynamic> wargaDiRumah =
-                                            wargaByKeluarga[noRumah] ?? [];
+                                        final rumahEntry =
+                                            rumahToKK.entries.elementAt(index);
+                                        final noRumah = rumahEntry.key;
+                                        final kkList = rumahEntry.value;
+                                        final totalKK = kkList.length;
+                                        final totalWargaDiRumah =
+                                            kkList.fold(0, (sum, kk) {
+                                          return sum +
+                                              (kkToWarga[kk['no_kk']]?.length ??
+                                                  0);
+                                        });
 
-                                        // Kelompokkan warga di rumah ini berdasarkan KK
-                                        Map<String, List<dynamic>> kkDiRumah =
-                                            {};
-                                        for (var warga in wargaDiRumah) {
-                                          String noKK = warga['no_kk'];
-                                          if (!kkDiRumah.containsKey(noKK)) {
-                                            kkDiRumah[noKK] = [];
-                                          }
-                                          kkDiRumah[noKK]!.add(warga);
-                                        }
+                                        // Cari data keluarga untuk rumah ini (untuk mendapatkan latitude/longitude)
+                                        final keluarga =
+                                            keluargaList.firstWhere(
+                                          (kel) => kel['no_rumah'] == noRumah,
+                                          orElse: () => {},
+                                        );
+
                                         return Container(
-                                          margin: EdgeInsets.all(20),
+                                          margin: EdgeInsets.only(
+                                              bottom: 20, left: 20, right: 20),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             border: Border.all(
@@ -388,7 +400,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          'Nomor Rumah : ${keluarga['no_rumah'] ?? "-"}',
+                                                          'Nomor Rumah : $noRumah', // Gunakan noRumah langsung
                                                           style: TextStyle(
                                                               fontSize: 18,
                                                               fontWeight:
@@ -396,12 +408,12 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                       .bold),
                                                         ),
                                                         Text(
-                                                          "Total NO KK : 6",
+                                                          "Total KK : $totalKK", // Gunakan nilai dinamis
                                                           style: TextStyle(
                                                               fontSize: 14),
                                                         ),
                                                         Text(
-                                                          "Total Warga : 6",
+                                                          "Total Warga : $totalWargaDiRumah", // Gunakan nilai dinamis
                                                           style: TextStyle(
                                                               fontSize: 14),
                                                         ),
@@ -474,8 +486,11 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                   ],
                                                 ),
                                               ),
-                                              children: [
-                                                Container(
+                                              children: kkList.map((keluarga) {
+                                                final noKK = keluarga['no_kk'];
+                                                final wargaDiKK =
+                                                    kkToWarga[noKK] ?? [];
+                                                return Container(
                                                   margin: EdgeInsets.all(10),
                                                   decoration: BoxDecoration(
                                                     color: Colors.white,
@@ -506,7 +521,7 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                            'No KK: ${keluarga['no_kk'] ?? "-"}',
+                                                            'No KK: $noKK',
                                                             style: TextStyle(
                                                                 fontSize: 18,
                                                                 fontWeight:
@@ -514,20 +529,49 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                         .bold),
                                                           ),
                                                           Text(
-                                                              "Status Keluarga : Menetap",
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      14)),
+                                                            "Status Keluarga: ${keluarga['status'] ?? '-'}",
+                                                            style: TextStyle(
+                                                                fontSize: 14),
+                                                          ),
                                                           Text(
-                                                            "Total Warga : 6",
+                                                            "Total Warga: ${wargaDiKK.length}",
                                                             style: TextStyle(
                                                                 fontSize: 14),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
-                                                    children: [
-                                                      Padding(
+                                                    children: (wargaDiKK
+                                                            .map((warga) {
+                                                      int order;
+                                                      switch (warga[
+                                                          'status_keluarga']) {
+                                                        case 'Kepala Keluarga':
+                                                          order = 1;
+                                                          break;
+                                                        case 'Istri':
+                                                          order = 2;
+                                                          break;
+                                                        case 'Anak':
+                                                          order = 3;
+                                                          break;
+                                                        default:
+                                                          order = 4;
+                                                      }
+                                                      return {
+                                                        'warga': warga,
+                                                        'order': order
+                                                      };
+                                                    }).toList()
+                                                          ..sort((a, b) => a[
+                                                                  'order']
+                                                              .compareTo(
+                                                                  b['order'])))
+                                                        .map<Widget>((item) {
+                                                      final warga =
+                                                          item['warga'];
+
+                                                      return Padding(
                                                         padding:
                                                             EdgeInsets.all(10),
                                                         child: Container(
@@ -566,14 +610,13 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                   height: 20),
                                                               Text(
                                                                 warga['status_keluarga'] ??
-                                                                    'Unknown Name',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 22,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
+                                                                    'Anggota Keluarga',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        22,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                               ),
                                                               (warga['foto'] ==
                                                                           null ||
@@ -721,11 +764,11 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                             ],
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                      );
+                                                    }).toList(),
                                                   ),
-                                                ),
-                                              ],
+                                                );
+                                              }).toList(),
                                             ),
                                           ),
                                         );
