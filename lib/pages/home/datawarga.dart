@@ -307,15 +307,14 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text('Total Warga : '),
+                                        Text('Total Rumah : '),
                                         Text(
                                           NumberFormat.decimalPattern('id')
-                                              .format(totalWarga +
-                                                  totalWargaInactive),
+                                              .format(rumahToKK.keys.length),
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
-                                        Text(' Warga')
+                                        Text(' Rumah'),
                                       ],
                                     ),
                                     SizedBox(height: 5),
@@ -323,10 +322,26 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text('Total Warga Tidak Aktif : '),
+                                        Text('Total Keluarga : '),
                                         Text(
                                           NumberFormat.decimalPattern('id')
-                                              .format(totalWarga),
+                                              .format(keluargaList.length),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(' Keluarga'),
+                                      ],
+                                    ),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text('Total Warga : '),
+                                        Text(
+                                          NumberFormat.decimalPattern('id')
+                                              .format(totalWarga +
+                                                  totalWargaInactive),
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -706,6 +721,21 @@ class _DataWargaPageState extends State<DataWargaPage> {
                                                                             2),
                                                                     Text(
                                                                         'Nama Ibu : ${warga['nama_ibu']}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Pendidikan : ${warga['pendidikan'] ?? '-'}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Pekerjaan : ${warga['pekerjaan'] ?? '-'}'),
+                                                                    SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    Text(
+                                                                        'Gaji : ${warga['gaji'] ?? '-'}'),
                                                                     SizedBox(
                                                                         height:
                                                                             20),
